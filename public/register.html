@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - De trazos a emociones</title>
+  <title>Sign Up - De trazos a emociones</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -441,6 +441,73 @@
         padding: 2rem 1.5rem;
       }
     }
+    .form-row {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .form-row .form-group {
+      margin-bottom: 0;
+      flex: 1;
+    }
+
+    .eye-icon {
+      position: absolute;
+      right: 16px;
+      color: var(--text-gray);
+      cursor: pointer;
+    }
+
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      line-height: 1.4;
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--text-gray);
+      border-radius: 4px;
+      background-color: var(--input-bg);
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    
+    .checkbox-group input[type="checkbox"]:checked {
+      background-color: var(--accent-purple);
+      border-color: var(--accent-purple);
+    }
+    
+    .checkbox-group input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 2px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    .checkbox-group a {
+      color: #c0b4f9;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -500,13 +567,21 @@
           <path d="M8 16a4 4 0 0 1 8 0" />
         </svg>
       </div>
+      <!-- Laughing Face -->
+      <div class="face-container" style="top: 55%; left: 10%; animation-delay: -4s;">
+        <span style="font-size: 24px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));">😅</span>
+      </div>
+
+      <!-- Crying Face -->
+      <div class="face-container" style="top: 50%; left: 75%; animation-delay: -1s;">
+        <span style="font-size: 24px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));">🥺</span>
+      </div>
     </div>
 
     <div class="hero-text">
       <h1 class="hero-title">
-        Descubre el mundo
-        <span class="highlight">emocional</span>
-        de cada niño
+        Comienza tu<br>viaje hacia las<br>
+        <span class="highlight">emociones</span>
       </h1>
       <p class="hero-subtitle">Psicología infantil · Análisis profundo</p>
     </div>
@@ -532,11 +607,38 @@
       </div>
 
       <div class="form-header">
-        <h1>SIGN IN</h1>
-        <p>Inicia sesión con tu correo electrónico</p>
+        <h1>SIGN UP</h1>
+        <p>Crea tu cuenta y empieza el análisis</p>
       </div>
 
-      <form action="#" method="POST" onsubmit="event.preventDefault(); window.location.href='app.html';">
+      <form action="#" method="POST" onsubmit="event.preventDefault(); window.location.href='index.html';">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstname">NOMBRE</label>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <input type="text" id="firstname" placeholder="Ej: Laura" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="lastname">APELLIDO</label>
+            <div class="input-wrapper">
+              <div class="input-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <input type="text" id="lastname" placeholder="Ej: Gómez" required />
+            </div>
+          </div>
+        </div>
+
         <div class="form-group">
           <label for="email">CORREO ELECTRÓNICO</label>
           <div class="input-wrapper">
@@ -559,17 +661,40 @@
                 <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
               </svg>
             </div>
-            <input type="password" id="password" placeholder="••••••" required />
+            <input type="password" id="password" placeholder="Mínimo 8 caracteres" required />
+            <div class="eye-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="role">ROL</label>
+          <div class="input-wrapper">
+            <select id="role" style="width: 100%; background-color: var(--input-bg); border: 1px solid var(--input-border); border-radius: 8px; padding: 16px 16px; color: var(--text-white); font-family: 'DM Sans', sans-serif; font-size: 1rem; outline: none; transition: all 0.3s ease; cursor: pointer;">
+              <option value="" disabled selected>Selecciona tu rol</option>
+              <option value="padre">Padre / Madre</option>
+              <option value="psicologo">Psicólogo(a)</option>
+              <option value="profesor">Profesor(a)</option>
+            </select>
           </div>
         </div>
 
+        <label class="checkbox-group">
+          <input type="checkbox" required>
+          <span>Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a> de De trazos a emociones.</span>
+        </label>
+
         <button type="submit" class="btn-submit">
-          Iniciar sesión
+          Crear cuenta
         </button>
       </form>
 
       <div class="form-footer">
-        ¿No tienes cuenta? <a href="register.html">Regístrate gratis</a>
+        ¿Ya tienes cuenta? <a href="index.html">Inicia sesión</a>
       </div>
 
     </div>
