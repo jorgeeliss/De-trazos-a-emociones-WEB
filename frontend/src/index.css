@@ -1,0 +1,44 @@
+:root {
+  --sans: 'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+  
+  /* Theme Colors for Login/Register */
+  --bg-dark: #0a0816;
+  --text-white: #ffffff;
+  --text-gray: #a1a1aa;
+  
+  /* Input & Button colors based on requested design */
+  --input-bg: #2b2827; /* Dark cafe/grey */
+  --input-border: #3b3735;
+  --btn-bg: #19142c; /* Dark purple */
+  --btn-border: #261f40;
+  --accent-purple: #8b79f2;
+  --accent-purple-glow: rgba(139, 121, 242, 0.4);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--sans);
+  background-color: #0a0816;
+  color: #ffffff;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: block; /* Removing the default flex layout from Vite boilerplate */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}

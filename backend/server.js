@@ -3,6 +3,7 @@ const axios = require("axios");
 const multer = require("multer");
 const fs = require("fs");
 const cors = require("cors");
+const sharp = require("sharp");
 
 const app = express();
 app.use(cors());
@@ -105,8 +106,14 @@ app.post("/analizar-imagen", upload.single("imagen"), async (req, res) => {
         : "";
 
     try {
+        // Optimización: Redimensionar y comprimir la imagen para que el modelo la procese más rápido
+        const processedImagePath = req.file.path + "-resized.jpg";
+        await sharp(req.file.path)
+            .resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true }) // Limitar tamaño máximo
+            .jpeg({ quality: 80 }) // Compresión para reducir el peso
+            .toFile(processedImagePath);
 
-        const imagenBase64 = fs.readFileSync(req.file.path, { encoding: "base64" });
+        const imagenBase64 = fs.readFileSync(processedImagePath, { encoding: "base64" });
 
         const response = await axios.post("http://127.0.0.1:11434/api/chat", {
             model: "minicpm-v",
@@ -154,6 +161,7 @@ Con base en este análisis, responde con:
 - Recomendaciones generales si se detectan emociones negativas recurrentes.
 
 IMPORTANTE:
+- Sé conciso y directo en tu respuesta. Evita introducciones o conclusiones innecesarias para ahorrar tiempo de generación.
 - No hagas diagnósticos clínicos.
 - Usa lenguaje probabilístico (ej: "podría indicar", "es posible que").
 - Considera el contexto cultural.
@@ -167,11 +175,13 @@ IMPORTANTE:
                 }
             ],
             stream: false,
-            options: { num_predict: 1000, temperature: 0.2 },
+            options: { num_predict: 800, temperature: 0.2 },
             keep_alive: "10m"
         });
 
+        // Eliminar archivos temporales
         fs.unlinkSync(req.file.path);
+        fs.unlinkSync(processedImagePath);
 
         res.json({ analisis: response.data.message.content });
 

@@ -1,0 +1,30 @@
+/* TARJETAS DE ESTADÍSTICAS */
+.history-wrapper .stat-card {
+  padding: 24px;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+
+.history-wrapper .stat-card:nth-child(2) { animation-delay: 0.35s; }
+.history-wrapper .stat-card:nth-child(3) { animation-delay: 0.4s; }
+
+.history-wrapper .stat-num {
+  font-family: 'Inter', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.history-wrapper .stat-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.history-wrapper .stat-sub {
+  font-size: 12px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

@@ -1,0 +1,81 @@
+.auth-container .form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.auth-container .form-row .form-group {
+  margin-bottom: 0;
+  flex: 1;
+}
+
+.auth-container .eye-icon {
+  position: absolute;
+  right: 16px;
+  color: var(--text-gray);
+  cursor: pointer;
+}
+
+.auth-container select {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.auth-container .role-select {
+  width: 100%;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 16px 16px;
+  color: var(--text-white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.auth-container .checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  line-height: 1.4;
+}
+
+.auth-container .checkbox-group input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--text-gray);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.auth-container .checkbox-group input[type="checkbox"]:checked {
+  background-color: var(--accent-purple);
+  border-color: var(--accent-purple);
+}
+
+.auth-container .checkbox-group input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.auth-container .checkbox-group a {
+  color: #c0b4f9;
+  text-decoration: none;
+}

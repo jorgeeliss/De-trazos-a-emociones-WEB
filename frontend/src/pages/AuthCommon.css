@@ -1,0 +1,201 @@
+.auth-container {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Panel Derecho - Formulario */
+.auth-container .right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-dark);
+  padding: 2rem;
+  position: relative;
+  z-index: 10;
+  overflow-y: auto;
+}
+
+.auth-container .form-container {
+  width: 100%;
+  max-width: 420px;
+  margin: auto;
+  animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-container .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 3rem;
+}
+
+.auth-container .brand-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.auth-container .brand-text h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.auth-container .brand-text p {
+  font-size: 0.75rem;
+  color: var(--text-gray);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.auth-container .form-header {
+  margin-bottom: 2.5rem;
+}
+.auth-container .form-header h1 {
+  font-family: 'Inter', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+.auth-container .form-header p {
+  color: var(--text-gray);
+  font-size: 1rem;
+}
+
+.auth-container .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.auth-container .form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-gray);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.auth-container .input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-container .input-icon {
+  position: absolute;
+  left: 16px;
+  color: var(--text-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-container .input-wrapper input {
+  width: 100%;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 16px 16px 16px 48px;
+  color: var(--text-white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.auth-container .input-wrapper input::placeholder {
+  color: rgba(161, 161, 170, 0.5);
+}
+
+.auth-container .input-wrapper input:focus {
+  border-color: var(--accent-purple);
+  box-shadow: 0 0 0 2px var(--accent-purple-glow);
+}
+
+.auth-container .btn-submit {
+  width: 100%;
+  background-color: var(--btn-bg);
+  border: 1px solid var(--btn-border);
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-container .btn-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  transition: left 0.5s ease;
+}
+
+.auth-container .btn-submit:hover {
+  background-color: #1a1532;
+  border-color: var(--accent-purple);
+  box-shadow: 0 4px 20px rgba(139, 121, 242, 0.2);
+}
+
+.auth-container .btn-submit:hover::before {
+  left: 100%;
+}
+
+.auth-container .form-footer {
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-gray);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 2rem;
+}
+
+.auth-container .form-footer a {
+  color: #c0b4f9;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.auth-container .form-footer a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .auth-container {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .auth-container .left-panel {
+    display: none; /* Ocultar los gráficos en dispositivos móviles para centrarse en el inicio de sesión. */
+  }
+  .auth-container .right-panel {
+    padding: 2rem 1.5rem;
+  }
+}
