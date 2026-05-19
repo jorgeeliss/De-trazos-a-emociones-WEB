@@ -12,14 +12,14 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
       </div>
       
       <div className="floating-elements">
-        {/* Stars & Shapes */}
+        {/* Estrellas, formas abstractas y caras sonrientes */}
         <div className="star star1"></div>
         <div className="star star2"></div>
         <div className="star star3"></div>
         <div className="shape shape1"></div>
         <div className="shape shape2"></div>
 
-        {/* Smiling Face (Yellow) */}
+        {/* Cara sonriente (amarilla)*/}
         <div className="face-container face-yellow">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <circle cx="12" cy="12" r="10" />
@@ -29,7 +29,7 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
           </svg>
         </div>
         
-        {/* Small Smiling Face (Yellow) */}
+        {/* Cara sonriente pequeña (amarilla) */}
         <div className="face-container face-yellow-small">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <circle cx="12" cy="12" r="10" />
@@ -37,7 +37,7 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
           </svg>
         </div>
 
-        {/* Surprised Face (Orange/Purple glow) */}
+        {/* Cara naranja (con brillo púrpura) */}
         <div className="face-container face-orange">
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
             <circle cx="12" cy="12" r="11" fill="#4c3661" />
@@ -48,7 +48,7 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
           </svg>
         </div>
 
-        {/* Sad Face (Purple) */}
+        {/* Cara triste (púrpura) */}
         <div className="face-container face-sad">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
             <circle cx="12" cy="12" r="10" />
