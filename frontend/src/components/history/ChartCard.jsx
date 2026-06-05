@@ -1,13 +1,13 @@
 import React from 'react';
 import './ChartCard.css';
 
-const ChartCard = () => {
+const ChartCard = ({ activeChildName = '' }) => {
   return (
     <div className="dashboard-card chart-card">
       <div className="card-header">
         <div>
           <div className="card-label">Evolución temporal</div>
-          <div className="card-title">Tendencia emocional — Sofía</div>
+          <div className="card-title">Tendencia emocional — {activeChildName || 'este niño'}</div>
         </div>
         <div style={{display: 'flex', gap: '8px'}}>
           <button style={{background: 'var(--purple-dim)', color: 'var(--purple-light)', border: 'none', borderRadius: '10px', padding: '6px 14px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif"}}>8 sem</button>

@@ -36,7 +36,18 @@ const AnalyzerResult = ({ analysisResult, STYLES, resetAll }) => {
           </div>
           <div className="analysis-card-title">Análisis emocional completo</div>
         </div>
-        <div className="analysis-body">{analysisResult.cleanText}</div>
+        <div className="analysis-body">
+          {analysisResult.jsonObj && analysisResult.jsonObj.analisis_completo ? (
+            <div className="structured-analysis">
+              <div className="sa-section highlight">
+                <h4 className="sa-title">Análisis Psicológico Detallado</h4>
+                <p className="sa-text">{analysisResult.jsonObj.analisis_completo}</p>
+              </div>
+            </div>
+          ) : (
+            analysisResult.cleanText
+          )}
+        </div>
       </div>
 
       <details>

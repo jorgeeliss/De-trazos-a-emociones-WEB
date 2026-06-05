@@ -1,32 +1,86 @@
 import React from 'react';
 import './StatCards.css';
 
-const StatCards = () => {
+const StatCards = ({ sessions = [] }) => {
+  const totalSessions = sessions.length;
+
+  let dominanteName = 'N/A';
+  let dominanteColor = '#a89ee0'; 
+  let dominanteIntensidad = 'N/A';
+  let intensitySubText = 'Esperando datos';
+
+  if (totalSessions > 0) {
+    const emotionCounts = {};
+    sessions.forEach(s => {
+      const e = s.resultado_ia?.emocion_predominante?.toLowerCase() || 'desconocida';
+      emotionCounts[e] = (emotionCounts[e] || 0) + 1;
+    });
+    
+    let maxCount = 0;
+    for (const e in emotionCounts) {
+      if (emotionCounts[e] > maxCount) {
+        maxCount = emotionCounts[e];
+        dominanteName = e;
+      }
+    }
+    
+    const lastDominanteSession = sessions.find(s => s.resultado_ia?.emocion_predominante?.toLowerCase() === dominanteName);
+    if (lastDominanteSession) {
+      dominanteIntensidad = lastDominanteSession.resultado_ia?.intensidad || 'Media';
+    }
+
+    if (dominanteName.includes('ansiedad') || dominanteName.includes('enojo') || dominanteName.includes('ira')) dominanteColor = '#f87171';
+    else if (dominanteName.includes('tristeza') || dominanteName.includes('miedo')) dominanteColor = '#60a5fa';
+    else if (dominanteName.includes('alegría') || dominanteName.includes('felicidad')) dominanteColor = '#2dd4bf';
+    else dominanteColor = '#fbbf24'; 
+    
+    dominanteName = dominanteName.charAt(0).toUpperCase() + dominanteName.slice(1);
+    intensitySubText = `Intensidad ${dominanteIntensidad.toLowerCase()}`;
+  }
+
+  // Buscar mejor momento (alegría/calma)
+  const positiveSession = sessions.find(s => {
+    const e = s.resultado_ia?.emocion_predominante?.toLowerCase() || '';
+    return e.includes('alegría') || e.includes('calma') || e.includes('felicidad') || e.includes('tranquilidad');
+  });
+
+  let mejorMomento = '--';
+  let mejorMomentoLabel = 'mayor índice de bienestar';
+  let mejorMomentoSub = 'Esperando más análisis';
+  
+  if (positiveSession) {
+    const d = new Date(positiveSession.fecha);
+    mejorMomento = `${d.getDate()}/${d.getMonth()+1}`;
+    mejorMomentoSub = `↑ 100% ${positiveSession.resultado_ia.emocion_predominante}`;
+  } else if (totalSessions > 0) {
+    mejorMomentoSub = `Aún no detectado`;
+  }
+
   return (
     <div className="grid-bottom" style={{marginBottom: '20px'}}>
       <div className="dashboard-card stat-card">
         <div style={{fontSize: '11px', color: 'var(--purple-light)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px', fontWeight: 700}}>Total análisis</div>
-        <div className="stat-num">14</div>
+        <div className="stat-num">{totalSessions}</div>
         <div className="stat-label">sesiones registradas</div>
         <div className="stat-sub">
-          <span className="trend up" style={{fontSize: '11px'}}>+3 este mes</span>
+          <span className="trend up" style={{fontSize: '11px'}}>Actualizado</span>
         </div>
       </div>
       <div className="dashboard-card stat-card">
         <div style={{fontSize: '11px', color: 'var(--purple-light)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px', fontWeight: 700}}>Emoción dominante</div>
-        <div style={{fontFamily: "'Inter', sans-serif", fontSize: '26px', fontWeight: 800, color: '#f87171', lineHeight: 1, letterSpacing: '-0.02em'}}>Ansiedad</div>
-        <div className="stat-label">últimas 3 semanas</div>
+        <div style={{fontFamily: "'Inter', sans-serif", fontSize: '26px', fontWeight: 800, color: dominanteColor, lineHeight: 1, letterSpacing: '-0.02em'}}>{dominanteName}</div>
+        <div className="stat-label">historial global</div>
         <div className="stat-sub">
-          <span style={{width: '8px', height: '8px', borderRadius: '50%', background: '#f87171', display: 'inline-block', boxShadow: '0 0 8px rgba(248,113,113,0.5)'}}></span>
-          <span style={{fontSize: '11px', color: 'var(--muted2)', fontWeight: 500}}>Intensidad alta</span>
+          <span style={{width: '8px', height: '8px', borderRadius: '50%', background: dominanteColor, display: 'inline-block', boxShadow: `0 0 8px ${dominanteColor}`}}></span>
+          <span style={{fontSize: '11px', color: 'var(--muted2)', fontWeight: 500, marginLeft: '6px'}}>{intensitySubText}</span>
         </div>
       </div>
       <div className="dashboard-card stat-card">
         <div style={{fontSize: '11px', color: 'var(--purple-light)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px', fontWeight: 700}}>Mejor momento</div>
-        <div style={{fontFamily: "'Inter', sans-serif", fontSize: '26px', fontWeight: 800, color: '#2dd4bf', lineHeight: 1, letterSpacing: '-0.02em'}}>Sem 2</div>
-        <div className="stat-label">mayor índice de alegría</div>
+        <div style={{fontFamily: "'Inter', sans-serif", fontSize: '26px', fontWeight: 800, color: '#2dd4bf', lineHeight: 1, letterSpacing: '-0.02em'}}>{mejorMomento}</div>
+        <div className="stat-label">{mejorMomentoLabel}</div>
         <div className="stat-sub">
-          <span className="trend up" style={{fontSize: '11px'}}>↑ 71% alegría</span>
+          <span className="trend up" style={{fontSize: '11px'}}>{mejorMomentoSub}</span>
         </div>
       </div>
     </div>

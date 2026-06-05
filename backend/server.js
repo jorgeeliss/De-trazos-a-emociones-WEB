@@ -4,10 +4,18 @@ const multer = require("multer");
 const fs = require("fs");
 const cors = require("cors");
 const sharp = require("sharp");
+const path = require("path");
+
+const connectDB = require("./database");
+const Analysis = require("./models/Analysis");
+
+// Conectar a MongoDB
+connectDB();
 
 const app = express();
 app.use(cors());
 app.use(express.static("public"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 
 const upload = multer({ dest: "uploads/" });
@@ -34,7 +42,7 @@ app.post("/preguntar", async (req, res) => {
 
     try {
         const response = await axios.post("http://127.0.0.1:11434/api/chat", {
-            model: "minicpm-v",
+            model: "llama-3.2-vision",
             messages: [
                 { role: "system", content: "Responde claro, corto y en español." },
                 { role: "user", content: pregunta }
@@ -129,43 +137,20 @@ ${contextoFinal}
 
 Ten en cuenta los siguientes aspectos:
 
-1. Uso del color:
-   - Colores cálidos (rojo, amarillo, naranja): posibles emociones como alegría, energía o enojo.
-   - Colores fríos (azul, verde, morado): pueden reflejar calma, tristeza o tranquilidad.
-   - Colores oscuros o apagados: podrían indicar miedo, tristeza o inseguridad.
+1. Uso del color.
+2. Trazos y presión.
+3. Formas y composición.
+4. Contenido del dibujo.
+5. Espacio y distribución.
 
-2. Trazos y presión:
-   - Trazos fuertes o marcados: intensidad emocional, posible enojo o ansiedad.
-   - Trazos suaves o débiles: timidez, tristeza o baja energía emocional.
-
-3. Formas y composición:
-   - Figuras grandes: seguridad o necesidad de destacar.
-   - Figuras pequeñas: inseguridad o introversión.
-   - Elementos repetitivos o desordenados: posible ansiedad o estrés.
-
-4. Contenido del dibujo:
-   - Presencia de personas, familia, animales, naturaleza.
-   - Expresiones faciales en los personajes.
-   - Escenarios (hogar, escuela, lugares abiertos o cerrados).
-
-5. Espacio y distribución:
-   - Uso del espacio (centrado, disperso, vacío).
-   - Elementos aislados o agrupados.
-
-Con base en este análisis, responde con:
-
-- Emoción o emociones predominantes.
-- Justificación clara basada en los elementos observados.
-- Nivel de intensidad emocional (bajo, medio, alto).
-- Observaciones adicionales relevantes.
-- Recomendaciones generales si se detectan emociones negativas recurrentes.
-
-IMPORTANTE:
-- Sé conciso y directo en tu respuesta. Evita introducciones o conclusiones innecesarias para ahorrar tiempo de generación.
-- No hagas diagnósticos clínicos.
-- Usa lenguaje probabilístico (ej: "podría indicar", "es posible que").
-- Considera el contexto cultural.
-- Si se proporcionó contexto del niño, úsalo para enriquecer e individualizar el análisis.
+IMPORTANTE: 
+Responde ÚNICAMENTE con un objeto JSON válido con la siguiente estructura, sin texto adicional:
+{
+  "emocion_predominante": "nombre de la emoción principal",
+  "intensidad": "baja, media o alta",
+  "analisis_completo": "Escribe aquí tu análisis psicológico completo, exhaustivo y detallado de la imagen. Describe exhaustivamente todos los elementos, colores, trazos, brinda la justificación, observaciones clínicas y recomendaciones. ¡NO TE LIMITES EN LA LONGITUD! Habla como el experto que eres. (IMPORTANTE: Todo este texto debe ir en este mismo campo. Para separar párrafos, usa la secuencia de caracteres \\n\\n)."
+}
+Asegúrate de que la salida sea JSON puro y válido.
 `
                 },
                 {
@@ -175,16 +160,60 @@ IMPORTANTE:
                 }
             ],
             stream: false,
-            options: { num_predict: 800, temperature: 0.2 },
+            options: { num_predict: 1000, temperature: 0.2 },
             keep_alive: "10m"
         });
 
-        // Eliminar archivos temporales
+        // Intentar parsear a JSON el resultado
+        let resultadoJSON = {};
+        try {
+            const rawContent = response.data.message.content.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
+            resultadoJSON = JSON.parse(rawContent);
+        } catch (e) {
+            console.error("Error al parsear JSON de la IA:", e);
+            resultadoJSON = { error: "La IA no devolvió un JSON válido", raw: response.data.message.content };
+        }
+
+        // Eliminar solo el archivo original temporal, nos quedamos con el resized
         fs.unlinkSync(req.file.path);
-        fs.unlinkSync(processedImagePath);
+        
+        // El processedImagePath queda guardado permanentemente
+        const rutaImagenGuardada = "/uploads/" + path.basename(processedImagePath);
 
-        res.json({ analisis: response.data.message.content });
+        // Guardar en la base de datos
+        const nuevoAnalisis = new Analysis({
+            contexto_nino: {
+                nombre,
+                edad,
+                genero,
+                situacion_actual,
+                comportamiento,
+                diagnostico_previo,
+                dibujo_espontaneo,
+                comento_mientras,
+                tiempo_dibujo
+            },
+            ruta_imagen: rutaImagenGuardada,
+            resultado_ia: resultadoJSON
+        });
 
+        await nuevoAnalisis.save();
+
+        res.json({ analisis: resultadoJSON, id: nuevoAnalisis._id, imagen: rutaImagenGuardada });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+/* =========================
+   HISTORIAL DE ANÁLISIS
+========================= */
+
+app.get("/analisis", async (req, res) => {
+    try {
+        const historial = await Analysis.find().sort({ fecha: -1 });
+        res.json(historial);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

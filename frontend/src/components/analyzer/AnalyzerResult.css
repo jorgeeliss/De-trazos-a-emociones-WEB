@@ -168,3 +168,51 @@ details summary::-webkit-details-marker {
   white-space: pre-wrap;
   overflow-x: auto;
 }
+
+/* ESTRUCTURADO DEL JSON */
+.structured-analysis {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sa-section {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 16px 20px;
+  border-left: 3px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sa-section:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+}
+
+.sa-section.highlight {
+  border-left-color: #2dd4bf;
+  background: linear-gradient(90deg, rgba(45, 212, 191, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+
+.sa-section.highlight:hover {
+  background: linear-gradient(90deg, rgba(45, 212, 191, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+
+.sa-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin: 0 0 8px 0;
+}
+
+.sa-section.highlight .sa-title {
+  color: #2dd4bf;
+}
+
+.sa-text {
+  margin: 0;
+  color: #e5e7eb;
+  line-height: 1.6;
+}
