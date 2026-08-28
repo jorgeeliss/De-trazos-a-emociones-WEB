@@ -4,15 +4,16 @@ import { User, Mail, Lock, Eye } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
 import './AuthCommon.css';
 import './Register.css';
+import { api } from '../api';
 
 const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstname: '',
-    lastname: '',
+    nombre: '',
+    apellido: '',
     email: '',
     password: '',
-    role: ''
+    rol: ''
   });
 
   const handleChange = (e) => {
@@ -22,11 +23,21 @@ const Register = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí iría la lógica para enviar los datos al backend y crear la cuenta
-    navigate('/login');
-  };
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      try {
+        console.log("DATOS QUE ENVÍA FRONT:", formData);
+
+        await api.register(formData);
+
+        alert("Usuario registrado correctamente");
+        navigate('/login');
+
+      } catch (error) {
+        alert(error.message);
+      }
+    };
 
   return (
     <div className="auth-container">
@@ -69,14 +80,14 @@ const Register = () => {
                   <div className="input-icon">
                     <User size={20} />
                   </div>
-                  <input 
-                    type="text" 
-                    id="firstname" 
-                    placeholder="Ej: Laura" 
-                    required 
-                    value={formData.firstname}
-                    onChange={handleChange}
-                  />
+                    <input 
+                      type="text" 
+                      id="nombre"
+                      placeholder="Ej: Laura" 
+                      required 
+                      value={formData.nombre}
+                      onChange={handleChange}
+                    />
                 </div>
               </div>
               <div className="form-group">
@@ -87,10 +98,10 @@ const Register = () => {
                   </div>
                   <input 
                     type="text" 
-                    id="lastname" 
+                    id="apellido"
                     placeholder="Ej: Gómez" 
                     required 
-                    value={formData.lastname}
+                    value={formData.apellido}
                     onChange={handleChange}
                   />
                 </div>
@@ -137,18 +148,29 @@ const Register = () => {
             <div className="form-group">
               <label htmlFor="role">ROL</label>
               <div className="input-wrapper">
-                <select 
-                  id="role" 
-                  className="role-select" 
-                  required
-                  value={formData.role}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>Selecciona tu rol</option>
-                  <option value="padre">Padre / Madre</option>
-                  <option value="psicologo">Psicólogo(a)</option>
-                  <option value="profesor">Profesor(a)</option>
-                </select>
+              <select 
+                id="rol"
+                className="role-select" 
+                required
+                value={formData.rol}
+                onChange={handleChange}
+              >
+                <option value="" disabled>
+                  Selecciona tu rol
+                </option>
+
+                <option value="padre">
+                  Padre / Madre
+                </option>
+
+                <option value="psicologo">
+                  Psicólogo(a)
+                </option>
+
+                <option value="profesor">
+                  Profesor(a)
+                </option>
+              </select>
               </div>
             </div>
 

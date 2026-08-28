@@ -1,6 +1,12 @@
 const mongoose = require("mongoose");
 
 const AnalysisSchema = new mongoose.Schema({
+    usuarioId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+
     contexto_nino: {
         nombre: String,
         edad: String,
@@ -12,15 +18,17 @@ const AnalysisSchema = new mongoose.Schema({
         comento_mientras: String,
         tiempo_dibujo: String
     },
+
     ruta_imagen: {
         type: String,
         required: true
     },
+
     resultado_ia: {
-        // Se guardará el JSON generado por la IA
         type: mongoose.Schema.Types.Mixed,
         required: true
     },
+
     fecha: {
         type: Date,
         default: Date.now

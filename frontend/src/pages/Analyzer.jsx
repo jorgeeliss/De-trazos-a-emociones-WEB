@@ -4,6 +4,7 @@ import './Analyzer.css';
 import AnalyzerContext from '../components/analyzer/AnalyzerContext';
 import AnalyzerUpload from '../components/analyzer/AnalyzerUpload';
 import AnalyzerResult from '../components/analyzer/AnalyzerResult';
+import { api } from '../api';
 
 const Analyzer = () => {
   const [step, setStep] = useState(1);
@@ -69,30 +70,31 @@ const Analyzer = () => {
     setError(null);
     setIsAnalyzing(true);
 
-    const apiUrl = ''; // Proxy handles /analizar-imagen directly
+  const fd = new FormData();
 
-    const fd = new FormData();
-    fd.append('imagen', selectedFile);
+  fd.append('imagen', selectedFile);
 
-    Object.entries(formData).forEach(([k, v]) => {
-      if (v) fd.append(k, v);
-    });
-
-    try {
-      // In development mode, proxy will handle this
-      const resp = await fetch(`${apiUrl}/analizar-imagen`, { method: 'POST', body: fd });
-      const data = await resp.json();
-      if (!resp.ok) throw new Error(data.error || 'Error del servidor');
-      if (!data.analisis) throw new Error('La API no devolvió un campo "analisis"');
-      
-      processResult(data.analisis);
-      setStep(3);
-    } catch (err) {
-      setError(err.message + '. Verifica que el backend esté corriendo.');
-    } finally {
-      setIsAnalyzing(false);
+  Object.entries(formData).forEach(([k, v]) => {
+    if (v) {
+      fd.append(k, v);
     }
-  };
+  });
+
+  try {
+    const data = await api.analizarImagen(fd);
+
+    if (!data.analisis) {
+      throw new Error('La API no devolvió un campo "analisis"');
+    }
+
+    processResult(data.analisis);
+    setStep(3);
+
+  } catch (err) {
+    setError(err.message + '. Verifica que el backend esté corriendo.');
+  } finally {
+    setIsAnalyzing(false);
+  }
 
   const KEYWORDS = ['alegría', 'tristeza', 'miedo', 'enojo', 'calma', 'ansiedad', 'inseguridad', 'energía', 'amor', 'felicidad', 'ira', 'frustración', 'estrés', 'tranquilidad', 'entusiasmo', 'soledad', 'angustia', 'nerviosismo', 'euforia', 'melancolía'];
   
@@ -225,6 +227,8 @@ const Analyzer = () => {
       </div>
     </div>
   );
+};
+
 };
 
 export default Analyzer;

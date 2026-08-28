@@ -1,3 +1,8 @@
+require("dotenv").config();
+
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 const express = require("express");
 const axios = require("axios");
 const multer = require("multer");
@@ -5,9 +10,12 @@ const fs = require("fs");
 const cors = require("cors");
 const sharp = require("sharp");
 const path = require("path");
+const authRoutes = require("./routes/auth");
 
 const connectDB = require("./database");
 const Analysis = require("./models/Analysis");
+const verificarToken = require("./middleware/authMiddleware");
+
 
 // Conectar a MongoDB
 connectDB();
@@ -17,6 +25,7 @@ app.use(cors());
 app.use(express.static("public"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
+app.use("/auth", authRoutes);
 
 const upload = multer({ dest: "uploads/" });
 
@@ -32,7 +41,7 @@ app.get("/", (req, res) => {
    TEXTO
 ========================= */
 
-app.post("/preguntar", async (req, res) => {
+app.post("/preguntar", verificarToken, async (req, res) => {
 
     const pregunta = req.body.pregunta;
 
@@ -63,8 +72,11 @@ app.post("/preguntar", async (req, res) => {
    ANALISIS DE IMAGEN CON CONTEXTO
 ========================= */
 
-app.post("/analizar-imagen", upload.single("imagen"), async (req, res) => {
-
+app.post(
+    "/analizar-imagen",
+    verificarToken,
+    upload.single("imagen"),
+    async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "No se envió ninguna imagen" });
     }
@@ -182,6 +194,8 @@ Asegúrate de que la salida sea JSON puro y válido.
 
         // Guardar en la base de datos
         const nuevoAnalisis = new Analysis({
+            usuarioId: req.usuario.id,
+
             contexto_nino: {
                 nombre,
                 edad,
@@ -193,7 +207,9 @@ Asegúrate de que la salida sea JSON puro y válido.
                 comento_mientras,
                 tiempo_dibujo
             },
+
             ruta_imagen: rutaImagenGuardada,
+
             resultado_ia: resultadoJSON
         });
 
@@ -210,12 +226,20 @@ Asegúrate de que la salida sea JSON puro y válido.
    HISTORIAL DE ANÁLISIS
 ========================= */
 
-app.get("/analisis", async (req, res) => {
+app.get("/analisis", verificarToken, async (req, res) => {
     try {
-        const historial = await Analysis.find().sort({ fecha: -1 });
+        const historial = await Analysis.find({
+            usuarioId: req.usuario.id
+        }).sort({ fecha: -1 });
+
         res.json(historial);
+
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Error obteniendo historial:", error);
+
+        res.status(500).json({
+            error: "Error obteniendo el historial"
+        });
     }
 });
 
