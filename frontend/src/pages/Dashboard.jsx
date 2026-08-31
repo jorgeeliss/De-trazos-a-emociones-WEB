@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Settings, Plus, FileText, Share2, ArrowRight } from 'lucide-react';
 import './Dashboard.css';
+import { api } from '../api';
 
 import Sidebar from '../components/layout/Sidebar';
 import ChildSwitcher from '../components/dashboard/ChildSwitcher';
@@ -13,6 +14,8 @@ import ComparisonSection from '../components/dashboard/ComparisonSection';
 const Dashboard = () => {
   const navigate = useNavigate();
   const [activeChild, setActiveChild] = useState('sofia');
+  const [historyData, setHistoryData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [actDones, setActDones] = useState([true, false, false]);
 
   const toggleActDone = (index) => {
@@ -29,6 +32,21 @@ const Dashboard = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+  const loadDashboard = async () => {
+    try {
+      const data = await api.getAnalisis();
+      setHistoryData(data);
+    } catch (error) {
+      console.error('Error cargando dashboard:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadDashboard();
+}, []);
+
   return (
     <div className="dashboard-container">
       <div className="bg-orb orb-1"></div>
@@ -41,10 +59,17 @@ const Dashboard = () => {
         {/* WELCOME */}
         <div className="welcome">
           <div className="welcome-left">
-            <div className="welcome-greeting">👋 Hola, María</div>
-            <div className="welcome-title">¿Cómo está <span>Sofía</span> hoy?</div>
-            <div className="welcome-sub">Esta semana hemos detectado que Sofía podría estar pasando por un momento de ansiedad. Te tenemos algunas sugerencias para ayudarla.</div>
-          </div>
+            <div className="welcome-greeting">
+              👋 Hola, {JSON.parse(localStorage.getItem('user') || '{}').firstname || 'Usuario'}
+              </div>
+                <div className="welcome-title">
+              ¿Cómo está <span>{historyData[0]?.contexto_nino?.nombre || 'tu hijo/a'}</span> hoy?
+            </div>
+              <div className="welcome-sub">
+                {historyData.length > 0
+                  ? `Tenemos ${historyData.length} análisis registrados para este usuario.`
+                  : 'Aún no tienes análisis registrados. Realiza tu primer análisis para comenzar el seguimiento.'}
+              </div>          </div>
           <div className="welcome-emoji">😟</div>
         </div>
 

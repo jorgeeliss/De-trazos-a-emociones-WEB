@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, ChevronRight, AlertTriangle } from 'lucide-react';
 import './History.css';
+import { api } from '../api';
 
 import Sidebar from '../components/layout/Sidebar';
 import HistoryChildBar from '../components/history/HistoryChildBar';
@@ -30,9 +31,8 @@ const History = () => {
     // Obtener el historial real del backend
     const fetchHistory = async () => {
       try {
-        const res = await fetch('http://localhost:3000/analisis');
-        const data = await res.json();
-        setHistoryData(data);
+        const data = await api.getAnalisis();
+        setHistoryData(data);;
         
         // Extraer niños únicos
         const uniqueChildrenMap = new Map();

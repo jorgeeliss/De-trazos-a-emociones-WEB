@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Analyzer from './pages/Analyzer';
 import Dashboard from './pages/Dashboard';
 import History from './pages/History';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   return (
@@ -11,11 +12,34 @@ function App() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/app" element={<Analyzer />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/historial" element={<History />} />
-    </Routes>
-  );
-}
+      <Route
+      path="/app"
+      element={
+        <ProtectedRoute>
+          <Analyzer />
+        </ProtectedRoute>
+      }
+    />
 
-export default App;
+    <Route
+      path="/dashboard"
+      element={
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
+      }
+    />
+
+    <Route
+      path="/historial"
+      element={
+        <ProtectedRoute>
+          <History />
+        </ProtectedRoute>
+      }
+      />
+          </Routes>
+        );
+      }
+
+      export default App;

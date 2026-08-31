@@ -3,17 +3,33 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, CheckCircle } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
 import './AuthCommon.css';
+import { api } from '../api';
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Simular autenticación exitosa
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const data = await api.login({
+      email,
+      password,
+    });
+
+    localStorage.setItem("token", data.token);
+
+    if (data.user) {
+      localStorage.setItem("user", JSON.stringify(data.user));
+    }
+
     navigate('/app');
-  };
+  } catch (error) {
+    alert(error.message);
+  }
+};
 
   return (
     <div className="auth-container">
