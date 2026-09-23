@@ -1,0 +1,122 @@
+/* UPLOAD */
+.upload-area {
+  position: relative;
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: #040418;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.upload-area:hover,
+.upload-area.drag {
+  border-color: #4f46e5;
+  background: rgba(79, 70, 229, 0.05);
+}
+
+.upload-area input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.upload-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  background: rgba(96, 165, 250, 0.1);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  animation: floatIcon 4s ease-in-out infinite alternate;
+}
+
+.upload-icon svg {
+  width: 28px;
+  height: 28px;
+  color: #ffffff;
+}
+
+.upload-title {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #f9fafb;
+}
+
+.upload-hint {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.preview-img-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #040418;
+}
+
+.preview-img-wrap img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+}
+
+.preview-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 8, 48, 0.95);
+}
+
+.preview-name {
+  font-size: 13px;
+  color: #f9fafb;
+}
+
+.btn-remove {
+  font-size: 12px;
+  color: #ef4444;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-remove:hover {
+  color: #f87171;
+  text-decoration: underline;
+}
+
+/* ERROR */
+.error-box {
+  display: none;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 1.5rem;
+  font-size: 14px;
+  color: #fca5a5;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.error-box.active {
+  display: flex;
+}
+
+.error-icon {
+  color: #ef4444;
+}
