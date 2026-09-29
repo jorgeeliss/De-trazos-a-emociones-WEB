@@ -86,7 +86,7 @@ const Analyzer = () => {
       throw new Error('La API no devolvió un campo "analisis"');
     }
 
-    processResult(data.analisis);
+    processResult(data.analisis, data.aviso);
     setStep(3);
 
   } catch (err) {
@@ -98,45 +98,61 @@ const Analyzer = () => {
 
   const KEYWORDS = ['alegría', 'tristeza', 'miedo', 'enojo', 'calma', 'ansiedad', 'inseguridad', 'energía', 'amor', 'felicidad', 'ira', 'frustración', 'estrés', 'tranquilidad', 'entusiasmo', 'soledad', 'angustia', 'nerviosismo', 'euforia', 'melancolía'];
   
-  const processResult = (raw) => {
-    // Si por algún motivo la IA devuelve un string (ej. falló el parseo en el backend), usamos la lógica anterior
+  const intensityFromText = (text) => {
+    const lower = String(text || '').toLowerCase();
+    if (lower.includes('alta') || lower.includes('alto')) return 'high';
+    if (lower.includes('baja') || lower.includes('bajo') || lower.includes('leve')) return 'low';
+    return 'medio';
+  };
+
+  const intensityLabel = (intensity) => ({ low: 'Baja', medio: 'Media', high: 'Alta' }[intensity]);
+
+  const processResult = (raw, aviso) => {
+    // Respaldo: si la IA devuelve un string suelto, usamos la lógica por palabras clave.
     if (typeof raw === 'string') {
       const lower = raw.toLowerCase();
       const found = [...new Set(KEYWORDS.filter(k => lower.includes(k)))].slice(0, 6);
       const chips = found.length ? found : ['emoción detectada'];
-      
+
       let intensity = 'medio';
       if (/intensidad[:\s]*(emocional[:\s]*)?(alta|alto)/i.test(lower) || / alto/.test(lower)) intensity = 'high';
       else if (/intensidad[:\s]*(emocional[:\s]*)?(baja|bajo)/i.test(lower) || / bajo/.test(lower) || / leve/.test(lower)) intensity = 'low';
-      
+
       const clean = raw.replace(/\*\*/g, '').replace(/#{1,4}\s*/g, '').trim();
-      
+
       setAnalysisResult({
         chips,
         intensity,
-        intensityLabel: { low: 'Baja', medio: 'Media', high: 'Alta' }[intensity],
-        cleanText: clean,
+        intensityLabel: intensityLabel(intensity),
+        rasgos: [],
+        interpretacion: '',
+        lectura: clean,
+        aviso: aviso || '',
         rawText: raw
       });
       return;
     }
 
-    // Si es el nuevo formato JSON:
+    // Formato nuevo: { rasgos_observados, interpretacion, emocion_predominante, intensidad, lectura_orientativa }
+    // Compatibilidad con registros viejos: { ..., analisis_completo }.
     const chips = [raw.emocion_predominante || 'emoción detectada'];
-    
-    let intensity = 'medio';
-    const rawIntensity = String(raw.intensidad || '').toLowerCase();
-    if (rawIntensity.includes('alta') || rawIntensity.includes('alto')) intensity = 'high';
-    else if (rawIntensity.includes('baja') || rawIntensity.includes('bajo') || rawIntensity.includes('leve')) intensity = 'low';
-    
-    // Construimos un texto limpio para mostrar en el resultado usando el JSON
-    const clean = raw.analisis_completo || 'El modelo no proporcionó un análisis detallado.';
-    
+    const intensity = intensityFromText(raw.intensidad);
+    const rasgos = Array.isArray(raw.rasgos_observados) ? raw.rasgos_observados.filter(Boolean) : [];
+    const interpretacion = raw.interpretacion || '';
+    const lectura = raw.lectura_orientativa
+      || raw.analisis_completo
+      || 'El modelo no proporcionó un análisis detallado.';
+
     setAnalysisResult({
       chips,
       intensity,
-      intensityLabel: { low: 'Baja', medio: 'Media', high: 'Alta' }[intensity],
-      cleanText: clean,
+      intensityLabel: intensityLabel(intensity),
+      rasgos,
+      interpretacion,
+      lectura,
+      aviso: aviso || (raw.parseo_incompleto
+        ? 'El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo.'
+        : ''),
       rawText: JSON.stringify(raw, null, 2),
       jsonObj: raw
     });

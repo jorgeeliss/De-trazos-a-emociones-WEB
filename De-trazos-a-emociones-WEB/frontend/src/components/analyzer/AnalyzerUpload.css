@@ -120,3 +120,15 @@
 .error-icon {
   color: #ef4444;
 }
+
+.analyzing-notice {
+  background: rgba(129, 140, 248, 0.1);
+  border: 1px solid rgba(129, 140, 248, 0.3);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 1.5rem;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #a5b4fc;
+  text-align: center;
+}

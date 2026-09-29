@@ -34,6 +34,81 @@ if (!fs.existsSync(uploadsDir)) {
 const upload = multer({ dest: uploadsDir });
 
 /* =========================
+   CONFIGURACIÓN DEL ANÁLISIS CON OLLAMA
+========================= */
+
+const OLLAMA_URL = "http://127.0.0.1:11434/api/chat";
+
+// Esquema de la respuesta del modelo. Ollama lo usa (parámetro "format") para
+// forzar un JSON válido con estos campos. Requiere Ollama 0.5.0 o superior.
+const ESQUEMA_ANALISIS = {
+    type: "object",
+    properties: {
+        rasgos_observados: { type: "array", items: { type: "string" } },
+        interpretacion: { type: "string" },
+        emocion_predominante: { type: "string" },
+        intensidad: { type: "string", enum: ["baja", "media", "alta"] },
+        lectura_orientativa: { type: "string" }
+    },
+    required: [
+        "rasgos_observados",
+        "interpretacion",
+        "emocion_predominante",
+        "intensidad",
+        "lectura_orientativa"
+    ]
+};
+
+// OLLAMA_FORMAT_MODE: "schema" (por defecto, Ollama >= 0.5.0) o "json" (versiones
+// más antiguas que no soportan esquema pero sí format: "json").
+function resolverFormatoOllama() {
+    const modo = (process.env.OLLAMA_FORMAT_MODE || "schema").toLowerCase();
+    return modo === "json" ? "json" : ESQUEMA_ANALISIS;
+}
+
+// Intenta parsear la respuesta del modelo. Si el JSON llega incompleto o mal
+// formado, recupera el texto crudo y devuelve algo mostrable en vez de fallar.
+function parsearRespuestaIA(rawContent) {
+    const limpio = String(rawContent || "")
+        .replace(/```json/gi, "")
+        .replace(/```/g, "")
+        .trim();
+
+    // 1) Intento directo
+    try {
+        return { ok: true, datos: JSON.parse(limpio) };
+    } catch (e) {
+        // continúa con la recuperación
+    }
+
+    // 2) Intento extrayendo el primer bloque {...}
+    const inicio = limpio.indexOf("{");
+    const fin = limpio.lastIndexOf("}");
+    if (inicio !== -1 && fin !== -1 && fin > inicio) {
+        try {
+            return { ok: true, datos: JSON.parse(limpio.slice(inicio, fin + 1)) };
+        } catch (e) {
+            // continúa con el respaldo
+        }
+    }
+
+    // 3) Respaldo: no se pudo parsear. Guardamos el texto crudo en un objeto
+    //    con la misma forma para que el frontend igual muestre algo.
+    return {
+        ok: false,
+        datos: {
+            rasgos_observados: [],
+            interpretacion: "",
+            emocion_predominante: "No determinada",
+            intensidad: "media",
+            lectura_orientativa: limpio,
+            parseo_incompleto: true,
+            raw: rawContent
+        }
+    };
+}
+
+/* =========================
    TEST
 ========================= */
 
@@ -139,34 +214,34 @@ app.post(
 
         const imagenBase64 = fs.readFileSync(processedImagePath, { encoding: "base64" });
 
-        const response = await axios.post("http://127.0.0.1:11434/api/chat", {
+        const response = await axios.post(OLLAMA_URL, {
             model: "minicpm-v",
+            format: resolverFormatoOllama(),
             messages: [
                 {
                     role: "system",
                     content: `
-Actúa como un experto en psicología infantil, análisis emocional y expresión artística en niños.
+Eres una herramienta de apoyo orientativo que observa dibujos infantiles para ayudar a adultos (familias, docentes y psicólogos) a acompañar al niño. No eres un profesional clínico y no emites diagnósticos.
 
-Analiza el dibujo proporcionado y determina qué emociones podría estar expresando el niño a través de su representación visual.
+Observa ÚNICAMENTE lo que aparece en el dibujo. No inventes ni menciones elementos que no estén presentes en la imagen.
 
 ${contextoFinal}
 
-Ten en cuenta los siguientes aspectos:
+Analiza el dibujo teniendo en cuenta: uso del color, trazos y presión aparente, figuras y su contenido, tamaño, disposición en la hoja y posibles omisiones.
 
-1. Uso del color.
-2. Trazos y presión.
-3. Formas y composición.
-4. Contenido del dibujo.
-5. Espacio y distribución.
+Reglas de lenguaje (obligatorias):
+- Usa lenguaje orientativo y tentativo ("podría sugerir", "parece", "podría estar relacionado con"). Nunca uses lenguaje clínico ni diagnóstico ("el niño padece", "tiene un trastorno").
+- No hagas afirmaciones categóricas sobre la salud mental del niño.
+- Recuerda que un mismo trazo puede significar cosas distintas según el niño y su contexto.
 
-IMPORTANTE: 
-Responde ÚNICAMENTE con un objeto JSON válido con la siguiente estructura, sin texto adicional:
-{
-  "emocion_predominante": "nombre de la emoción principal",
-  "intensidad": "baja, media o alta",
-  "analisis_completo": "Escribe aquí tu análisis psicológico completo, exhaustivo y detallado de la imagen. Describe exhaustivamente todos los elementos, colores, trazos, brinda la justificación, observaciones clínicas y recomendaciones. ¡NO TE LIMITES EN LA LONGITUD! Habla como el experto que eres. (IMPORTANTE: Todo este texto debe ir en este mismo campo. Para separar párrafos, usa la secuencia de caracteres \\n\\n)."
-}
-Asegúrate de que la salida sea JSON puro y válido.
+Devuelve un objeto JSON con EXACTAMENTE estas claves:
+- "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). No incluyas interpretaciones aquí.
+- "interpretacion": texto extenso y detallado que relacione cada rasgo observado con el contexto del niño (si se proporcionó). No te limites en la longitud.
+- "emocion_predominante": la emoción principal que el dibujo podría estar expresando.
+- "intensidad": uno de "baja", "media" o "alta".
+- "lectura_orientativa": síntesis clara para el adulto, con sugerencias de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional.
+
+Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
 `
                 },
                 {
@@ -176,18 +251,21 @@ Asegúrate de que la salida sea JSON puro y válido.
                 }
             ],
             stream: false,
-            options: { num_predict: 1000, temperature: 0.2 },
+            // Análisis exhaustivo: priorizamos calidad sobre velocidad.
+            options: { num_predict: 4000, num_ctx: 8192, temperature: 0.2 },
             keep_alive: "10m"
+        }, {
+            // El análisis puede tardar varios minutos; sin timeout corto.
+            timeout: 0,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity
         });
 
-        // Intentar parsear a JSON el resultado
-        let resultadoJSON = {};
-        try {
-            const rawContent = response.data.message.content.replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
-            resultadoJSON = JSON.parse(rawContent);
-        } catch (e) {
-            console.error("Error al parsear JSON de la IA:", e);
-            resultadoJSON = { error: "La IA no devolvió un JSON válido", raw: response.data.message.content };
+        // Parseo robusto: si el JSON llega incompleto, recuperamos lo que se pueda.
+        const parseo = parsearRespuestaIA(response.data.message.content);
+        const resultadoJSON = parseo.datos;
+        if (!parseo.ok) {
+            console.error("La IA no devolvió un JSON válido; se guardó el texto recuperado.");
         }
 
         // Eliminar solo el archivo original temporal, nos quedamos con el resized
@@ -219,7 +297,14 @@ Asegúrate de que la salida sea JSON puro y válido.
 
         await nuevoAnalisis.save();
 
-        res.json({ analisis: resultadoJSON, id: nuevoAnalisis._id, imagen: rutaImagenGuardada });
+        res.json({
+            analisis: resultadoJSON,
+            id: nuevoAnalisis._id,
+            imagen: rutaImagenGuardada,
+            aviso: parseo.ok
+                ? undefined
+                : "El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo."
+        });
 
     } catch (error) {
         res.status(500).json({ error: error.message });

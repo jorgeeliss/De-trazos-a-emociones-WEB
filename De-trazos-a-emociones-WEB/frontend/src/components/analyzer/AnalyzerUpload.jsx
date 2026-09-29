@@ -65,6 +65,12 @@ const AnalyzerUpload = ({
         </div>
       )}
 
+      {isAnalyzing && (
+        <div className="analyzing-notice">
+          El análisis puede tardar varios minutos. No cierres esta ventana.
+        </div>
+      )}
+
       <div className="nav-row">
         <button className="btn-back" onClick={() => setStep(1)}>
           <ArrowLeft size={18} style={{marginRight: '6px'}}/>

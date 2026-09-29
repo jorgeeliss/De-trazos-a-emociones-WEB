@@ -29,6 +29,10 @@ const AnalyzerResult = ({ analysisResult, STYLES, resetAll }) => {
         </div>
       </div>
 
+      {analysisResult.aviso && (
+        <div className="analysis-notice">{analysisResult.aviso}</div>
+      )}
+
       <div className="analysis-card">
         <div className="analysis-card-top">
           <div className="analysis-icon">
@@ -37,16 +41,30 @@ const AnalyzerResult = ({ analysisResult, STYLES, resetAll }) => {
           <div className="analysis-card-title">Análisis emocional completo</div>
         </div>
         <div className="analysis-body">
-          {analysisResult.jsonObj && analysisResult.jsonObj.analisis_completo ? (
-            <div className="structured-analysis">
-              <div className="sa-section highlight">
-                <h4 className="sa-title">Análisis Psicológico Detallado</h4>
-                <p className="sa-text">{analysisResult.jsonObj.analisis_completo}</p>
+          <div className="structured-analysis">
+            {analysisResult.rasgos && analysisResult.rasgos.length > 0 && (
+              <div className="sa-section">
+                <h4 className="sa-title">Rasgos observados</h4>
+                <ul className="sa-list">
+                  {analysisResult.rasgos.map((rasgo, i) => (
+                    <li key={i}>{rasgo}</li>
+                  ))}
+                </ul>
               </div>
+            )}
+
+            {analysisResult.interpretacion && (
+              <div className="sa-section">
+                <h4 className="sa-title">Interpretación</h4>
+                <p className="sa-text">{analysisResult.interpretacion}</p>
+              </div>
+            )}
+
+            <div className="sa-section highlight">
+              <h4 className="sa-title">Lectura orientativa</h4>
+              <p className="sa-text">{analysisResult.lectura}</p>
             </div>
-          ) : (
-            analysisResult.cleanText
-          )}
+          </div>
         </div>
       </div>
 
