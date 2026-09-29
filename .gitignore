@@ -14,3 +14,9 @@ De-trazos-a-emociones-WEB/uploads/*
 !De-trazos-a-emociones-WEB/uploads/.gitkeep
 De-trazos-a-emociones-WEB/backend/uploads/*
 !De-trazos-a-emociones-WEB/backend/uploads/.gitkeep
+
+# Mockups con datos personales visibles (correo real, imagen de terceros)
+docs/MOCKUPS.pdf
+
+# Metadatos de Windows/WSL al copiar archivos descargados
+*:Zone.Identifier
