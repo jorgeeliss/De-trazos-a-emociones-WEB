@@ -126,7 +126,7 @@ No existe un `.env.example` previo en el repositorio (aunque el `.gitignore` ya 
 
 **Funciona:**
 - Registro e inicio de sesión con JWT.
-- El flujo completo de tres pasos en `/app` guarda el análisis en MongoDB (sujeto al bug crítico P0-1, ver abajo).
+- El flujo completo de tres pasos en `/app` guarda el análisis en MongoDB.
 - El historial (`SessionsList`, `StatCards`, `SummaryCard`, `HistoryChildBar`) consulta datos reales de `/analisis`.
 
 **Simulado o pendiente:**
@@ -136,8 +136,6 @@ No existe un `.env.example` previo en el repositorio (aunque el `.gitignore` ya 
 - No existe el modo "sin contexto / con contexto" (comparar el análisis del mismo dibujo con y sin la información del niño) que describen los resultados académicos.
 
 **Problemas conocidos (ver también `CLAUDE.md` para el detalle completo):**
-- 🔴 **Crítico:** la pantalla `/app` se renderiza en blanco por un error de llaves en `Analyzer.jsx` (la función `analyze` nunca se cierra).
-- 🔴 **Crítico:** hay ~120 imágenes de dibujos versionadas en `uploads/` en este repositorio (ver sección siguiente).
 - 🟠 Rutas de subida inconsistentes entre `multer` y `express.static`.
 - 🟠 El login no guarda el usuario en `localStorage` (desajuste `usuario` / `data.user`), y el rol no viaja en el token.
 - 🟠 El prompt del modelo pide "observaciones clínicas" y actuar como "experto en psicología infantil", lo que contradice el encuadre ético del proyecto.
@@ -148,7 +146,7 @@ No existe un `.env.example` previo en el repositorio (aunque el `.gitignore` ya 
 ## Privacidad y ética
 
 - La aplicación procesa dibujos y datos de menores de edad; su uso requiere **consentimiento informado** de los padres o tutores y del centro educativo/clínico correspondiente.
-- **No se debe versionar la carpeta `uploads/`** ni ninguna imagen real de un dibujo infantil en el repositorio. Actualmente hay imágenes versionadas por un problema de configuración del `.gitignore` (ver problema crítico P0-2 en `CLAUDE.md`); mientras no se confirme y resuelva ese punto, no subas más imágenes reales.
+- **La carpeta `uploads/` no se versiona en git** (`De-trazos-a-emociones-WEB/uploads/` y `De-trazos-a-emociones-WEB/backend/uploads/` están en `.gitignore`). Anteriormente había ~120 imágenes versionadas en el repositorio; eran **imágenes de prueba tomadas de internet, no dibujos reales de niños**, y ya se quitaron del seguimiento de git (los archivos siguen en disco localmente, pero no se suben a GitHub). No vuelvas a versionar imágenes de esa carpeta, sean de prueba o reales.
 - Evita registrar datos sensibles innecesarios (por ejemplo, el nombre real del niño o un diagnóstico previo en texto libre); cuando sea posible, usa alias.
 - Ningún texto de la interfaz, del prompt de IA o de la documentación debe presentarse como diagnóstico clínico.
 

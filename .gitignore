@@ -8,3 +8,9 @@ node_modules/
 
 # Logs
 *.log
+
+# Dibujos subidos por los usuarios (datos sensibles, no se versionan)
+De-trazos-a-emociones-WEB/uploads/*
+!De-trazos-a-emociones-WEB/uploads/.gitkeep
+De-trazos-a-emociones-WEB/backend/uploads/*
+!De-trazos-a-emociones-WEB/backend/uploads/.gitkeep
