@@ -1,4 +1,5 @@
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const dns = require("dns");
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -9,7 +10,6 @@ const multer = require("multer");
 const fs = require("fs");
 const cors = require("cors");
 const sharp = require("sharp");
-const path = require("path");
 const authRoutes = require("./routes/auth");
 
 const connectDB = require("./database");
@@ -27,7 +27,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 app.use("/auth", authRoutes);
 
-const upload = multer({ dest: "uploads/" });
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
+const upload = multer({ dest: uploadsDir });
 
 /* =========================
    TEST

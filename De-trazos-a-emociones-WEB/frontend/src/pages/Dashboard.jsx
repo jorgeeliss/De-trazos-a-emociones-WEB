@@ -60,7 +60,7 @@ const Dashboard = () => {
         <div className="welcome">
           <div className="welcome-left">
             <div className="welcome-greeting">
-              👋 Hola, {JSON.parse(localStorage.getItem('user') || '{}').firstname || 'Usuario'}
+              👋 Hola, {JSON.parse(localStorage.getItem('user') || '{}').nombre || 'Usuario'}
               </div>
                 <div className="welcome-title">
               ¿Cómo está <span>{historyData[0]?.contexto_nino?.nombre || 'tu hijo/a'}</span> hoy?

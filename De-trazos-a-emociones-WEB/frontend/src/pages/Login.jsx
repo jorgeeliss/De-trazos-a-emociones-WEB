@@ -21,8 +21,8 @@ const handleSubmit = async (e) => {
 
     localStorage.setItem("token", data.token);
 
-    if (data.user) {
-      localStorage.setItem("user", JSON.stringify(data.user));
+    if (data.usuario) {
+      localStorage.setItem("user", JSON.stringify(data.usuario));
     }
 
     navigate('/app');
