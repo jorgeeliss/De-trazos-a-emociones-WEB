@@ -107,8 +107,10 @@ Definidas en `De-trazos-a-emociones-WEB/backend/.env` (ver plantilla en [`backen
 | `JWT_SECRET` | Sí | — | Secreto para firmar los JWT. |
 | `JWT_EXPIRES_IN` | No | `2h` | Vigencia del token. |
 | `PORT` | No | `3000` | Puerto del backend. |
+| `OLLAMA_FORMAT_MODE` | No | `schema` | Cómo se fuerza el JSON en Ollama: `schema` (requiere Ollama ≥ 0.5.0) o `json` (versiones más antiguas). |
+| `AI_MODE` | No | `ollama` | Motor de análisis: `ollama` (real) o `mock` (resultado simulado para probar el flujo sin Ollama). |
 
-No existe un `.env.example` previo en el repositorio (aunque el `.gitignore` ya lo permite); este PR lo agrega.
+> **Modo simulado (`AI_MODE=mock`):** con este valor, `/analizar-imagen` **no llama a Ollama**; devuelve en 2-3 segundos un resultado de ejemplo (marcado con `simulado: true`) y lo guarda en MongoDB como un análisis normal. La interfaz muestra el aviso "Resultado simulado (modo de prueba)". Sirve para probar el flujo completo en equipos sin Ollama. **Nunca debe usarse en la prueba piloto ni con dibujos reales.**
 
 ## API
 

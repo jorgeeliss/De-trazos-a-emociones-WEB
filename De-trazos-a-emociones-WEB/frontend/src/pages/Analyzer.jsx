@@ -128,6 +128,7 @@ const Analyzer = () => {
         interpretacion: '',
         lectura: clean,
         aviso: aviso || '',
+        simulado: false,
         rawText: raw
       });
       return;
@@ -153,6 +154,7 @@ const Analyzer = () => {
       aviso: aviso || (raw.parseo_incompleto
         ? 'El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo.'
         : ''),
+      simulado: raw.simulado === true,
       rawText: JSON.stringify(raw, null, 2),
       jsonObj: raw
     });

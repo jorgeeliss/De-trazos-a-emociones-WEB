@@ -39,6 +39,29 @@ const upload = multer({ dest: uploadsDir });
 
 const OLLAMA_URL = "http://127.0.0.1:11434/api/chat";
 
+// AI_MODE: "ollama" (por defecto, análisis real) o "mock" (resultado simulado
+// para probar el flujo sin Ollama). NUNCA debe usarse "mock" en la prueba piloto.
+const AI_MODE = (process.env.AI_MODE || "ollama").toLowerCase();
+
+// Resultado de ejemplo para AI_MODE=mock. Respeta la estructura nueva y va
+// marcado con simulado: true para que el frontend lo advierta claramente.
+function generarAnalisisSimulado() {
+    return {
+        rasgos_observados: [
+            "Uso predominante de colores cálidos (amarillo y naranja) en la zona central.",
+            "Trazos firmes y continuos, con presión aparente media.",
+            "Una figura humana grande y sonriente en el centro de la hoja.",
+            "Un sol en la esquina superior izquierda y varias flores en la parte inferior.",
+            "Amplio aprovechamiento del espacio de la hoja, sin zonas vacías marcadas."
+        ],
+        interpretacion: "El uso de colores cálidos y una figura central sonriente podría sugerir un estado de ánimo positivo en el momento del dibujo. La firmeza de los trazos podría relacionarse con seguridad al dibujar. Este es un texto de ejemplo: el resultado es SIMULADO y no proviene de un análisis real del dibujo ni del contexto ingresado.",
+        emocion_predominante: "Alegría",
+        intensidad: "media",
+        lectura_orientativa: "El dibujo podría sugerir un momento emocional tranquilo y positivo. Como acompañamiento, podrías preguntarle al niño qué representó y escuchar su explicación sin corregir. Recuerda que esta lectura es orientativa y no reemplaza la valoración de un profesional. (Resultado simulado, modo de prueba.)",
+        simulado: true
+    };
+}
+
 // Esquema de la respuesta del modelo. Ollama lo usa (parámetro "format") para
 // forzar un JSON válido con estos campos. Requiere Ollama 0.5.0 o superior.
 const ESQUEMA_ANALISIS = {
@@ -212,6 +235,15 @@ app.post(
             .jpeg({ quality: 80 }) // Compresión para reducir el peso
             .toFile(processedImagePath);
 
+        // Modo simulado: no se llama a Ollama. Se devuelve un resultado de ejemplo
+        // tras una breve espera, pero se guarda en MongoDB como un análisis normal.
+        let resultadoJSON;
+        let avisoParseo;
+
+        if (AI_MODE === "mock") {
+            await new Promise((resolve) => setTimeout(resolve, 2500));
+            resultadoJSON = generarAnalisisSimulado();
+        } else {
         const imagenBase64 = fs.readFileSync(processedImagePath, { encoding: "base64" });
 
         const response = await axios.post(OLLAMA_URL, {
@@ -263,9 +295,11 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
 
         // Parseo robusto: si el JSON llega incompleto, recuperamos lo que se pueda.
         const parseo = parsearRespuestaIA(response.data.message.content);
-        const resultadoJSON = parseo.datos;
+        resultadoJSON = parseo.datos;
         if (!parseo.ok) {
+            avisoParseo = "El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo.";
             console.error("La IA no devolvió un JSON válido; se guardó el texto recuperado.");
+        }
         }
 
         // Eliminar solo el archivo original temporal, nos quedamos con el resized
@@ -301,9 +335,8 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
             analisis: resultadoJSON,
             id: nuevoAnalisis._id,
             imagen: rutaImagenGuardada,
-            aviso: parseo.ok
-                ? undefined
-                : "El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo."
+            simulado: resultadoJSON.simulado === true,
+            aviso: avisoParseo
         });
 
     } catch (error) {

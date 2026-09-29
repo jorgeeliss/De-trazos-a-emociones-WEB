@@ -29,6 +29,10 @@ const AnalyzerResult = ({ analysisResult, STYLES, resetAll }) => {
         </div>
       </div>
 
+      {analysisResult.simulado && (
+        <div className="analysis-notice simulado">Resultado simulado (modo de prueba)</div>
+      )}
+
       {analysisResult.aviso && (
         <div className="analysis-notice">{analysisResult.aviso}</div>
       )}
