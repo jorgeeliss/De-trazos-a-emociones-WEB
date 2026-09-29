@@ -1,5 +1,4 @@
-import React, { useState, useRef } from 'react';
-import { Upload, X, ArrowRight, ArrowLeft, RefreshCw, AlertCircle, Sparkles, CheckCircle, Activity, HeartPulse } from 'lucide-react';
+import { useState, useRef } from 'react';
 import './Analyzer.css';
 import AnalyzerContext from '../components/analyzer/AnalyzerContext';
 import AnalyzerUpload from '../components/analyzer/AnalyzerUpload';
@@ -95,6 +94,7 @@ const Analyzer = () => {
   } finally {
     setIsAnalyzing(false);
   }
+  };
 
   const KEYWORDS = ['alegría', 'tristeza', 'miedo', 'enojo', 'calma', 'ansiedad', 'inseguridad', 'energía', 'amor', 'felicidad', 'ira', 'frustración', 'estrés', 'tranquilidad', 'entusiasmo', 'soledad', 'angustia', 'nerviosismo', 'euforia', 'melancolía'];
   
@@ -227,8 +227,6 @@ const Analyzer = () => {
       </div>
     </div>
   );
-};
-
 };
 
 export default Analyzer;
