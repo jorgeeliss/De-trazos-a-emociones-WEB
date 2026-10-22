@@ -274,10 +274,12 @@ Reglas de lenguaje (obligatorias):
 
 Devuelve un objeto JSON con EXACTAMENTE estas claves:
 - "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). Enumera entre 4 y 10 rasgos DISTINTOS; no repitas el mismo rasgo ni lo reformules. No incluyas interpretaciones aquí.
-- "interpretacion": texto extenso y detallado que relacione cada rasgo observado con el contexto del niño (si se proporcionó). No te limites en la longitud.
+- "interpretacion": texto EXTENSO y detallado (varios párrafos) que relacione CADA rasgo observado con el contexto del niño (si se proporcionó). Explica el porqué de cada posible lectura emocional. Es un campo obligatorio: nunca lo dejes vacío ni con una sola frase.
 - "emocion_predominante": la emoción principal que el dibujo podría estar expresando.
 - "intensidad": uno de "baja", "media" o "alta".
-- "lectura_orientativa": síntesis clara para el adulto, con sugerencias de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional.
+- "lectura_orientativa": síntesis clara para el adulto, de VARIAS frases, con sugerencias concretas de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional. Es un campo obligatorio: nunca lo dejes vacío.
+
+Los campos "interpretacion" y "lectura_orientativa" deben ser desarrollados y detallados; no los resumas en una sola línea.
 
 Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
 `
@@ -296,7 +298,7 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
                 num_predict: OLLAMA_NUM_PREDICT,
                 num_ctx: OLLAMA_NUM_CTX,
                 temperature: 0.2,
-                repeat_penalty: 1.3,
+                repeat_penalty: 1.2,
                 repeat_last_n: 256
             },
             keep_alive: "10m"

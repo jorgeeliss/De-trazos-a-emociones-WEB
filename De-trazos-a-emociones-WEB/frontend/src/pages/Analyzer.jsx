@@ -234,10 +234,11 @@ const Analyzer = () => {
 
         {/* PASO 3: RESULTADO */}
         {step === 3 && analysisResult && (
-          <AnalyzerResult 
-            analysisResult={analysisResult} 
-            STYLES={STYLES} 
-            resetAll={resetAll} 
+          <AnalyzerResult
+            analysisResult={analysisResult}
+            STYLES={STYLES}
+            resetAll={resetAll}
+            previewUrl={previewUrl}
           />
         )}
 

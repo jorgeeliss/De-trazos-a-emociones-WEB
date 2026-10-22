@@ -2,11 +2,18 @@ import React from 'react';
 import { Sparkles, RefreshCw } from 'lucide-react';
 import './AnalyzerResult.css';
 
-const AnalyzerResult = ({ analysisResult, STYLES, resetAll }) => {
+const AnalyzerResult = ({ analysisResult, STYLES, resetAll, previewUrl }) => {
   return (
     <div id="screen-3" className="screen">
       <div className="section-label">Resultado del análisis</div>
-      
+
+      {previewUrl && (
+        <div className="result-image-wrap">
+          <img src={previewUrl} alt="Dibujo analizado" className="result-image" />
+          <div className="result-image-caption">Dibujo analizado</div>
+        </div>
+      )}
+
       <div className="emotions-grid">
         {analysisResult.chips.map((emotion, i) => {
           const s = STYLES[i % STYLES.length];
