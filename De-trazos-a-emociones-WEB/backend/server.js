@@ -39,6 +39,12 @@ const upload = multer({ dest: uploadsDir });
 
 const OLLAMA_URL = "http://127.0.0.1:11434/api/chat";
 
+// Parámetros de generación de Ollama. Configurables por .env para poder bajarlos
+// en equipos sin GPU o con pocos recursos (el análisis en CPU puede ser muy lento
+// con valores altos, y un num_predict menor también acota los bucles de repetición).
+const OLLAMA_NUM_PREDICT = parseInt(process.env.OLLAMA_NUM_PREDICT, 10) || 4000;
+const OLLAMA_NUM_CTX = parseInt(process.env.OLLAMA_NUM_CTX, 10) || 8192;
+
 // AI_MODE: "ollama" (por defecto, análisis real) o "mock" (resultado simulado
 // para probar el flujo sin Ollama). NUNCA debe usarse "mock" en la prueba piloto.
 const AI_MODE = (process.env.AI_MODE || "ollama").toLowerCase();
@@ -67,7 +73,7 @@ function generarAnalisisSimulado() {
 const ESQUEMA_ANALISIS = {
     type: "object",
     properties: {
-        rasgos_observados: { type: "array", items: { type: "string" } },
+        rasgos_observados: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 10 },
         interpretacion: { type: "string" },
         emocion_predominante: { type: "string" },
         intensidad: { type: "string", enum: ["baja", "media", "alta"] },
@@ -267,7 +273,7 @@ Reglas de lenguaje (obligatorias):
 - Recuerda que un mismo trazo puede significar cosas distintas según el niño y su contexto.
 
 Devuelve un objeto JSON con EXACTAMENTE estas claves:
-- "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). No incluyas interpretaciones aquí.
+- "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). Enumera entre 4 y 10 rasgos DISTINTOS; no repitas el mismo rasgo ni lo reformules. No incluyas interpretaciones aquí.
 - "interpretacion": texto extenso y detallado que relacione cada rasgo observado con el contexto del niño (si se proporcionó). No te limites en la longitud.
 - "emocion_predominante": la emoción principal que el dibujo podría estar expresando.
 - "intensidad": uno de "baja", "media" o "alta".
@@ -284,7 +290,15 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
             ],
             stream: false,
             // Análisis exhaustivo: priorizamos calidad sobre velocidad.
-            options: { num_predict: 4000, num_ctx: 8192, temperature: 0.2 },
+            // En equipos sin GPU conviene bajar num_predict/num_ctx vía .env.
+            // repeat_penalty/repeat_last_n frenan los bucles de repetición del modelo.
+            options: {
+                num_predict: OLLAMA_NUM_PREDICT,
+                num_ctx: OLLAMA_NUM_CTX,
+                temperature: 0.2,
+                repeat_penalty: 1.3,
+                repeat_last_n: 256
+            },
             keep_alive: "10m"
         }, {
             // El análisis puede tardar varios minutos; sin timeout corto.
