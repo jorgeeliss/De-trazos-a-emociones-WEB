@@ -350,9 +350,21 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
 
         // Eliminar solo el archivo original temporal, nos quedamos con el resized
         fs.unlinkSync(req.file.path);
-        
+
         // El processedImagePath queda guardado permanentemente
         const rutaImagenGuardada = "/uploads/" + path.basename(processedImagePath);
+
+        // Modo "solo dibujo": no se guarda de una; el usuario decide después
+        // (guardar como independiente, asignar a un niño, o descartar).
+        if (req.body.persistir === "false") {
+            return res.json({
+                analisis: resultadoJSON,
+                imagen: rutaImagenGuardada,
+                guardado: false,
+                simulado: resultadoJSON.simulado === true,
+                aviso: avisoParseo
+            });
+        }
 
         // Guardar en la base de datos
         const nuevoAnalisis = new Analysis({
@@ -381,6 +393,7 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
             analisis: resultadoJSON,
             id: nuevoAnalisis._id,
             imagen: rutaImagenGuardada,
+            guardado: true,
             simulado: resultadoJSON.simulado === true,
             aviso: avisoParseo
         });
@@ -409,6 +422,55 @@ app.get("/analisis", verificarToken, async (req, res) => {
             error: "Error obteniendo el historial"
         });
     }
+});
+
+/* =========================
+   GUARDAR UN ANÁLISIS YA HECHO (modo "solo dibujo")
+========================= */
+
+app.post("/analisis/guardar", verificarToken, async (req, res) => {
+    const { analisis, imagen, independiente, contexto_nino } = req.body;
+
+    if (!analisis || !imagen) {
+        return res.status(400).json({ error: "Faltan datos del análisis" });
+    }
+
+    // Por seguridad, solo el nombre del archivo, y debe existir en uploads.
+    const nombreArchivo = path.basename(String(imagen));
+    const rutaFisica = path.join(uploadsDir, nombreArchivo);
+    if (!fs.existsSync(rutaFisica)) {
+        return res.status(404).json({ error: "La imagen ya no está disponible" });
+    }
+
+    try {
+        const nuevo = new Analysis({
+            usuarioId: req.usuario.id,
+            contexto_nino: independiente ? {} : (contexto_nino || {}),
+            ruta_imagen: "/uploads/" + nombreArchivo,
+            resultado_ia: analisis,
+            independiente: !!independiente
+        });
+
+        await nuevo.save();
+        res.json({ id: nuevo._id, guardado: true });
+
+    } catch (error) {
+        console.error("Error guardando el análisis:", error);
+        res.status(500).json({ error: "Error guardando el análisis" });
+    }
+});
+
+/* =========================
+   DESCARTAR UN ANÁLISIS NO GUARDADO (borra la imagen temporal)
+========================= */
+
+app.post("/analisis/descartar", verificarToken, (req, res) => {
+    const { imagen } = req.body;
+    if (imagen) {
+        const rutaFisica = path.join(uploadsDir, path.basename(String(imagen)));
+        fs.unlink(rutaFisica, () => {});
+    }
+    res.json({ ok: true });
 });
 
 /* =========================

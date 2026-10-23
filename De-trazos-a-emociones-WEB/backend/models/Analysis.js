@@ -29,6 +29,12 @@ const AnalysisSchema = new mongoose.Schema({
         required: true
     },
 
+    // true = dibujo analizado "suelto", no pertenece a ningún niño.
+    independiente: {
+        type: Boolean,
+        default: false
+    },
+
     fecha: {
         type: Date,
         default: Date.now

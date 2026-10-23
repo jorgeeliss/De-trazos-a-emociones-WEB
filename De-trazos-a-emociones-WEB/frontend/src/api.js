@@ -98,6 +98,40 @@ export const api = {
     return data;
   },
 
+  guardarAnalisis: async (payload) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/analisis/guardar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error al guardar el análisis");
+    }
+
+    return data;
+  },
+
+  descartarAnalisis: async (imagen) => {
+    const token = localStorage.getItem("token");
+
+    await fetch(`${API_URL}/analisis/descartar`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ imagen }),
+    });
+  },
+
   eliminarNino: async (ids) => {
     const token = localStorage.getItem("token");
 

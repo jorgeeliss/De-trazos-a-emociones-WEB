@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import './HistoryChildBar.css';
 
-const HistoryChildBar = ({ childrenList, activeChild, setActiveChild }) => {
+const HistoryChildBar = ({ childrenList, activeChild, setActiveChild, hayIndependientes, independientesKey }) => {
   const navigate = useNavigate();
   return (
     <div className="child-bar">
@@ -28,6 +28,17 @@ const HistoryChildBar = ({ childrenList, activeChild, setActiveChild }) => {
       {(!childrenList || childrenList.length === 0) && (
         <div className="child-pill">
           <span className="child-name" style={{color: 'var(--muted)'}}>No hay niños analizados aún</span>
+        </div>
+      )}
+
+      {hayIndependientes && (
+        <div
+          className={`child-pill ${activeChild === independientesKey ? 'active' : ''}`}
+          onClick={() => setActiveChild(independientesKey)}
+          title="Dibujos analizados sin asociar a un niño"
+        >
+          <div className="child-avatar" style={{background: 'rgba(168,158,224,0.2)', color: '#a89ee0'}}>🖼️</div>
+          <span className="child-name">Dibujos independientes</span>
         </div>
       )}
 

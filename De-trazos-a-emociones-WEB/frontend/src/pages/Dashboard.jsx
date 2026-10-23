@@ -34,6 +34,7 @@ const Dashboard = () => {
   const children = useMemo(() => {
     const map = new Map();
     for (const a of historyData) {
+      if (a.independiente) continue; // los dibujos independientes no son niños
       const nombre = (a.contexto_nino?.nombre || '').trim() || 'Sin nombre';
       if (!map.has(nombre)) {
         map.set(nombre, { nombre, edad: a.contexto_nino?.edad || '', analisis: [] });
@@ -75,17 +76,17 @@ const Dashboard = () => {
               ¿Cómo está <span>{selected?.nombre && selected.nombre !== 'Sin nombre' ? selected.nombre : 'tu niño/a'}</span> hoy?
             </div>
             <div className="welcome-sub">
-              {historyData.length > 0
-                ? `Tienes ${children.length} niño(s) con ${historyData.length} análisis registrados.`
-                : 'Aún no tienes análisis registrados. Realiza tu primer análisis para comenzar el seguimiento.'}
+              {children.length > 0
+                ? `Tienes ${children.length} niño(s) registrados.`
+                : 'Aún no tienes niños registrados. Realiza un análisis con contexto para comenzar el seguimiento.'}
             </div>
           </div>
-          <div className="welcome-emoji">{historyData.length > 0 ? emojiSel : '🙂'}</div>
+          <div className="welcome-emoji">{children.length > 0 ? emojiSel : '🙂'}</div>
         </div>
 
-        {historyData.length === 0 ? (
+        {children.length === 0 ? (
           <div className="dashboard-card" style={{ padding: '32px', textAlign: 'center', color: 'var(--muted)' }}>
-            Todavía no hay análisis. Crea el primero desde <strong>Nuevo análisis</strong> para ver aquí el seguimiento del niño.
+            Todavía no hay niños registrados. Usa <strong>Agregar niño</strong> o <strong>Nuevo análisis</strong> para comenzar. Los dibujos analizados de forma independiente se ven en el Historial.
           </div>
         ) : (
           <>

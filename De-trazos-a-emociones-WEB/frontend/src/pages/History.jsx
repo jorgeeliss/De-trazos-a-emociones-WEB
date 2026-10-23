@@ -14,10 +14,13 @@ import SessionsList from '../components/history/SessionsList';
 import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
 import BrandHeader from '../components/common/BrandHeader';
 
+const INDEP = '__independientes__';
+
 const History = () => {
   const navigate = useNavigate();
   const [historyData, setHistoryData] = useState([]);
   const [children, setChildren] = useState([]);
+  const [hayIndependientes, setHayIndependientes] = useState(false);
   const [activeChild, setActiveChild] = useState('');
   const [loading, setLoading] = useState(true);
   const [detalle, setDetalle] = useState(null);
@@ -36,10 +39,12 @@ const History = () => {
         const data = await api.getAnalisis();
         setHistoryData(data);;
         
-        // Extraer niños únicos (igual que el Dashboard: los análisis sin nombre
-        // se agrupan bajo "Sin nombre" para que no se pierdan).
+        // Extraer niños únicos (los análisis sin nombre se agrupan como "Sin nombre").
+        // Los dibujos independientes NO son niños: van en su propia vista.
         const uniqueChildrenMap = new Map();
+        let indep = false;
         data.forEach(item => {
+          if (item.independiente) { indep = true; return; }
           const name = (item.contexto_nino?.nombre || '').trim() || 'Sin nombre';
           if (!uniqueChildrenMap.has(name)) {
             uniqueChildrenMap.set(name, { ...(item.contexto_nino || {}), nombre: name });
@@ -48,9 +53,12 @@ const History = () => {
 
         const childrenArray = Array.from(uniqueChildrenMap.values());
         setChildren(childrenArray);
-        
+        setHayIndependientes(indep);
+
         if (childrenArray.length > 0) {
           setActiveChild(childrenArray[0].nombre);
+        } else if (indep) {
+          setActiveChild(INDEP);
         }
         setLoading(false);
       } catch (err) {
@@ -64,9 +72,13 @@ const History = () => {
   }, []);
 
   const activeSessions = historyData.filter(item => {
+    if (activeChild === INDEP) return item.independiente === true;
+    if (item.independiente) return false;
     const name = (item.contexto_nino?.nombre || '').trim() || 'Sin nombre';
     return name === activeChild;
   });
+
+  const activeChildName = activeChild === INDEP ? 'Dibujos independientes' : activeChild;
 
   // Alerta orientativa (no diagnóstica): los 3 análisis más recientes del niño
   // muestran emociones negativas. Es una señal para conversar, no un diagnóstico.
@@ -114,7 +126,7 @@ const History = () => {
               <AlertTriangle color="#f87171" size={20} />
             </div>
             <div className="alert-text">
-              <div className="alert-title">Señal para acompañar — {activeChild}</div>
+              <div className="alert-title">Señal para acompañar — {activeChildName}</div>
               <div className="alert-sub">Los 3 análisis más recientes muestran emociones que suelen asociarse a malestar. Podría ser útil conversar con calma o, si lo consideras, con un profesional. Esto es orientativo, no un diagnóstico.</div>
             </div>
           </div>
@@ -124,11 +136,17 @@ const History = () => {
           <div style={{padding: '20px', color: 'var(--muted)'}}>Cargando historial...</div>
         ) : (
           <>
-            <HistoryChildBar childrenList={children} activeChild={activeChild} setActiveChild={setActiveChild} />
+            <HistoryChildBar
+              childrenList={children}
+              activeChild={activeChild}
+              setActiveChild={setActiveChild}
+              hayIndependientes={hayIndependientes}
+              independientesKey={INDEP}
+            />
 
             {/* CUADRÍCULA SUPERIOR */}
             <div className="grid-top">
-              <ChartCard sessions={activeSessions} activeChildName={activeChild} />
+              <ChartCard sessions={activeSessions} activeChildName={activeChildName} />
               <SummaryCard sessions={activeSessions} dotsHeight={dotsHeight} />
             </div>
 
@@ -136,7 +154,7 @@ const History = () => {
             <StatCards sessions={activeSessions} />
 
             {/* LISTA DE SESIONES */}
-            <SessionsList sessions={activeSessions} activeChildName={activeChild} onDeleted={handleDeleted} onSelect={setDetalle} />
+            <SessionsList sessions={activeSessions} activeChildName={activeChildName} onDeleted={handleDeleted} onSelect={setDetalle} />
           </>
         )}
       </main>

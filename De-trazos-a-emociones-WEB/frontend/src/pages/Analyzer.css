@@ -108,6 +108,43 @@
   line-height: 1.6;
 }
 
+.analyzer-wrapper .welcome-user {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--purple-light, #a89ee0);
+  margin-bottom: 10px;
+}
+
+/* SELECTOR DE MODO */
+.analyzer-wrapper .modo-selector {
+  display: flex;
+  gap: 6px;
+  width: max-content;
+  margin: 0 auto 1.5rem;
+  background: var(--card, #181828);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.07));
+  border-radius: 999px;
+  padding: 5px;
+}
+
+.analyzer-wrapper .modo-opt {
+  background: transparent;
+  border: none;
+  color: var(--muted, #a1a1aa);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.analyzer-wrapper .modo-opt.active {
+  background: var(--purple, #8b79f2);
+  color: #ffffff;
+}
+
 /* STEPS */
 .analyzer-wrapper .steps {
   display: flex;

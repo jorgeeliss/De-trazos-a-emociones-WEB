@@ -1,11 +1,10 @@
-import React from 'react';
 import { Upload, X, ArrowLeft, Sparkles, AlertCircle } from 'lucide-react';
 import './AnalyzerUpload.css';
 
-const AnalyzerUpload = ({ 
-  step, setStep, selectedFile, previewUrl, 
-  handleDrop, handleFileChange, clearFile, fileInputRef, 
-  error, isAnalyzing, analyze 
+const AnalyzerUpload = ({
+  setStep, selectedFile, previewUrl,
+  handleDrop, handleFileChange, clearFile, fileInputRef,
+  error, isAnalyzing, analyze, mostrarVolver = true
 }) => {
   return (
     <div id="screen-2" className="screen">
@@ -72,10 +71,12 @@ const AnalyzerUpload = ({
       )}
 
       <div className="nav-row">
-        <button className="btn-back" onClick={() => setStep(1)}>
-          <ArrowLeft size={18} style={{marginRight: '6px'}}/>
-          Volver
-        </button>
+        {mostrarVolver && (
+          <button className="btn-back" onClick={() => setStep(1)}>
+            <ArrowLeft size={18} style={{marginRight: '6px'}}/>
+            Volver
+          </button>
+        )}
         <button className="btn-analyze" disabled={!selectedFile || isAnalyzing} onClick={analyze}>
           {isAnalyzing ? (
             <><div className="spinner"></div> Analizando...</>
