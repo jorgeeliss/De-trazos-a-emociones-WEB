@@ -5,7 +5,7 @@ import AnalyzingProgress from './AnalyzingProgress';
 const AnalyzerUpload = ({
   setStep, selectedFile, previewUrl,
   handleDrop, handleFileChange, clearFile, fileInputRef,
-  error, isAnalyzing, analyze, mostrarVolver = true
+  error, isAnalyzing, analisisInicio, analyze, mostrarVolver = true
 }) => {
   return (
     <div id="screen-2" className="screen">
@@ -65,7 +65,7 @@ const AnalyzerUpload = ({
         </div>
       )}
 
-      {isAnalyzing && <AnalyzingProgress />}
+      {isAnalyzing && <AnalyzingProgress inicio={analisisInicio} />}
 
       <div className="nav-row">
         {mostrarVolver && (

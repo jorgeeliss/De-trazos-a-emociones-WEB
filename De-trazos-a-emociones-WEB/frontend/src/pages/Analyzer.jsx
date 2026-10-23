@@ -24,7 +24,7 @@ const Analyzer = () => {
   const {
     modo, ninoConocido, step, setStep, formData,
     selectedFile, previewUrl, isAnalyzing, error, analysisResult,
-    pendienteGuardar, guardadoEstado, guardando, ninosExistentes,
+    pendienteGuardar, guardadoEstado, guardando, ninosExistentes, analisisInicio,
     handleInputChange, handleRadioChange, handleFileChange, handleDrop, clearFile,
     cargarNinos, cambiarModo, analizar,
     guardarIndependiente, asignarANino, noGuardar, resetAll, setNotificacion,
@@ -116,6 +116,7 @@ const Analyzer = () => {
             fileInputRef={fileInputRef}
             error={error}
             isAnalyzing={isAnalyzing}
+            analisisInicio={analisisInicio}
             analyze={analizar}
             mostrarVolver={modo === 'contexto'}
           />

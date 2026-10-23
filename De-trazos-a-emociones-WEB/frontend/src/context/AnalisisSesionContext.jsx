@@ -65,6 +65,9 @@ export function AnalisisSesionProvider({ children }) {
   const [guardando, setGuardando] = useState(false);
   const [ninosExistentes, setNinosExistentes] = useState([]);
   const [notificacion, setNotificacion] = useState(null);
+  // Momento en que arrancó el análisis; permite que la barra de progreso
+  // continúe donde iba aunque se cambie de página y se vuelva.
+  const [analisisInicio, setAnalisisInicio] = useState(null);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -148,6 +151,7 @@ export function AnalisisSesionProvider({ children }) {
     if (!selectedFile) return;
     setError(null);
     setIsAnalyzing(true);
+    setAnalisisInicio(Date.now());
     setNotificacion(null);
 
     const fd = new FormData();
@@ -209,9 +213,23 @@ export function AnalisisSesionProvider({ children }) {
     } catch (err) { alert(err.message); } finally { setGuardando(false); }
   };
 
+  // Al analizar otro dibujo se conserva el contexto del niño (nombre, situación
+  // actual, etc.) y solo se limpian los datos propios del dibujo anterior.
   const resetAll = () => {
     clearFile();
-    setFormData(ninoConocido ? formData : FORM_VACIO);
+    const tieneNino = Boolean(formData.nombre?.trim());
+    setFormData(tieneNino
+      ? {
+          ...FORM_VACIO,
+          nombre: formData.nombre,
+          edad: formData.edad,
+          fecha_nacimiento: formData.fecha_nacimiento,
+          genero: formData.genero,
+          situacion_actual: formData.situacion_actual,
+          diagnostico_previo: formData.diagnostico_previo,
+          comportamiento: formData.comportamiento,
+        }
+      : FORM_VACIO);
     setAnalysisResult(null);
     setPendienteGuardar(null);
     setGuardadoEstado(null);
@@ -222,7 +240,7 @@ export function AnalisisSesionProvider({ children }) {
   const value = {
     modo, ninoConocido, step, setStep, formData,
     selectedFile, previewUrl, isAnalyzing, error, analysisResult,
-    pendienteGuardar, guardadoEstado, guardando, ninosExistentes, notificacion,
+    pendienteGuardar, guardadoEstado, guardando, ninosExistentes, notificacion, analisisInicio,
     handleInputChange, handleRadioChange, handleFileChange, handleDrop, clearFile,
     cargarNinos, nuevaSesion, precargarContexto, cambiarModo, analizar,
     guardarIndependiente, asignarANino, noGuardar, resetAll, setNotificacion

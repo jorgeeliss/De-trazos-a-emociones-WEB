@@ -11,27 +11,22 @@ const FASES = [
   'Redactando la lectura orientativa',
 ];
 
-const AnalyzingProgress = () => {
-  const [i, setI] = useState(0);
-  const [pct, setPct] = useState(6);
-
-  // El texto de la fase avanza cada ~2.8 s (es informativo).
+// La barra y la fase se calculan a partir del tiempo transcurrido desde `inicio`,
+// no de un contador interno. Así, si se cambia de página y se vuelve, la barra
+// continúa donde iba en lugar de reiniciarse. Nunca llega a 100%: se acerca
+// asintóticamente a ~92% y, cuando el análisis termina, el componente desaparece.
+const AnalyzingProgress = ({ inicio }) => {
+  // El inicio queda fijo al montar (inicializador perezoso, sin refs en render).
+  const [base] = useState(() => inicio || Date.now());
+  const [ahora, setAhora] = useState(base);
   useEffect(() => {
-    const id = setInterval(() => {
-      setI((prev) => (prev < FASES.length - 1 ? prev + 1 : prev));
-    }, 2800);
+    const id = setInterval(() => setAhora(Date.now()), 500);
     return () => clearInterval(id);
   }, []);
 
-  // La barra avanza rápido al inicio y se desacelera acercándose a un tope (~92%);
-  // nunca llega a 100%. Cuando el análisis realmente termina, este componente
-  // desaparece y se muestra el resultado.
-  useEffect(() => {
-    const id = setInterval(() => {
-      setPct((p) => (p < 92 ? p + (92 - p) * 0.05 : p));
-    }, 600);
-    return () => clearInterval(id);
-  }, []);
+  const transcurrido = Math.max(0, (ahora - base) / 1000);
+  const pct = Math.min(92, 92 * (1 - Math.exp(-transcurrido / 60)));
+  const i = Math.min(FASES.length - 1, Math.floor(transcurrido / 3));
 
   return (
     <div className="analyzing-box">
