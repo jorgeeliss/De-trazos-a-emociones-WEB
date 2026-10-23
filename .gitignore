@@ -20,3 +20,6 @@ docs/MOCKUPS.pdf
 
 # Metadatos de Windows/WSL al copiar archivos descargados
 *:Zone.Identifier
+
+# Capturas de pantalla compartidas para revisión (no se versionan)
+WhatsApp Image*
