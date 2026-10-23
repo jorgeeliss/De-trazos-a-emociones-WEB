@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './ChildSwitcher.css';
-import { emotionVisual, emocionPredominante } from '../../utils/emociones';
+import { emotionVisual, emocionPredominante, textoEdad } from '../../utils/emociones';
 import { api } from '../../api';
 
 const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) => {
@@ -34,7 +34,7 @@ const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) =
             <div className="child-avatar-lg" style={{ background: visual.bg, color: visual.color }}>{inicial}</div>
             <div className="child-info">
               <div className="child-cname">{nino.nombre}</div>
-              <div className="child-cage">{nino.edad ? `${nino.edad} años` : `${nino.analisis.length} análisis`}</div>
+              <div className="child-cage">{textoEdad(nino) || `${nino.analisis.length} análisis`}</div>
             </div>
             <span className="child-mood">{visual.emoji}</span>
             <button className="child-delete" title="Eliminar niño" onClick={(e) => handleDelete(e, nino)}>

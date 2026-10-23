@@ -37,7 +37,12 @@ const Dashboard = () => {
       if (a.independiente) continue; // los dibujos independientes no son niños
       const nombre = (a.contexto_nino?.nombre || '').trim() || 'Sin nombre';
       if (!map.has(nombre)) {
-        map.set(nombre, { nombre, edad: a.contexto_nino?.edad || '', analisis: [] });
+        map.set(nombre, {
+          nombre,
+          edad: a.contexto_nino?.edad || '',
+          fecha_nacimiento: a.contexto_nino?.fecha_nacimiento || '',
+          analisis: []
+        });
       }
       map.get(nombre).analisis.push(a);
     }

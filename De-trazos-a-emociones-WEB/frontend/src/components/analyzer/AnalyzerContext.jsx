@@ -1,5 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import './AnalyzerContext.css';
+import { textoEdad } from '../../utils/emociones';
 
 const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setStep, ninoConocido }) => {
   return (
@@ -16,7 +17,7 @@ const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setSt
             <div>
               <div className="card-title">{formData.nombre || 'Niño sin nombre'}</div>
               <div className="card-subtitle">
-                {[formData.edad ? `${formData.edad} años` : null, formData.genero].filter(Boolean).join(' · ') || 'Datos ya registrados'}
+                {[textoEdad(formData) || null, formData.genero].filter(Boolean).join(' · ') || 'Datos ya registrados'}
               </div>
             </div>
           </div>
@@ -47,8 +48,9 @@ const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setSt
                 <input type="text" id="nombre" value={formData.nombre} onChange={handleInputChange} placeholder="Ej: Sofía" />
               </div>
               <div className="field">
-                <label>Edad</label>
-                <input type="number" id="edad" value={formData.edad} onChange={handleInputChange} placeholder="Ej: 7" min="2" max="17" />
+                <label>Fecha de nacimiento</label>
+                <input type="date" id="fecha_nacimiento" value={formData.fecha_nacimiento} onChange={handleInputChange} max={new Date().toISOString().split('T')[0]} />
+                {textoEdad(formData) && <span className="field-hint">{textoEdad(formData)}</span>}
               </div>
               <div className="field">
                 <label>Género</label>

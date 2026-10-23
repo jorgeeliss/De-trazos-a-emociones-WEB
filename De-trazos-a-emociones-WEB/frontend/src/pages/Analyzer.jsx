@@ -43,6 +43,7 @@ const Analyzer = () => {
   const [formData, setFormData] = useState(() => ({
     nombre: contextoInicial?.nombre || '',
     edad: contextoInicial?.edad || '',
+    fecha_nacimiento: contextoInicial?.fecha_nacimiento || '',
     genero: contextoInicial?.genero || '',
     situacion_actual: contextoInicial?.situacion_actual || '',
     diagnostico_previo: contextoInicial?.diagnostico_previo || '',
@@ -160,7 +161,7 @@ const Analyzer = () => {
         analisis: pendienteGuardar.analisis,
         imagen: pendienteGuardar.imagen,
         independiente: false,
-        contexto_nino: { nombre, edad: ctx.edad, genero: ctx.genero }
+        contexto_nino: { nombre, edad: ctx.edad, fecha_nacimiento: ctx.fecha_nacimiento, genero: ctx.genero }
       });
       setGuardadoEstado('asignado');
       setPendienteGuardar(null);
@@ -262,7 +263,7 @@ const Analyzer = () => {
   const resetAll = () => {
     clearFile();
     setFormData({
-      nombre: '', edad: '', genero: '', situacion_actual: '', diagnostico_previo: '',
+      nombre: '', edad: '', fecha_nacimiento: '', genero: '', situacion_actual: '', diagnostico_previo: '',
       comportamiento: '', dibujo_espontaneo: '', comento_mientras: '', tiempo_dibujo: ''
     });
     setAnalysisResult(null);
@@ -322,7 +323,7 @@ const Analyzer = () => {
               <div className="step-divider"></div>
             </>
           )}
-          <div className={`step ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`} onClick={() => (step > 2 || (step === 1 && formData.edad)) && setStep(2)}>
+          <div className={`step ${step === 2 ? 'active' : step > 2 ? 'done' : ''}`} onClick={() => (step > 2 || (step === 1 && formData.fecha_nacimiento)) && setStep(2)}>
             <div className="step-num">{modo === 'contexto' ? '2' : '1'}</div> Dibujo
           </div>
           <div className="step-divider"></div>

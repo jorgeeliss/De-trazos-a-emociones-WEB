@@ -10,6 +10,7 @@ const AnalysisSchema = new mongoose.Schema({
     contexto_nino: {
         nombre: String,
         edad: String,
+        fecha_nacimiento: String,
         genero: String,
         situacion_actual: String,
         comportamiento: String,

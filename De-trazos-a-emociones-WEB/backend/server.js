@@ -48,6 +48,19 @@ const upload = multer({ dest: uploadsDir });
 
 const OLLAMA_URL = "http://127.0.0.1:11434/api/chat";
 
+// Calcula la edad en años a partir de una fecha de nacimiento (YYYY-MM-DD).
+// Devuelve null si no hay fecha válida.
+function edadDesdeFecha(fechaNacimiento) {
+    if (!fechaNacimiento) return null;
+    const nac = new Date(fechaNacimiento);
+    if (isNaN(nac.getTime())) return null;
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nac.getFullYear();
+    const m = hoy.getMonth() - nac.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+    return edad >= 0 ? edad : null;
+}
+
 // Modelo de visión usado para el análisis. Configurable por .env: minicpm-v es
 // pequeño y rápido pero de redacción limitada; modelos más grandes como
 // llama3.2-vision dan mejor análisis pero son más lentos (sobre todo en CPU).
@@ -207,6 +220,7 @@ app.post(
     const {
         nombre,
         edad,
+        fecha_nacimiento,
         genero,
         situacion_actual,
         comportamiento,
@@ -216,13 +230,16 @@ app.post(
         tiempo_dibujo
     } = req.body;
 
+    // Edad para el prompt: se calcula de la fecha de nacimiento si está; si no, se usa la edad guardada (registros viejos).
+    const edadCalculada = edadDesdeFecha(fecha_nacimiento) ?? (edad ? parseInt(edad, 10) : null);
+
     // Construir bloque de contexto dinámico
     let contextoNino = "";
 
-    if (nombre || edad || genero) {
+    if (nombre || edadCalculada != null || genero) {
         contextoNino += "## Información del niño\n";
         if (nombre) contextoNino += `- Nombre: ${nombre}\n`;
-        if (edad) contextoNino += `- Edad: ${edad} años\n`;
+        if (edadCalculada != null) contextoNino += `- Edad: ${edadCalculada} años\n`;
         if (genero) contextoNino += `- Género: ${genero}\n`;
         contextoNino += "\n";
     }
@@ -373,6 +390,7 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
             contexto_nino: {
                 nombre,
                 edad,
+                fecha_nacimiento,
                 genero,
                 situacion_actual,
                 comportamiento,

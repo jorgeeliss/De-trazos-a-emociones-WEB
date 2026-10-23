@@ -28,6 +28,27 @@ export function esEmocionNegativa(emocion = '') {
     .some((neg) => e.includes(neg));
 }
 
+// Edad en años a partir de una fecha de nacimiento (YYYY-MM-DD). null si no es válida.
+export function edadDesde(fechaNacimiento) {
+  if (!fechaNacimiento) return null;
+  const nac = new Date(fechaNacimiento);
+  if (isNaN(nac.getTime())) return null;
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - nac.getFullYear();
+  const m = hoy.getMonth() - nac.getMonth();
+  if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+  return edad >= 0 ? edad : null;
+}
+
+// Devuelve el texto de edad de un niño: calculada desde la fecha de nacimiento,
+// o la edad guardada (registros viejos). Cadena vacía si no hay dato.
+export function textoEdad({ fecha_nacimiento, edad } = {}) {
+  const calc = edadDesde(fecha_nacimiento);
+  if (calc != null) return `${calc} años`;
+  if (edad) return `${edad} años`;
+  return '';
+}
+
 export function formatFecha(fecha) {
   if (!fecha) return '';
   const d = new Date(fecha);
