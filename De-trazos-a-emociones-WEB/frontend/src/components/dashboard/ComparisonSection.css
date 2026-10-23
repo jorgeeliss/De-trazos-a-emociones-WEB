@@ -131,3 +131,42 @@ img.compare-thumb {
   color: var(--text);
   font-weight: 600;
 }
+
+.compare-selectors {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.compare-sel-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.compare-sel-col label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted2);
+  font-weight: 700;
+}
+
+.compare-select {
+  width: 100%;
+  background: rgba(30, 30, 48, 0.8);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+.compare-select:focus {
+  outline: none;
+  border-color: var(--purple-light);
+}

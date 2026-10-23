@@ -89,7 +89,7 @@ const Dashboard = () => {
 
             <div className="grid-bottom">
               <ActivitiesSection key={`act-${selected?.nombre}`} child={selected} />
-              <ComparisonSection key={`cmp-${selected?.nombre}`} child={selected} />
+              <ComparisonSection key={`cmp-${selected?.nombre}`} child={selected} onSelect={setDetalle} />
             </div>
           </>
         )}
