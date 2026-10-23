@@ -13,13 +13,6 @@ import ComparisonSection from '../components/dashboard/ComparisonSection';
 const Dashboard = () => {
   const [activeChild, setActiveChild] = useState(null);
   const [historyData, setHistoryData] = useState([]);
-  const [actDones, setActDones] = useState([false, false, false]);
-
-  const toggleActDone = (index) => {
-    const newActDones = [...actDones];
-    newActDones[index] = !newActDones[index];
-    setActDones(newActDones);
-  };
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -93,8 +86,8 @@ const Dashboard = () => {
             <TimelineSection child={selected} />
 
             <div className="grid-bottom">
-              <ActivitiesSection actDones={actDones} toggleActDone={toggleActDone} />
-              <ComparisonSection />
+              <ActivitiesSection key={`act-${selected?.nombre}`} child={selected} />
+              <ComparisonSection key={`cmp-${selected?.nombre}`} child={selected} />
             </div>
           </>
         )}

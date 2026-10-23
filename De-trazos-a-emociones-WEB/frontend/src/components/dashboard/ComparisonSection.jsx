@@ -1,33 +1,74 @@
-import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import './ComparisonSection.css';
+import { emotionVisual, emocionPredominante, formatFechaCorta } from '../../utils/emociones';
+import { actividadesPara } from '../../data/actividades';
 
-const ComparisonSection = () => {
+const API_URL = 'http://localhost:3000';
+
+const Miniatura = ({ analisis }) => {
+  const visual = emotionVisual(analisis?.resultado_ia?.emocion_predominante || '');
+  if (analisis?.ruta_imagen) {
+    return <img className="compare-thumb" src={`${API_URL}${analisis.ruta_imagen}`} alt="Dibujo" style={{ objectFit: 'cover' }} />;
+  }
+  return <div className="compare-thumb">{visual.emoji}</div>;
+};
+
+const ComparisonSection = ({ child }) => {
+  const analisis = child?.analisis || [];
+  const nombre = child?.nombre && child.nombre !== 'Sin nombre' ? child.nombre : 'el niño';
+
+  const ahora = analisis[0];
+  const antes = analisis[1];
+  const emocionAhora = (ahora?.resultado_ia?.emocion_predominante || '').toLowerCase();
+  const emocionAntes = (antes?.resultado_ia?.emocion_predominante || '').toLowerCase();
+
+  let cambio;
+  if (!antes) {
+    cambio = `Necesitas al menos dos análisis de ${nombre} para comparar su evolución. Por ahora solo hay uno.`;
+  } else if (emocionAhora && emocionAntes && emocionAhora === emocionAntes) {
+    cambio = `Entre estos dos dibujos, ${nombre} se ha mantenido sobre todo en ${emocionAhora}.`;
+  } else {
+    cambio = `Entre estos dos dibujos, ${nombre} pasó de ${emocionAntes || 'una emoción no detectada'} a ${emocionAhora || 'una emoción no detectada'}. Puede ser útil observar si el cambio se sostiene en los próximos análisis.`;
+  }
+
+  const { consejos } = actividadesPara(emocionPredominante(analisis));
+
   return (
-    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       <div className="dashboard-card compare-card">
         <div className="ts-header">
           <div>
             <div className="ts-title">Antes y ahora</div>
-            <div style={{fontSize: '13px', color: 'var(--muted2)', marginTop: '4px'}}>Comparación de dibujos</div>
+            <div style={{ fontSize: '13px', color: 'var(--muted2)', marginTop: '4px' }}>Comparación de dibujos</div>
           </div>
         </div>
         <div className="compare-body">
-          <div className="compare-pair">
-            <div style={{flex: 1, textAlign: 'center'}}>
-              <div className="compare-thumb">🖍️</div>
-              <div className="compare-date">Hace 2 semanas</div>
+          {antes ? (
+            <div className="compare-pair">
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <Miniatura analisis={antes} />
+                <div className="compare-date">{formatFechaCorta(antes.fecha)}</div>
+              </div>
+              <div className="compare-arrow">
+                <ArrowRight size={24} />
+              </div>
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <Miniatura analisis={ahora} />
+                <div className="compare-date">{formatFechaCorta(ahora.fecha)}</div>
+              </div>
             </div>
-            <div className="compare-arrow">
-              <ArrowRight size={24} />
-            </div>
-            <div style={{flex: 1, textAlign: 'center'}}>
-              <div className="compare-thumb">🎨</div>
-              <div className="compare-date">Hoy</div>
-            </div>
-          </div>
+          ) : (
+            ahora && (
+              <div className="compare-pair">
+                <div style={{ flex: 1, textAlign: 'center' }}>
+                  <Miniatura analisis={ahora} />
+                  <div className="compare-date">{formatFechaCorta(ahora.fecha)}</div>
+                </div>
+              </div>
+            )
+          )}
           <div className="compare-result">
-            <strong>Cambio detectado:</strong> Sofía pasó de usar colores brillantes a colores más apagados. Sus figuras también se volvieron más pequeñas, lo que puede indicar un bajón emocional.
+            <strong>{antes ? 'Cambio detectado:' : 'Sin comparación aún:'}</strong> {cambio}
           </div>
         </div>
       </div>
@@ -37,14 +78,12 @@ const ComparisonSection = () => {
           <div className="ts-title">Consejos para esta semana</div>
         </div>
         <div className="tips-body">
-          <div className="tip-item">
-            <div className="tip-num">1</div>
-            <div className="tip-text"><strong>Normaliza sus emociones.</strong> Dile que está bien sentirse ansioso a veces y que tú también lo sientes.</div>
-          </div>
-          <div className="tip-item">
-            <div className="tip-num">2</div>
-            <div className="tip-text"><strong>Evita forzar conversaciones.</strong> A veces un abrazo silencioso dice más que mil preguntas.</div>
-          </div>
+          {consejos.map((c, i) => (
+            <div className="tip-item" key={i}>
+              <div className="tip-num">{i + 1}</div>
+              <div className="tip-text"><strong>{c.titulo}.</strong> {c.texto}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
