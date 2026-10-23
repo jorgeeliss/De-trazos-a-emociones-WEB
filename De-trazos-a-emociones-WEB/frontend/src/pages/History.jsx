@@ -12,6 +12,7 @@ import SummaryCard from '../components/history/SummaryCard';
 import StatCards from '../components/history/StatCards';
 import SessionsList from '../components/history/SessionsList';
 import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
+import BrandHeader from '../components/common/BrandHeader';
 
 const History = () => {
   const navigate = useNavigate();
@@ -84,6 +85,8 @@ const History = () => {
       <Sidebar active="history" />
 
       <main className="main">
+        <BrandHeader />
+
         {/* BARRA SUPERIOR */}
         <div className="topbar">
           <div>

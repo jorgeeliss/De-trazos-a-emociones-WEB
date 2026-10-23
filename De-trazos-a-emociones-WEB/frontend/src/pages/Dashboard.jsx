@@ -10,6 +10,7 @@ import TimelineSection from '../components/dashboard/TimelineSection';
 import ActivitiesSection from '../components/dashboard/ActivitiesSection';
 import ComparisonSection from '../components/dashboard/ComparisonSection';
 import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
+import BrandHeader from '../components/common/BrandHeader';
 
 const Dashboard = () => {
   const [activeChild, setActiveChild] = useState(null);
@@ -57,6 +58,8 @@ const Dashboard = () => {
       <Sidebar active="dashboard" />
 
       <main className="main">
+        <BrandHeader />
+
         {/* WELCOME */}
         <div className="welcome">
           <div className="welcome-left">
