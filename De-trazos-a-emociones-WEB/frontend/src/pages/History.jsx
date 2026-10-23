@@ -11,6 +11,7 @@ import ChartCard from '../components/history/ChartCard';
 import SummaryCard from '../components/history/SummaryCard';
 import StatCards from '../components/history/StatCards';
 import SessionsList from '../components/history/SessionsList';
+import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
 
 const History = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const History = () => {
   const [children, setChildren] = useState([]);
   const [activeChild, setActiveChild] = useState('');
   const [loading, setLoading] = useState(true);
+  const [detalle, setDetalle] = useState(null);
 
   const [dotsHeight, setDotsHeight] = useState(['0px', '0px', '0px', '0px', '0px', '0px', '0px']);
 
@@ -125,10 +127,12 @@ const History = () => {
             <StatCards sessions={activeSessions} />
 
             {/* LISTA DE SESIONES */}
-            <SessionsList sessions={activeSessions} activeChildName={activeChild} onDeleted={handleDeleted} />
+            <SessionsList sessions={activeSessions} activeChildName={activeChild} onDeleted={handleDeleted} onSelect={setDetalle} />
           </>
         )}
       </main>
+
+      {detalle && <AnalysisDetailModal analisis={detalle} onClose={() => setDetalle(null)} />}
     </div>
   );
 };

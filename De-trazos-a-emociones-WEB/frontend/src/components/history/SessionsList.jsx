@@ -2,7 +2,7 @@ import { Trash2 } from 'lucide-react';
 import './SessionsList.css';
 import { api } from '../../api';
 
-const SessionsList = ({ sessions = [], activeChildName = '', onDeleted }) => {
+const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect }) => {
 
   const getEmotionColor = (emotionStr = '') => {
     const lower = emotionStr.toLowerCase();
@@ -26,13 +26,14 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted }) => {
     return date.toLocaleDateString('es-ES', options);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
     if (!window.confirm('¿Eliminar este análisis? Esta acción no se puede deshacer.')) return;
     try {
       await api.eliminarAnalisis(id);
       if (onDeleted) onDeleted(id);
-    } catch (e) {
-      alert(e.message);
+    } catch (err) {
+      alert(err.message);
     }
   };
 
@@ -60,7 +61,12 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted }) => {
             const datePrefix = isToday ? 'Hoy · ' : '';
 
             return (
-              <div key={session._id || i} className="session-row">
+              <div
+                key={session._id || i}
+                className="session-row session-row-click"
+                onClick={() => onSelect && onSelect(session)}
+                title="Ver el dibujo y el análisis completo"
+              >
                 <div className="session-thumb" style={{padding: 0, overflow: 'hidden', background: '#f0f0f0'}}>
                   {session.ruta_imagen ? (
                     <img src={`http://localhost:3000${session.ruta_imagen}`} alt="Dibujo" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
@@ -83,7 +89,7 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted }) => {
                 <button
                   className="session-delete"
                   title="Eliminar análisis"
-                  onClick={() => handleDelete(session._id)}
+                  onClick={(e) => handleDelete(e, session._id)}
                 >
                   <Trash2 size={18} />
                 </button>

@@ -156,3 +156,7 @@
   background: rgba(248, 113, 113, 0.12);
   color: #f87171;
 }
+
+.session-row-click {
+  cursor: pointer;
+}

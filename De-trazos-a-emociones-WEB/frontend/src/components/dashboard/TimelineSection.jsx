@@ -8,7 +8,7 @@ const resumenDe = (r = {}) => {
   return 'Sin resumen disponible para este análisis.';
 };
 
-const TimelineSection = ({ child }) => {
+const TimelineSection = ({ child, onSelect }) => {
   const analisis = (child?.analisis || []).slice(0, 6);
   const nombre = child?.nombre && child.nombre !== 'Sin nombre' ? child.nombre : 'el niño';
 
@@ -30,7 +30,7 @@ const TimelineSection = ({ child }) => {
             const intensidad = intensityInfo(r.intensidad || '');
             const esUltimo = i === analisis.length - 1;
             return (
-              <div className="tl-item" key={a._id || i}>
+              <div className="tl-item tl-item-click" key={a._id || i} onClick={() => onSelect && onSelect(a)} title="Ver el dibujo y el análisis completo">
                 <div className="tl-left">
                   <div className="tl-dot" style={{ background: visual.bg }}>{visual.emoji}</div>
                   {!esUltimo && <div className="tl-line"></div>}
@@ -45,10 +45,13 @@ const TimelineSection = ({ child }) => {
                       {r.emocion_predominante || 'Desconocida'}
                     </span>
                   </div>
-                  <div className="tl-summary">{resumenDe(r)}</div>
-                  <div className="tl-intensity">
-                    <div className="tl-intensity-dot" style={{ background: intensidad.color }}></div>
-                    <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Intensidad {intensidad.label}</span>
+                  <div className="tl-summary tl-summary-clamp">{resumenDe(r)}</div>
+                  <div className="tl-footer-row">
+                    <div className="tl-intensity">
+                      <div className="tl-intensity-dot" style={{ background: intensidad.color }}></div>
+                      <span style={{ fontSize: '12px', color: 'var(--muted)' }}>Intensidad {intensidad.label}</span>
+                    </div>
+                    <span className="tl-ver-mas">Ver detalle →</span>
                   </div>
                 </div>
               </div>

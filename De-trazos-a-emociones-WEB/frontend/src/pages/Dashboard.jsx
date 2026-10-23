@@ -9,10 +9,12 @@ import WeeklySummary from '../components/dashboard/WeeklySummary';
 import TimelineSection from '../components/dashboard/TimelineSection';
 import ActivitiesSection from '../components/dashboard/ActivitiesSection';
 import ComparisonSection from '../components/dashboard/ComparisonSection';
+import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
 
 const Dashboard = () => {
   const [activeChild, setActiveChild] = useState(null);
   const [historyData, setHistoryData] = useState([]);
+  const [detalle, setDetalle] = useState(null);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -83,7 +85,7 @@ const Dashboard = () => {
 
             <WeeklySummary child={selected} />
 
-            <TimelineSection child={selected} />
+            <TimelineSection child={selected} onSelect={setDetalle} />
 
             <div className="grid-bottom">
               <ActivitiesSection key={`act-${selected?.nombre}`} child={selected} />
@@ -92,6 +94,8 @@ const Dashboard = () => {
           </>
         )}
       </main>
+
+      {detalle && <AnalysisDetailModal analisis={detalle} onClose={() => setDetalle(null)} />}
     </div>
   );
 };
