@@ -53,6 +53,12 @@ const UserSchema = new mongoose.Schema(
         esAdmin: {
             type: Boolean,
             default: false
+        },
+
+        // Ruta de la foto de perfil (relativa). La imagen se sirve protegida.
+        fotoPerfil: {
+            type: String,
+            default: ""
         }
     },
     {

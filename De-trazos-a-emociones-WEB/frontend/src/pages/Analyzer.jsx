@@ -5,6 +5,7 @@ import AnalyzerContext from '../components/analyzer/AnalyzerContext';
 import AnalyzerUpload from '../components/analyzer/AnalyzerUpload';
 import AnalyzerResult from '../components/analyzer/AnalyzerResult';
 import AnalyzerSavePanel from '../components/analyzer/AnalyzerSavePanel';
+import ProfileMenu from '../components/common/ProfileMenu';
 import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 
 const STYLES = [
@@ -45,6 +46,10 @@ const Analyzer = () => {
       <Sidebar active="app" />
       <div className="bg-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div className="container">
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+          <ProfileMenu />
+        </div>
 
         <header className="header">
           <div className="badge"><span className="badge-dot"></span> Psicología infantil · IA</div>

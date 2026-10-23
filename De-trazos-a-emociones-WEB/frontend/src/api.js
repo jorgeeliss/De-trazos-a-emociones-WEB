@@ -242,6 +242,68 @@ export const api = {
     return data;
   },
 
+  // --- Perfil / cuenta ---
+
+  getPerfil: async () => {
+    const response = await authFetch(`${API_URL}/perfil/me`);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al obtener el perfil");
+    }
+
+    return data;
+  },
+
+  subirFotoPerfil: async (file) => {
+    const formData = new FormData();
+    formData.append("foto", file);
+
+    const response = await authFetch(`${API_URL}/perfil/foto`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al subir la foto");
+    }
+
+    return data;
+  },
+
+  // Descarga la foto como blob (un <img> no puede mandar el token). Un 404
+  // (sin foto) devuelve null; no fuerza el cierre de sesión como authFetch.
+  fetchFotoPerfil: async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch(`${API_URL}/perfil/foto`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) return null;
+      return await response.blob();
+    } catch {
+      return null;
+    }
+  },
+
+  eliminarCuenta: async () => {
+    const response = await authFetch(`${API_URL}/perfil`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al eliminar la cuenta");
+    }
+
+    return data;
+  },
+
   logout: () => {
     limpiarSesion();
   },

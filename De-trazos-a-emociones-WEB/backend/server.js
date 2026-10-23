@@ -20,6 +20,7 @@ const cors = require("cors");
 const sharp = require("sharp");
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
+const perfilRoutes = require("./routes/perfil");
 
 const connectDB = require("./database");
 const Analysis = require("./models/Analysis");
@@ -45,6 +46,7 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+app.use("/perfil", perfilRoutes);
 
 const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
