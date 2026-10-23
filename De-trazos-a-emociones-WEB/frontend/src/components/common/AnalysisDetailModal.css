@@ -78,6 +78,28 @@
   font-weight: 600;
 }
 
+.adm-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  color: var(--accent-soft);
+  padding: 7px 13px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all 0.2s ease;
+}
+
+.adm-export:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
 .adm-sincontexto {
   display: flex;
   align-items: center;

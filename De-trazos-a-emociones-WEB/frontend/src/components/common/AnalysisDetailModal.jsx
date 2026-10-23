@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { X, ZoomIn, RefreshCw } from 'lucide-react';
+import { X, ZoomIn, RefreshCw, FileDown } from 'lucide-react';
 import './AnalysisDetailModal.css';
 import { emotionVisual, intensityInfo, formatFecha } from '../../utils/emociones';
 import { api } from '../../api';
 import AnalyzingProgress from '../analyzer/AnalyzingProgress';
+import ExportPdfModal from './ExportPdfModal';
 
 const API_URL = 'http://localhost:3000';
 
 const AnalysisDetailModal = ({ analisis, onClose, onActualizado }) => {
   const [zoom, setZoom] = useState(false);
+  const [exportar, setExportar] = useState(false);
   const [imgUrl, setImgUrl] = useState(null);
   const [resultadoLocal, setResultadoLocal] = useState(null);
   const [yaReanalizado, setYaReanalizado] = useState(false);
@@ -76,6 +78,9 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado }) => {
             <span className="adm-chip" style={{ background: visual.bg, color: visual.color }}>{visual.emoji} {r.emocion_predominante || 'Sin emoción'}</span>
             <span className="adm-intensity" style={{ color: inten.color }}>Intensidad {inten.label}</span>
           </div>
+          <button className="adm-export" onClick={() => setExportar(true)}>
+            <FileDown size={15} /> Exportar PDF
+          </button>
         </div>
 
         {sinContexto && (
@@ -126,6 +131,10 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado }) => {
         <div className="adm-lightbox" onClick={(e) => { e.stopPropagation(); setZoom(false); }} title="Cerrar">
           <img src={imgUrl} alt="Dibujo ampliado" />
         </div>
+      )}
+
+      {exportar && (
+        <ExportPdfModal analisis={analisis} imgUrl={imgUrl} onClose={() => setExportar(false)} />
       )}
     </div>
   );
