@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { esEmailAdmin } = require("../utils/admin");
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ POST /auth/register
 
 router.post("/register", async (req, res) => {
     try {
-        const { nombre, apellido, email, password, rol } = req.body;
+        const { nombre, apellido, email, password, rol, institucion } = req.body;
 
         // Validar campos
         if (!nombre || !apellido || !email || !password || !rol) {
@@ -47,23 +48,34 @@ router.post("/register", async (req, res) => {
         // Hashear contraseña
         const passwordHash = await bcrypt.hash(password, 12);
 
+        // Si el correo está en ADMIN_EMAILS, la cuenta es admin y queda aprobada;
+        // de lo contrario queda pendiente de aprobación por el administrador.
+        const admin = esEmailAdmin(emailNormalizado);
+
         // Crear usuario
         const nuevoUsuario = new User({
             nombre: nombre.trim(),
             apellido: apellido.trim(),
             email: emailNormalizado,
             password: passwordHash,
-            rol: rol
+            rol: rol,
+            institucion: (institucion || "").trim(),
+            esAdmin: admin,
+            estado: admin ? "aprobado" : "pendiente"
         });
 
         await nuevoUsuario.save();
 
         return res.status(201).json({
-            message: "Usuario registrado correctamente",
+            message: admin
+                ? "Cuenta de administrador creada. Ya puedes iniciar sesión."
+                : "Registro recibido. Tu cuenta quedó pendiente de aprobación por el administrador.",
+            estado: nuevoUsuario.estado,
             usuario: {
                 id: nuevoUsuario._id,
                 nombre: nuevoUsuario.nombre,
-                email: nuevoUsuario.email
+                email: nuevoUsuario.email,
+                estado: nuevoUsuario.estado
             }
         });
 
@@ -122,12 +134,34 @@ router.post("/login", async (req, res) => {
             });
         }
 
+        // Reconciliar administrador desde ADMIN_EMAILS (por si el correo se
+        // agregó a la lista después de haberse registrado).
+        if (esEmailAdmin(usuario.email) && (!usuario.esAdmin || usuario.estado !== "aprobado")) {
+            usuario.esAdmin = true;
+            usuario.estado = "aprobado";
+            await usuario.save();
+        }
+
+        // Bloquear el acceso hasta que el administrador apruebe la cuenta.
+        if (usuario.estado === "pendiente") {
+            return res.status(403).json({
+                message: "Tu cuenta está pendiente de aprobación por el administrador."
+            });
+        }
+
+        if (usuario.estado === "rechazado") {
+            return res.status(403).json({
+                message: "Tu solicitud de registro fue rechazada. Comunícate con el administrador."
+            });
+        }
+
         // Crear JWT
         const token = jwt.sign(
             {
                 id: usuario._id,
                 email: usuario.email,
-                rol: usuario.rol
+                rol: usuario.rol,
+                esAdmin: usuario.esAdmin
             },
             process.env.JWT_SECRET,
             {
@@ -142,7 +176,8 @@ router.post("/login", async (req, res) => {
                 id: usuario._id,
                 nombre: usuario.nombre,
                 email: usuario.email,
-                rol: usuario.rol
+                rol: usuario.rol,
+                esAdmin: usuario.esAdmin
             }
         });
 

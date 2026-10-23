@@ -210,6 +210,38 @@ export const api = {
     return data;
   },
 
+  // --- Administración (solo admin) ---
+
+  getSolicitudes: async (estado = "pendiente") => {
+    const response = await authFetch(`${API_URL}/admin/usuarios?estado=${estado}`);
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al obtener las solicitudes");
+    }
+
+    return data;
+  },
+
+  resolverSolicitud: async (id, accion) => {
+    const response = await authFetch(`${API_URL}/admin/usuarios/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ accion }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al actualizar la solicitud");
+    }
+
+    return data;
+  },
+
   logout: () => {
     limpiarSesion();
   },

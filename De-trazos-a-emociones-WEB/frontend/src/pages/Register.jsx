@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, Eye } from 'lucide-react';
+import { User, Mail, Lock, Eye, Building2, CheckCircle, Clock } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
 import './AuthCommon.css';
 import './Register.css';
@@ -8,12 +8,14 @@ import { api } from '../api';
 
 const Register = () => {
   const navigate = useNavigate();
+  const [resultado, setResultado] = useState(null);
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
     email: '',
     password: '',
-    rol: ''
+    rol: '',
+    institucion: ''
   });
 
   const handleChange = (e) => {
@@ -27,13 +29,11 @@ const Register = () => {
       e.preventDefault();
 
       try {
-        console.log("DATOS QUE ENVÍA FRONT:", formData);
-
-        await api.register(formData);
-
-        alert("Usuario registrado correctamente");
-        navigate('/login');
-
+        const data = await api.register(formData);
+        setResultado({
+          estado: data.estado || 'pendiente',
+          message: data.message || 'Registro recibido.'
+        });
       } catch (error) {
         alert(error.message);
       }
@@ -67,6 +67,24 @@ const Register = () => {
             </div>
           </div>
 
+          {resultado ? (
+            <div className="register-success">
+              <div className={`success-icon ${resultado.estado === 'aprobado' ? 'ok' : 'wait'}`}>
+                {resultado.estado === 'aprobado' ? <CheckCircle size={44} /> : <Clock size={44} />}
+              </div>
+              <h1>{resultado.estado === 'aprobado' ? 'Cuenta creada' : 'Registro recibido'}</h1>
+              <p className="success-msg">{resultado.message}</p>
+              <p className="success-hint">
+                {resultado.estado === 'aprobado'
+                  ? 'Ya puedes iniciar sesión con tu correo y contraseña.'
+                  : 'Cuando el administrador apruebe tu cuenta podrás iniciar sesión. La verificación de la autorización del representante legal la realiza la institución o entidad profesional.'}
+              </p>
+              <button type="button" className="btn-submit" onClick={() => navigate('/login')}>
+                Ir a iniciar sesión
+              </button>
+            </div>
+          ) : (
+          <>
           <div className="form-header">
             <h1>Crear cuenta</h1>
             <p>Crea tu cuenta y empieza el análisis</p>
@@ -174,6 +192,22 @@ const Register = () => {
               </div>
             </div>
 
+            <div className="form-group">
+              <label htmlFor="institucion">INSTITUCIÓN O ENTIDAD</label>
+              <div className="input-wrapper">
+                <div className="input-icon">
+                  <Building2 size={20} />
+                </div>
+                <input
+                  type="text"
+                  id="institucion"
+                  placeholder="Colegio, consultorio o entidad (si aplica)"
+                  value={formData.institucion}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
             <label className="checkbox-group">
               <input type="checkbox" required />
               <span>Acepto los <a href="/terminos" target="_blank" rel="noreferrer">Términos y Condiciones</a> y la <a href="/privacidad" target="_blank" rel="noreferrer">Política de Privacidad</a> de De trazos a emociones.</span>
@@ -187,6 +221,8 @@ const Register = () => {
           <div className="form-footer">
             ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
           </div>
+          </>
+          )}
 
         </div>
       </div>

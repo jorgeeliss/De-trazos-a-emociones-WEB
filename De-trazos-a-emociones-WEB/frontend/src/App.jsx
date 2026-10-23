@@ -6,7 +6,9 @@ import Dashboard from './pages/Dashboard';
 import History from './pages/History';
 import Terminos from './pages/Terminos';
 import Privacidad from './pages/Privacidad';
+import Admin from './pages/Admin';
 import ProtectedRoute from './ProtectedRoute';
+import AdminRoute from './AdminRoute';
 import { AnalisisSesionProvider } from './context/AnalisisSesionContext';
 import AnalisisToast from './components/common/AnalisisToast';
 
@@ -43,6 +45,15 @@ function App() {
         <ProtectedRoute>
           <History />
         </ProtectedRoute>
+      }
+      />
+
+    <Route
+      path="/admin"
+      element={
+        <AdminRoute>
+          <Admin />
+        </AdminRoute>
       }
       />
           </Routes>

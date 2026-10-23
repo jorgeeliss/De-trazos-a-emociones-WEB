@@ -19,6 +19,7 @@ const fs = require("fs");
 const cors = require("cors");
 const sharp = require("sharp");
 const authRoutes = require("./routes/auth");
+const adminRoutes = require("./routes/admin");
 
 const connectDB = require("./database");
 const Analysis = require("./models/Analysis");
@@ -43,6 +44,7 @@ app.use(express.static("public"));
 // dueño del análisis a través del endpoint protegido GET /analisis/:id/imagen.
 app.use(express.json());
 app.use("/auth", authRoutes);
+app.use("/admin", adminRoutes);
 
 const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {

@@ -1,0 +1,293 @@
+.admin-page {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  font-family: var(--sans);
+  padding: 2.5rem 1.5rem;
+}
+
+.admin-container {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* Encabezado */
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.admin-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-badge {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: rgba(139, 121, 242, 0.15);
+  color: var(--accent-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-title h1 {
+  font-family: var(--heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.admin-title p {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  margin: 2px 0 0;
+}
+
+.admin-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--text-gray);
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+}
+
+.admin-back:hover {
+  color: var(--text-white);
+  border-color: var(--accent-purple);
+}
+
+/* Pestañas de filtro */
+.admin-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-tab {
+  background: #181828;
+  border: 1px solid var(--input-border);
+  color: var(--text-gray);
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+}
+
+.admin-tab:hover {
+  color: var(--text-white);
+}
+
+.admin-tab.active {
+  background: var(--accent-purple);
+  border-color: var(--accent-purple);
+  color: #fff;
+  font-weight: 600;
+}
+
+.admin-refresh {
+  margin-left: auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: #181828;
+  border: 1px solid var(--input-border);
+  color: var(--text-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-refresh:hover {
+  color: var(--text-white);
+  border-color: var(--accent-purple);
+}
+
+/* Mensajes */
+.admin-error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+}
+
+.admin-empty {
+  text-align: center;
+  color: var(--text-gray);
+  padding: 3.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Lista de solicitudes */
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-card {
+  background: #181828;
+  border: 1px solid var(--input-border);
+  border-radius: 14px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-card-main {
+  min-width: 0;
+}
+
+.admin-card-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.admin-card-email {
+  color: var(--accent-purple);
+  font-size: 0.9rem;
+  margin: 2px 0 8px;
+  word-break: break-all;
+}
+
+.admin-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-chip {
+  background: rgba(139, 121, 242, 0.12);
+  border: 1px solid rgba(139, 121, 242, 0.3);
+  color: #c0b4f9;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+}
+
+.admin-chip.inst {
+  background: rgba(45, 212, 191, 0.1);
+  border-color: rgba(45, 212, 191, 0.3);
+  color: #5eead4;
+}
+
+.admin-chip.vacio {
+  background: transparent;
+  border-color: var(--input-border);
+  color: var(--text-gray);
+}
+
+.admin-fecha {
+  color: var(--text-gray);
+  font-size: 0.8rem;
+}
+
+/* Acciones */
+.admin-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.btn-aprobar,
+.btn-rechazar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+}
+
+.btn-aprobar {
+  background: rgba(45, 212, 191, 0.15);
+  border-color: rgba(45, 212, 191, 0.4);
+  color: #2dd4bf;
+}
+
+.btn-aprobar:hover:not(:disabled) {
+  background: rgba(45, 212, 191, 0.25);
+}
+
+.btn-rechazar {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.btn-rechazar:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.22);
+}
+
+.btn-aprobar:disabled,
+.btn-rechazar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.estado-badge {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.estado-badge.aprobado {
+  background: rgba(45, 212, 191, 0.15);
+  color: #2dd4bf;
+}
+
+.estado-badge.rechazado {
+  background: rgba(239, 68, 68, 0.12);
+  color: #fca5a5;
+}
+
+@media (max-width: 560px) {
+  .admin-card {
+    align-items: flex-start;
+  }
+  .admin-actions {
+    width: 100%;
+  }
+  .btn-aprobar,
+  .btn-rechazar {
+    flex: 1;
+    justify-content: center;
+  }
+}

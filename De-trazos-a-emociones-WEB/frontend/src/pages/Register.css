@@ -79,3 +79,53 @@
   color: #c0b4f9;
   text-decoration: none;
 }
+
+/* Pantalla de confirmación tras el registro */
+.auth-container .register-success {
+  text-align: center;
+  padding: 1rem 0;
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-container .register-success .success-icon {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.auth-container .register-success .success-icon.ok {
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.4);
+  color: #2dd4bf;
+}
+
+.auth-container .register-success .success-icon.wait {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #f5b041;
+}
+
+.auth-container .register-success h1 {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.auth-container .register-success .success-msg {
+  color: var(--text-white);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+.auth-container .register-success .success-hint {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
