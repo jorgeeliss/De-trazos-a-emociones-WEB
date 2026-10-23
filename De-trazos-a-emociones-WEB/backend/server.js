@@ -270,7 +270,23 @@ Observa ÚNICAMENTE lo que aparece en el dibujo. No inventes ni menciones elemen
 
 ${contextoFinal}
 
-Analiza el dibujo teniendo en cuenta: uso del color, trazos y presión aparente, figuras y su contenido, tamaño, disposición en la hoja y posibles omisiones.
+Para interpretar el dibujo, apóyate en este marco (son posibles lecturas, no reglas fijas; exprésalas siempre con lenguaje probabilístico):
+
+1. Uso del color:
+   - Colores cálidos (rojo, amarillo, naranja): podrían reflejar alegría, energía o enojo.
+   - Colores fríos (azul, verde, morado): podrían reflejar calma, tristeza o tranquilidad.
+   - Colores oscuros o apagados: podrían indicar miedo, tristeza o inseguridad.
+2. Trazos y presión aparente:
+   - Trazos fuertes o marcados: posible intensidad emocional, enojo o ansiedad.
+   - Trazos suaves o débiles: posible timidez, tristeza o baja energía.
+3. Formas y composición:
+   - Figuras grandes: posible seguridad o necesidad de destacar.
+   - Figuras pequeñas: posible inseguridad o introversión.
+   - Elementos repetitivos o desordenados: posible ansiedad o estrés.
+4. Contenido del dibujo: personas, familia, animales o naturaleza; expresiones faciales de los personajes; escenarios (hogar, escuela, lugares abiertos o cerrados).
+5. Espacio y distribución: uso del espacio (centrado, disperso, vacío); elementos aislados o agrupados; posibles omisiones.
+
+El contexto del niño y el contexto cultural pueden cambiar el significado de un mismo rasgo; tenlo en cuenta al interpretar.
 
 Reglas de lenguaje (obligatorias):
 - Usa lenguaje orientativo y tentativo ("podría sugerir", "parece", "podría estar relacionado con"). Nunca uses lenguaje clínico ni diagnóstico ("el niño padece", "tiene un trastorno").
