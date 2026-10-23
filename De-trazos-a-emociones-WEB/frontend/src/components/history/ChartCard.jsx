@@ -11,7 +11,7 @@ const ChartCard = ({ activeChildName = '' }) => {
         </div>
         <div style={{display: 'flex', gap: '8px'}}>
           <button style={{background: 'var(--purple-dim)', color: 'var(--purple-light)', border: 'none', borderRadius: '10px', padding: '6px 14px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans', sans-serif"}}>8 sem</button>
-          <button className="btn-outline-small">3 meses</button>
+          <button className="btn-outline-small" disabled title="Próximamente" style={{opacity: 0.55, cursor: 'not-allowed'}}>3 meses</button>
         </div>
       </div>
       <div className="chart-wrap">

@@ -33,7 +33,7 @@ const SessionsList = ({ sessions = [], activeChildName = '' }) => {
           <div className="card-label">Registro de sesiones</div>
           <div className="card-title">Todos los análisis de {activeChildName || 'este niño'}</div>
         </div>
-        <button className="btn-outline-small">Exportar PDF</button>
+        <button className="btn-outline-small" disabled title="Próximamente" style={{opacity: 0.55, cursor: 'not-allowed'}}>Exportar PDF</button>
       </div>
       <div className="sessions-body">
         {sessions.length === 0 ? (

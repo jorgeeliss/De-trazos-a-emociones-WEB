@@ -60,7 +60,7 @@ const WeeklySummary = ({ barsHeight }) => {
           <div style={{fontSize: '32px', marginBottom: '12px', animation: 'float 4s infinite ease-in-out'}}>🔔</div>
           <div className="alert-title">Atención necesaria</div>
           <div className="alert-sub">Sofía ha mostrado emociones negativas por 3 sesiones seguidas. Podría ser útil hablar con su profesora o un especialista.</div>
-          <button className="alert-action">Contactar especialista →</button>
+          <button className="alert-action" disabled title="Próximamente" style={{opacity: 0.6, cursor: 'not-allowed'}}>Contactar especialista →</button>
         </div>
 
         <div className="dashboard-card" style={{padding: '22px', animation: 'fadeUp 0.6s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both'}}>
@@ -76,11 +76,11 @@ const WeeklySummary = ({ barsHeight }) => {
               <span className="qa-icon">📊</span>
               Ver historial
             </div>
-            <div className="qa-btn">
+            <div className="qa-btn" title="Próximamente" style={{opacity: 0.5, cursor: 'not-allowed'}}>
               <span className="qa-icon">📄</span>
               Exportar PDF
             </div>
-            <div className="qa-btn">
+            <div className="qa-btn" title="Próximamente" style={{opacity: 0.5, cursor: 'not-allowed'}}>
               <span className="qa-icon">💬</span>
               Compartir
             </div>

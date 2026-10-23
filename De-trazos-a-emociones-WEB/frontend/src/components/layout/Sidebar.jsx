@@ -28,21 +28,21 @@ const Sidebar = ({ active }) => {
           <circle cx="12" cy="12" r="9" />
         </svg>
       </div>
-      <div className={`nav-item ${active === 'children' ? 'active' : ''}`} title="Niños">
+      <div className="nav-item" title="Niños (Próximamente)" style={{opacity: 0.4, cursor: 'not-allowed'}}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <circle cx="9" cy="7" r="4" />
           <path d="M3 21v-2a4 4 0 0 1 4-4h4" />
           <circle cx="17" cy="17" r="4" />
         </svg>
       </div>
-      <div className={`nav-item ${active === 'reports' ? 'active' : ''}`} title="Reportes">
+      <div className="nav-item" title="Reportes (Próximamente)" style={{opacity: 0.4, cursor: 'not-allowed'}}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
           <path d="M14 2v6h6M9 13h6M9 17h4" />
         </svg>
       </div>
       <div style={{ flex: 1 }}></div>
-      <div className="nav-item" title="Configuración">
+      <div className="nav-item" title="Configuración (Próximamente)" style={{opacity: 0.4, cursor: 'not-allowed'}}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <circle cx="12" cy="12" r="3" />
           <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />

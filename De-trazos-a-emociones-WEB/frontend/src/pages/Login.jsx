@@ -60,7 +60,7 @@ const handleSubmit = async (e) => {
           </div>
 
           <div className="form-header">
-            <h1>SIGN IN</h1>
+            <h1>Iniciar sesión</h1>
             <p>Inicia sesión con tu correo electrónico</p>
           </div>
 

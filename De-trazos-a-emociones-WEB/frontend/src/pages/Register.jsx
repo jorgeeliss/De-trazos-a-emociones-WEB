@@ -68,7 +68,7 @@ const Register = () => {
           </div>
 
           <div className="form-header">
-            <h1>SIGN UP</h1>
+            <h1>Crear cuenta</h1>
             <p>Crea tu cuenta y empieza el análisis</p>
           </div>
 
