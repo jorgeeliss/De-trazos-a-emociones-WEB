@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Settings, Plus, FileText, Share2, ArrowRight } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
 import './Dashboard.css';
 import { api } from '../api';
+import { emotionVisual, emocionPredominante } from '../utils/emociones';
 
 import Sidebar from '../components/layout/Sidebar';
 import ChildSwitcher from '../components/dashboard/ChildSwitcher';
@@ -12,11 +11,9 @@ import ActivitiesSection from '../components/dashboard/ActivitiesSection';
 import ComparisonSection from '../components/dashboard/ComparisonSection';
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const [activeChild, setActiveChild] = useState('sofia');
+  const [activeChild, setActiveChild] = useState(null);
   const [historyData, setHistoryData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [actDones, setActDones] = useState([true, false, false]);
+  const [actDones, setActDones] = useState([false, false, false]);
 
   const toggleActDone = (index) => {
     const newActDones = [...actDones];
@@ -24,28 +21,37 @@ const Dashboard = () => {
     setActDones(newActDones);
   };
 
-  const [barsHeight, setBarsHeight] = useState(['0px', '0px', '0px', '0px', '0px', '0px', '0px']);
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setBarsHeight(['32px', '24px', '40px', '48px', '52px', '56px', '8px']);
-    }, 300);
-    return () => clearTimeout(timer);
+    const loadDashboard = async () => {
+      try {
+        const data = await api.getAnalisis();
+        setHistoryData(data);
+      } catch (error) {
+        console.error('Error cargando dashboard:', error);
+      }
+    };
+    loadDashboard();
   }, []);
 
-  useEffect(() => {
-  const loadDashboard = async () => {
-    try {
-      const data = await api.getAnalisis();
-      setHistoryData(data);
-    } catch (error) {
-      console.error('Error cargando dashboard:', error);
-    } finally {
-      setLoading(false);
+  // Agrupar los análisis reales por niño (hoy identificado por el nombre del
+  // contexto; en el Paso 4 se reemplazará por un modelo de Niño con ninoId).
+  const children = useMemo(() => {
+    const map = new Map();
+    for (const a of historyData) {
+      const nombre = (a.contexto_nino?.nombre || '').trim() || 'Sin nombre';
+      if (!map.has(nombre)) {
+        map.set(nombre, { nombre, edad: a.contexto_nino?.edad || '', analisis: [] });
+      }
+      map.get(nombre).analisis.push(a);
     }
-  };
+    return [...map.values()];
+  }, [historyData]);
 
-  loadDashboard();
-}, []);
+  // El niño seleccionado por defecto es el primero; al hacer clic se actualiza activeChild.
+  const selected = children.find((c) => c.nombre === activeChild) || children[0] || null;
+  const nombreUsuario = JSON.parse(localStorage.getItem('user') || '{}').nombre || 'Usuario';
+  const emocionSel = selected ? emocionPredominante(selected.analisis) : null;
+  const emojiSel = emotionVisual(emocionSel || '').emoji;
 
   return (
     <div className="dashboard-container">
@@ -60,29 +66,38 @@ const Dashboard = () => {
         <div className="welcome">
           <div className="welcome-left">
             <div className="welcome-greeting">
-              👋 Hola, {JSON.parse(localStorage.getItem('user') || '{}').nombre || 'Usuario'}
-              </div>
-                <div className="welcome-title">
-              ¿Cómo está <span>{historyData[0]?.contexto_nino?.nombre || 'tu hijo/a'}</span> hoy?
+              👋 Hola, {nombreUsuario}
             </div>
-              <div className="welcome-sub">
-                {historyData.length > 0
-                  ? `Tenemos ${historyData.length} análisis registrados para este usuario.`
-                  : 'Aún no tienes análisis registrados. Realiza tu primer análisis para comenzar el seguimiento.'}
-              </div>          </div>
-          <div className="welcome-emoji">😟</div>
+            <div className="welcome-title">
+              ¿Cómo está <span>{selected?.nombre && selected.nombre !== 'Sin nombre' ? selected.nombre : 'tu niño/a'}</span> hoy?
+            </div>
+            <div className="welcome-sub">
+              {historyData.length > 0
+                ? `Tienes ${children.length} niño(s) con ${historyData.length} análisis registrados.`
+                : 'Aún no tienes análisis registrados. Realiza tu primer análisis para comenzar el seguimiento.'}
+            </div>
+          </div>
+          <div className="welcome-emoji">{historyData.length > 0 ? emojiSel : '🙂'}</div>
         </div>
 
-        <ChildSwitcher activeChild={activeChild} setActiveChild={setActiveChild} />
+        {historyData.length === 0 ? (
+          <div className="dashboard-card" style={{ padding: '32px', textAlign: 'center', color: 'var(--muted)' }}>
+            Todavía no hay análisis. Crea el primero desde <strong>Nuevo análisis</strong> para ver aquí el seguimiento del niño.
+          </div>
+        ) : (
+          <>
+            <ChildSwitcher ninos={children} activeChild={selected?.nombre} setActiveChild={setActiveChild} />
 
-        <WeeklySummary barsHeight={barsHeight} />
+            <WeeklySummary child={selected} />
 
-        <TimelineSection />
+            <TimelineSection child={selected} />
 
-        <div className="grid-bottom">
-          <ActivitiesSection actDones={actDones} toggleActDone={toggleActDone} />
-          <ComparisonSection />
-        </div>
+            <div className="grid-bottom">
+              <ActivitiesSection actDones={actDones} toggleActDone={toggleActDone} />
+              <ComparisonSection />
+            </div>
+          </>
+        )}
       </main>
     </div>
   );
