@@ -7,9 +7,12 @@ import History from './pages/History';
 import Terminos from './pages/Terminos';
 import Privacidad from './pages/Privacidad';
 import ProtectedRoute from './ProtectedRoute';
+import { AnalisisSesionProvider } from './context/AnalisisSesionContext';
+import AnalisisToast from './components/common/AnalisisToast';
 
 function App() {
   return (
+    <AnalisisSesionProvider>
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
@@ -43,6 +46,8 @@ function App() {
       }
       />
           </Routes>
+      <AnalisisToast />
+    </AnalisisSesionProvider>
         );
       }
 

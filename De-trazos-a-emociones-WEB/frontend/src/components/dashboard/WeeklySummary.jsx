@@ -1,17 +1,22 @@
 import { useNavigate } from 'react-router-dom';
 import './WeeklySummary.css';
 import { emotionVisual, intensityInfo, emocionPredominante, esEmocionNegativa, formatFechaCorta } from '../../utils/emociones';
+import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
 
 const alturaPorIntensidad = { 1: '22px', 2: '40px', 3: '56px' };
 
 const WeeklySummary = ({ child }) => {
   const navigate = useNavigate();
+  const { precargarContexto, nuevaSesion } = useAnalisisSesion();
   const analisis = child?.analisis || [];
   const nombre = child?.nombre && child.nombre !== 'Sin nombre' ? child.nombre : 'el niño';
 
   // Lleva el contexto del niño al Analyzer para no volver a pedirlo todo.
   const contextoNino = analisis[0]?.contexto_nino;
-  const irNuevoAnalisis = () => navigate('/app', contextoNino ? { state: { contexto: contextoNino } } : undefined);
+  const irNuevoAnalisis = () => {
+    if (contextoNino) precargarContexto(contextoNino); else nuevaSesion();
+    navigate('/app');
+  };
 
   // Línea de tiempo: hasta los 7 análisis más recientes, en orden cronológico.
   const recientes = analisis.slice(0, 7).reverse();

@@ -4,6 +4,7 @@ import { Plus, AlertTriangle } from 'lucide-react';
 import './History.css';
 import { api } from '../api';
 import { esEmocionNegativa } from '../utils/emociones';
+import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 
 import Sidebar from '../components/layout/Sidebar';
 import HistoryChildBar from '../components/history/HistoryChildBar';
@@ -19,6 +20,7 @@ const INDEP = '__independientes__';
 
 const History = () => {
   const navigate = useNavigate();
+  const { precargarContexto, nuevaSesion } = useAnalisisSesion();
   const [historyData, setHistoryData] = useState([]);
   const [activeChild, setActiveChild] = useState('');
   const [loading, setLoading] = useState(true);
@@ -119,8 +121,9 @@ const History = () => {
             <button
               className="btn-new"
               onClick={() => {
-                const contexto = (!esIndep && activeSessions[0]?.contexto_nino) || undefined;
-                navigate('/app', contexto ? { state: { contexto } } : undefined);
+                const contexto = (!esIndep && activeSessions[0]?.contexto_nino) || null;
+                if (contexto) precargarContexto(contexto); else nuevaSesion();
+                navigate('/app');
               }}
             >
               <Plus size={16} />

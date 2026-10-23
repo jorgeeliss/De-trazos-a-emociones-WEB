@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import './ChildSwitcher.css';
 import { emotionVisual, emocionPredominante, textoEdad } from '../../utils/emociones';
 import { api } from '../../api';
+import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
 
 const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) => {
   const navigate = useNavigate();
+  const { nuevaSesion } = useAnalisisSesion();
 
   const handleDelete = async (e, nino) => {
     e.stopPropagation();
@@ -43,7 +45,7 @@ const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) =
           </div>
         );
       })}
-      <div className="add-child" title="Registrar un niño nuevo con su contexto" onClick={() => navigate('/app')}>
+      <div className="add-child" title="Registrar un niño nuevo con su contexto" onClick={() => { nuevaSesion(); navigate('/app'); }}>
         <Plus size={18} />
         Agregar niño
       </div>

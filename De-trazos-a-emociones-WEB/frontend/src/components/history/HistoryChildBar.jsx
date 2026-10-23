@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import './HistoryChildBar.css';
+import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
 
 const HistoryChildBar = ({ childrenList, activeChild, setActiveChild, hayIndependientes, independientesKey }) => {
   const navigate = useNavigate();
+  const { nuevaSesion } = useAnalisisSesion();
   return (
     <div className="child-bar">
       {childrenList && childrenList.map((child, i) => {
@@ -42,7 +44,7 @@ const HistoryChildBar = ({ childrenList, activeChild, setActiveChild, hayIndepen
         </div>
       )}
 
-      <div className="child-pill" style={{borderStyle: 'dashed', cursor: 'pointer'}} title="Registrar un niño nuevo con su contexto" onClick={() => navigate('/app')}>
+      <div className="child-pill" style={{borderStyle: 'dashed', cursor: 'pointer'}} title="Registrar un niño nuevo con su contexto" onClick={() => { nuevaSesion(); navigate('/app'); }}>
         <div className="child-avatar" style={{background: 'rgba(255,255,255,0.05)', color: 'var(--muted)'}}>+</div>
         <span className="child-name" style={{color: 'var(--muted)'}}>Agregar niño</span>
       </div>

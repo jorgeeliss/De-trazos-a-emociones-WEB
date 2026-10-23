@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, CheckCircle } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
 import './AuthCommon.css';
 import { api } from '../api';
+import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { nuevaSesion } = useAnalisisSesion();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -25,6 +27,7 @@ const handleSubmit = async (e) => {
       localStorage.setItem("user", JSON.stringify(data.usuario));
     }
 
+    nuevaSesion();
     navigate('/app');
   } catch (error) {
     alert(error.message);
