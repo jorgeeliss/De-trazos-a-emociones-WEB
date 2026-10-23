@@ -9,6 +9,10 @@ const WeeklySummary = ({ child }) => {
   const analisis = child?.analisis || [];
   const nombre = child?.nombre && child.nombre !== 'Sin nombre' ? child.nombre : 'el niño';
 
+  // Lleva el contexto del niño al Analyzer para no volver a pedirlo todo.
+  const contextoNino = analisis[0]?.contexto_nino;
+  const irNuevoAnalisis = () => navigate('/app', contextoNino ? { state: { contexto: contextoNino } } : undefined);
+
   // Línea de tiempo: hasta los 7 análisis más recientes, en orden cronológico.
   const recientes = analisis.slice(0, 7).reverse();
 
@@ -94,7 +98,7 @@ const WeeklySummary = ({ child }) => {
             Acciones rápidas
           </div>
           <div className="quick-actions">
-            <div className="qa-btn" onClick={() => navigate('/app')}>
+            <div className="qa-btn" onClick={irNuevoAnalisis}>
               <span className="qa-icon">🎨</span>
               Nuevo análisis
             </div>

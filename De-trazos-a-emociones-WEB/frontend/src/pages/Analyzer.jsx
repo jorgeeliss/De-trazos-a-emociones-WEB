@@ -1,23 +1,31 @@
 import { useState, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Analyzer.css';
+import Sidebar from '../components/layout/Sidebar';
 import AnalyzerContext from '../components/analyzer/AnalyzerContext';
 import AnalyzerUpload from '../components/analyzer/AnalyzerUpload';
 import AnalyzerResult from '../components/analyzer/AnalyzerResult';
 import { api } from '../api';
 
 const Analyzer = () => {
+  const location = useLocation();
+  // Si se llega desde un niño ya existente, su contexto viene por el estado de
+  // navegación: se precargan los datos y solo se pide el contexto del dibujo.
+  const contextoInicial = location.state?.contexto;
+  const ninoConocido = !!(contextoInicial && contextoInicial.nombre);
+
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    nombre: '',
-    edad: '',
-    genero: '',
-    situacion_actual: '',
-    diagnostico_previo: '',
-    comportamiento: '',
+  const [formData, setFormData] = useState(() => ({
+    nombre: contextoInicial?.nombre || '',
+    edad: contextoInicial?.edad || '',
+    genero: contextoInicial?.genero || '',
+    situacion_actual: contextoInicial?.situacion_actual || '',
+    diagnostico_previo: contextoInicial?.diagnostico_previo || '',
+    comportamiento: contextoInicial?.comportamiento || '',
     dibujo_espontaneo: '',
     comento_mientras: '',
     tiempo_dibujo: ''
-  });
+  }));
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -182,13 +190,18 @@ const Analyzer = () => {
 
   return (
     <div className="analyzer-wrapper">
+      <Sidebar active="app" />
       <div className="bg-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div className="container">
-        
+
         <header className="header">
           <div className="badge"><span className="badge-dot"></span> Psicología infantil · IA</div>
           <h1>De trazos<br/>a <em>emociones</em></h1>
-          <p className="header-sub">Completa el contexto del niño y sube su dibujo para obtener un análisis emocional personalizado y profundo.</p>
+          <p className="header-sub">
+            {ninoConocido
+              ? `Analizando un nuevo dibujo de ${formData.nombre}. Revisa la situación y sube el dibujo.`
+              : 'Completa el contexto del niño y sube su dibujo para obtener un análisis emocional personalizado y profundo.'}
+          </p>
         </header>
 
         <div className="steps">
@@ -207,11 +220,12 @@ const Analyzer = () => {
 
         {/* PASO 1: CONTEXTO */}
         {step === 1 && (
-          <AnalyzerContext 
-            formData={formData} 
-            handleInputChange={handleInputChange} 
-            handleRadioChange={handleRadioChange} 
-            setStep={setStep} 
+          <AnalyzerContext
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleRadioChange={handleRadioChange}
+            setStep={setStep}
+            ninoConocido={ninoConocido}
           />
         )}
 

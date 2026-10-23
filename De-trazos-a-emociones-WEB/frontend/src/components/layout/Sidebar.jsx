@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 
@@ -12,6 +11,14 @@ const Sidebar = ({ active }) => {
           <path d="M8 14s1.5 2 4 2 4-2 4-2" />
           <line x1="9" y1="9" x2="9.01" y2="9" />
           <line x1="15" y1="9" x2="15.01" y2="9" />
+        </svg>
+      </div>
+      <div className={`nav-item ${active === 'app' ? 'active' : ''}`} title="Analizar dibujo" onClick={() => navigate('/app')}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 19l7-7 3 3-7 7-3-3z" />
+          <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+          <path d="M2 2l7.586 7.586" />
+          <circle cx="11" cy="11" r="2" />
         </svg>
       </div>
       <div className={`nav-item ${active === 'dashboard' ? 'active' : ''}`} title="Dashboard" onClick={() => navigate('/dashboard')}>

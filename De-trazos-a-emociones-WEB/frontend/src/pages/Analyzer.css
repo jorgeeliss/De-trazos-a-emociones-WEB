@@ -5,6 +5,7 @@
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
+  padding-left: 72px; /* espacio para el sidebar fijo */
 }
 
 /* Fondo degradado animado */

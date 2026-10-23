@@ -91,7 +91,13 @@ const History = () => {
             <div style={{fontSize: '14px', color: 'var(--muted)', marginTop: '6px', fontWeight: 400}}>Seguimiento longitudinal por niño · Últimas 8 semanas</div>
           </div>
           <div className="topbar-right">
-            <button className="btn-new" onClick={() => navigate('/app')}>
+            <button
+              className="btn-new"
+              onClick={() => {
+                const contexto = activeSessions[0]?.contexto_nino;
+                navigate('/app', contexto ? { state: { contexto } } : undefined);
+              }}
+            >
               <Plus size={16} />
               Nuevo análisis
             </button>

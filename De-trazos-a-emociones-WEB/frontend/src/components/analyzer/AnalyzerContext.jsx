@@ -1,45 +1,68 @@
-import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import './AnalyzerContext.css';
 
-const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setStep }) => {
+const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setStep, ninoConocido }) => {
   return (
     <div id="screen-1" className="screen">
-      <div className="card">
-        <div className="card-header">
-          <div className="card-icon">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-              <circle cx="9" cy="6" r="3.5" />
-              <path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" />
-            </svg>
+      {ninoConocido ? (
+        <div className="card nino-conocido-card">
+          <div className="card-header">
+            <div className="card-icon">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <circle cx="9" cy="6" r="3.5" />
+                <path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" />
+              </svg>
+            </div>
+            <div>
+              <div className="card-title">{formData.nombre || 'Niño sin nombre'}</div>
+              <div className="card-subtitle">
+                {[formData.edad ? `${formData.edad} años` : null, formData.genero].filter(Boolean).join(' · ') || 'Datos ya registrados'}
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="card-title">Información básica</div>
-            <div className="card-subtitle">Datos generales del niño</div>
-          </div>
-        </div>
-        <div className="card-body">
-          <div className="form-grid cols-3">
-            <div className="field">
-              <label>Nombre <span className="optional">Opcional</span></label>
-              <input type="text" id="nombre" value={formData.nombre} onChange={handleInputChange} placeholder="Ej: Sofía" />
-            </div>
-            <div className="field">
-              <label>Edad</label>
-              <input type="number" id="edad" value={formData.edad} onChange={handleInputChange} placeholder="Ej: 7" min="2" max="17" />
-            </div>
-            <div className="field">
-              <label>Género</label>
-              <select id="genero" value={formData.genero} onChange={handleInputChange}>
-                <option value="">Seleccionar</option>
-                <option value="niña">Niña</option>
-                <option value="niño">Niño</option>
-                <option value="no especificado">Prefiero no decirlo</option>
-              </select>
-            </div>
+          <div className="card-body">
+            <p style={{ margin: 0, fontSize: '13.5px', color: 'var(--muted, #6b7280)' }}>
+              Se reutilizan los datos de este niño. Solo necesitas revisar la situación actual y subir el nuevo dibujo.
+            </p>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="card">
+          <div className="card-header">
+            <div className="card-icon">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+                <circle cx="9" cy="6" r="3.5" />
+                <path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" />
+              </svg>
+            </div>
+            <div>
+              <div className="card-title">Información básica</div>
+              <div className="card-subtitle">Datos generales del niño</div>
+            </div>
+          </div>
+          <div className="card-body">
+            <div className="form-grid cols-3">
+              <div className="field">
+                <label>Nombre <span className="optional">Opcional</span></label>
+                <input type="text" id="nombre" value={formData.nombre} onChange={handleInputChange} placeholder="Ej: Sofía" />
+              </div>
+              <div className="field">
+                <label>Edad</label>
+                <input type="number" id="edad" value={formData.edad} onChange={handleInputChange} placeholder="Ej: 7" min="2" max="17" />
+              </div>
+              <div className="field">
+                <label>Género</label>
+                <select id="genero" value={formData.genero} onChange={handleInputChange}>
+                  <option value="">Seleccionar</option>
+                  <option value="niña">Niña</option>
+                  <option value="niño">Niño</option>
+                  <option value="no especificado">Prefiero no decirlo</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="card">
         <div className="card-header">
