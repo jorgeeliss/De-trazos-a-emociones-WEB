@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--text);
   animation: floatIcon 3.5s ease-in-out infinite alternate;
 }
 
@@ -250,7 +250,7 @@ details summary::-webkit-details-marker {
   gap: 10px;
   padding: 10px 14px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border);
   border-radius: 10px;
   transition: background 0.2s ease, transform 0.2s ease;
 }

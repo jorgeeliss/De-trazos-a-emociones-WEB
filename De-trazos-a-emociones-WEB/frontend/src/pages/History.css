@@ -1,25 +1,4 @@
-:root {
-  --bg-dark: #0a0816;
-  --bg-panel: #0d0a1b;
-  --surface: #13131f;
-  --card: #181828;
-  --card2: #1e1e30;
-  --border: rgba(255, 255, 255, 0.07);
-  --border2: rgba(255, 255, 255, 0.12);
-  --purple: #8b79f2;
-  --purple-light: #a89ee0;
-  --purple-dim: rgba(139, 121, 242, 0.15);
-  --purple-glow: rgba(139, 121, 242, 0.4);
-  --text: #ffffff;
-  --muted: #a1a1aa;
-  --muted2: #9490a8;
-  --teal: #2dd4bf;
-  --amber: #fbbf24;
-  --coral: #f87171;
-  --warm: #ff9f6b;
-  --green: #4ade80;
-  --blue: #60a5fa;
-}
+/* Los tokens de color viven en index.css (tema claro/oscuro + paletas). */
 
 .history-wrapper {
   font-family: 'DM Sans', sans-serif;
@@ -105,7 +84,7 @@
   align-items: center;
   gap: 8px;
   background: var(--purple);
-  color: #fff;
+  color: var(--text);
   border: none;
   border-radius: 12px;
   padding: 12px 20px;

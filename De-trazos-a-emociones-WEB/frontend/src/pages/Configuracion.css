@@ -1,0 +1,148 @@
+.config-page {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text);
+  font-family: var(--sans);
+  padding: 2.5rem 1.5rem;
+}
+
+.config-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.config-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--muted);
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+  margin-bottom: 1.5rem;
+}
+
+.config-back:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.config-title {
+  font-family: var(--heading);
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 0.4rem;
+}
+
+.config-sub {
+  color: var(--muted);
+  font-size: 1rem;
+  margin: 0 0 2.5rem;
+}
+
+.config-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.config-section h2 {
+  font-family: var(--heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 1.25rem;
+}
+
+/* Tema claro / oscuro */
+.tema-opciones {
+  display: flex;
+  gap: 12px;
+}
+
+.tema-opt {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--card2);
+  border: 2px solid var(--border);
+  color: var(--muted);
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+}
+
+.tema-opt:hover {
+  color: var(--text);
+}
+
+.tema-opt.active {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--accent-dim);
+}
+
+/* Paletas */
+.paleta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.paleta-opt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: var(--card2);
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+  color: var(--text);
+}
+
+.paleta-opt:hover {
+  border-color: var(--border2);
+}
+
+.paleta-opt.active {
+  border-color: var(--accent);
+}
+
+.paleta-swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.paleta-nombre {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.config-nota {
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 0.5rem;
+}

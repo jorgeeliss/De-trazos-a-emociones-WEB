@@ -7,13 +7,16 @@ import History from './pages/History';
 import Terminos from './pages/Terminos';
 import Privacidad from './pages/Privacidad';
 import Admin from './pages/Admin';
+import Configuracion from './pages/Configuracion';
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
+import { ThemeProvider } from './context/ThemeContext';
 import { AnalisisSesionProvider } from './context/AnalisisSesionContext';
 import AnalisisToast from './components/common/AnalisisToast';
 
 function App() {
   return (
+    <ThemeProvider>
     <AnalisisSesionProvider>
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -56,9 +59,19 @@ function App() {
         </AdminRoute>
       }
       />
+
+    <Route
+      path="/configuracion"
+      element={
+        <ProtectedRoute>
+          <Configuracion />
+        </ProtectedRoute>
+      }
+      />
           </Routes>
       <AnalisisToast />
     </AnalisisSesionProvider>
+    </ThemeProvider>
         );
       }
 

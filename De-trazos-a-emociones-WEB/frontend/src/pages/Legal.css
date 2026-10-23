@@ -1,6 +1,6 @@
 .legal-wrapper {
   min-height: 100vh;
-  background: var(--bg-dark, #0a0816);
+  background: var(--bg-dark);
   color: var(--text, #ffffff);
   font-family: 'DM Sans', sans-serif;
   padding: 48px 20px 80px;
@@ -58,7 +58,7 @@
 .legal-meta {
   margin-top: 40px;
   padding-top: 20px;
-  border-top: 1px solid var(--border, rgba(255, 255, 255, 0.07));
+  border-top: 1px solid var(--border);
   font-size: 13px;
   color: var(--muted, #a1a1aa);
 }

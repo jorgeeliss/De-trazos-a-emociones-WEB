@@ -44,7 +44,7 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-.adm-close:hover { background: rgba(255, 255, 255, 0.12); }
+.adm-close:hover { background: var(--border2); }
 
 .adm-date {
   font-size: 13px;
@@ -107,7 +107,7 @@
   gap: 6px;
   background: var(--purple, #8b79f2);
   border: none;
-  color: #fff;
+  color: var(--text);
   border-radius: 10px;
   padding: 8px 14px;
   font-size: 13px;
@@ -151,7 +151,7 @@
   align-items: center;
   gap: 5px;
   background: rgba(0, 0, 0, 0.6);
-  color: #fff;
+  color: var(--text);
   font-size: 12px;
   padding: 5px 10px;
   border-radius: 8px;

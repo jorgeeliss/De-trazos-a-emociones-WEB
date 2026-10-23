@@ -2,19 +2,117 @@
   --sans: 'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
-  
-  /* Theme Colors for Login/Register */
+
+  /* ===== TEMA OSCURO (por defecto) ===== */
+
+  /* Neutros */
   --bg-dark: #0a0816;
-  --text-white: #ffffff;
-  --text-gray: #a1a1aa;
-  
-  /* Input & Button colors based on requested design */
-  --input-bg: #2b2827; /* Dark cafe/grey */
+  --bg-panel: #0d0a1b;
+  --surface: #13131f;
+  --card: #181828;
+  --card2: #1e1e30;
+  --border: rgba(255, 255, 255, 0.07);
+  --border2: rgba(255, 255, 255, 0.12);
+  --border-solid: #2b2740;
+  --text: #ffffff;
+  --text-white: #ffffff;   /* alias heredado */
+  --muted: #a1a1aa;
+  --muted2: #9490a8;
+  --text-gray: #a1a1aa;    /* alias heredado */
+  --input-bg: #2b2827;
   --input-border: #3b3735;
-  --btn-bg: #19142c; /* Dark purple */
+  --btn-bg: #19142c;
   --btn-border: #261f40;
+  --overlay: rgba(5, 4, 12, 0.7);
+
+  /* Acento (paleta violeta por defecto) */
+  --accent: #8b79f2;
+  --accent-strong: #7c5cfc;
+  --accent-soft: #a89ee0;
+  --accent-dim: rgba(139, 121, 242, 0.15);
+  --accent-glow: rgba(139, 121, 242, 0.4);
+  --purple: #8b79f2;                       /* alias heredado */
+  --purple-light: #a89ee0;
+  --purple-dim: rgba(139, 121, 242, 0.15);
+  --purple-glow: rgba(139, 121, 242, 0.4);
   --accent-purple: #8b79f2;
   --accent-purple-glow: rgba(139, 121, 242, 0.4);
+
+  /* Semánticos (iguales en claro y oscuro) */
+  --teal: #2dd4bf;
+  --amber: #fbbf24;
+  --coral: #f87171;
+  --warm: #ff9f6b;
+  --green: #4ade80;
+  --blue: #60a5fa;
+}
+
+/* ===== TEMA CLARO ===== */
+/* Mayor especificidad (:root[...] = 0,2,0) para ganarle a cualquier :root. */
+:root[data-theme="light"] {
+  --bg-dark: #f4f3fb;
+  --bg-panel: #ffffff;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --card2: #f2f0fa;
+  --border: rgba(26, 22, 48, 0.1);
+  --border2: rgba(26, 22, 48, 0.16);
+  --border-solid: #e2def0;
+  --text: #1a1626;
+  --text-white: #1a1626;
+  --muted: #5c5870;
+  --muted2: #6b6880;
+  --text-gray: #5c5870;
+  --input-bg: #f1eff9;
+  --input-border: #d9d5ea;
+  --btn-bg: var(--accent);
+  --btn-border: var(--accent-strong);
+  --overlay: rgba(40, 35, 70, 0.4);
+  --purple-dim: rgba(139, 121, 242, 0.14);
+  --accent-dim: rgba(139, 121, 242, 0.14);
+}
+
+/* ===== PALETAS DE ACENTO (en claro y oscuro) ===== */
+:root[data-palette="teal"] {
+  --accent: #14b8a6;
+  --accent-strong: #0d9488;
+  --accent-soft: #5eead4;
+  --accent-dim: rgba(20, 184, 166, 0.15);
+  --accent-glow: rgba(20, 184, 166, 0.4);
+  --purple: #14b8a6;
+  --purple-light: #5eead4;
+  --purple-dim: rgba(20, 184, 166, 0.15);
+  --purple-glow: rgba(20, 184, 166, 0.4);
+  --accent-purple: #14b8a6;
+  --accent-purple-glow: rgba(20, 184, 166, 0.4);
+}
+
+:root[data-palette="durazno"] {
+  --accent: #f98a6c;
+  --accent-strong: #f2704f;
+  --accent-soft: #ffc3ad;
+  --accent-dim: rgba(249, 138, 108, 0.15);
+  --accent-glow: rgba(249, 138, 108, 0.4);
+  --purple: #f98a6c;
+  --purple-light: #ffc3ad;
+  --purple-dim: rgba(249, 138, 108, 0.15);
+  --purple-glow: rgba(249, 138, 108, 0.4);
+  --accent-purple: #f98a6c;
+  --accent-purple-glow: rgba(249, 138, 108, 0.4);
+}
+
+:root[data-palette="oceano"] {
+  --accent: #60a5fa;
+  --accent-strong: #3b82f6;
+  --accent-soft: #93c5fd;
+  --accent-dim: rgba(96, 165, 250, 0.15);
+  --accent-glow: rgba(96, 165, 250, 0.4);
+  --purple: #60a5fa;
+  --purple-light: #93c5fd;
+  --purple-dim: rgba(96, 165, 250, 0.15);
+  --purple-glow: rgba(96, 165, 250, 0.4);
+  --accent-purple: #60a5fa;
+  --accent-purple-glow: rgba(96, 165, 250, 0.4);
 }
 
 body {
@@ -22,8 +120,8 @@ body {
   padding: 0;
   box-sizing: border-box;
   font-family: var(--sans);
-  background-color: #0a0816;
-  color: #ffffff;
+  background-color: var(--bg-dark);
+  color: var(--text);
 }
 
 *, *::before, *::after {

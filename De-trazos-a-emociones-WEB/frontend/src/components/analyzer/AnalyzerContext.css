@@ -104,7 +104,7 @@
 
 .radio-opt.selected {
   background: var(--purple, #8b79f2);
-  color: #ffffff;
+  color: var(--text);
 }
 
 .field-hint {

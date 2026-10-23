@@ -11,8 +11,8 @@
 }
 
 .ind-card {
-  background: var(--card, #181828);
-  border: 1px solid var(--border, rgba(255, 255, 255, 0.07));
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
@@ -21,7 +21,7 @@
 
 .ind-card:hover {
   transform: translateY(-3px);
-  border-color: var(--border2, rgba(255, 255, 255, 0.12));
+  border-color: var(--border2);
 }
 
 .ind-thumb {
@@ -47,7 +47,7 @@
   right: 8px;
   background: rgba(0, 0, 0, 0.55);
   border: none;
-  color: #fff;
+  color: var(--text);
   width: 30px;
   height: 30px;
   border-radius: 8px;
@@ -110,9 +110,9 @@
 .ind-assign select {
   flex: 1;
   min-width: 0;
-  background: var(--card2, #1e1e30);
+  background: var(--card2);
   color: var(--text, #ffffff);
-  border: 1px solid var(--border, rgba(255, 255, 255, 0.07));
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 7px 8px;
   font-size: 12px;
@@ -123,7 +123,7 @@
 .ind-assign-btn {
   background: var(--purple, #8b79f2);
   border: none;
-  color: #fff;
+  color: var(--text);
   border-radius: 8px;
   padding: 7px 12px;
   font-size: 12px;

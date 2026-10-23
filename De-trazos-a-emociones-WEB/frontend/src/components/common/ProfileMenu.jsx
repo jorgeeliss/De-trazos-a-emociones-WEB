@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Repeat, Trash2, Camera, ChevronDown, AlertTriangle } from 'lucide-react';
+import { LogOut, Repeat, Trash2, Camera, ChevronDown, AlertTriangle, Settings } from 'lucide-react';
 import { api } from '../../api';
 import './ProfileMenu.css';
 
@@ -159,6 +159,17 @@ const ProfileMenu = () => {
           >
             <Camera size={17} />
             {subiendo ? 'Subiendo…' : fotoUrl ? 'Cambiar foto' : 'Agregar foto'}
+          </button>
+
+          <button
+            className="profile-item"
+            onClick={() => {
+              setAbierto(false);
+              navigate('/configuracion');
+            }}
+          >
+            <Settings size={17} />
+            Configuración
           </button>
 
           <button className="profile-item" onClick={cerrarSesion}>

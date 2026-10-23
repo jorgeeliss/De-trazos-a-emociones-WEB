@@ -81,7 +81,7 @@
 }
 
 .admin-tab {
-  background: #181828;
+  background: var(--card);
   border: 1px solid var(--input-border);
   color: var(--text-gray);
   padding: 8px 16px;
@@ -108,7 +108,7 @@
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: #181828;
+  background: var(--card);
   border: 1px solid var(--input-border);
   color: var(--text-gray);
   display: flex;
@@ -152,7 +152,7 @@
 }
 
 .admin-card {
-  background: #181828;
+  background: var(--card);
   border: 1px solid var(--input-border);
   border-radius: 14px;
   padding: 1.1rem 1.25rem;

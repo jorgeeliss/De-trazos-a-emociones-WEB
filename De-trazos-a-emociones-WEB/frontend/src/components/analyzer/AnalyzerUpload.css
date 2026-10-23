@@ -42,7 +42,7 @@
 .upload-icon svg {
   width: 28px;
   height: 28px;
-  color: #ffffff;
+  color: var(--text);
 }
 
 .upload-title {

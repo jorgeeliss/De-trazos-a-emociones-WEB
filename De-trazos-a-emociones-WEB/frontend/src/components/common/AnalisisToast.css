@@ -9,7 +9,7 @@
   max-width: 320px;
   padding: 14px 18px;
   border-radius: 14px;
-  background: var(--card, #181828);
+  background: var(--card);
   border: 1px solid var(--purple, #8b79f2);
   color: var(--text, #ffffff);
   font-family: 'DM Sans', sans-serif;
