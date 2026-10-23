@@ -39,6 +39,11 @@ const upload = multer({ dest: uploadsDir });
 
 const OLLAMA_URL = "http://127.0.0.1:11434/api/chat";
 
+// Modelo de visión usado para el análisis. Configurable por .env: minicpm-v es
+// pequeño y rápido pero de redacción limitada; modelos más grandes como
+// llama3.2-vision dan mejor análisis pero son más lentos (sobre todo en CPU).
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "minicpm-v";
+
 // Parámetros de generación de Ollama. Configurables por .env para poder bajarlos
 // en equipos sin GPU o con pocos recursos (el análisis en CPU puede ser muy lento
 // con valores altos, y un num_predict menor también acota los bucles de repetición).
@@ -253,7 +258,7 @@ app.post(
         const imagenBase64 = fs.readFileSync(processedImagePath, { encoding: "base64" });
 
         const response = await axios.post(OLLAMA_URL, {
-            model: "minicpm-v",
+            model: OLLAMA_MODEL,
             format: resolverFormatoOllama(),
             messages: [
                 {
@@ -273,11 +278,11 @@ Reglas de lenguaje (obligatorias):
 - Recuerda que un mismo trazo puede significar cosas distintas según el niño y su contexto.
 
 Devuelve un objeto JSON con EXACTAMENTE estas claves:
-- "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). Enumera entre 4 y 10 rasgos DISTINTOS; no repitas el mismo rasgo ni lo reformules. No incluyas interpretaciones aquí.
-- "interpretacion": texto EXTENSO y detallado (varios párrafos) que relacione CADA rasgo observado con el contexto del niño (si se proporcionó). Explica el porqué de cada posible lectura emocional. Es un campo obligatorio: nunca lo dejes vacío ni con una sola frase.
+- "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). Cada elemento debe ser una FRASE NATURAL Y COMPLETA en español, NUNCA una etiqueta, palabras sueltas ni texto con guiones bajos. Ejemplos del formato correcto: "Lluvia representada con líneas azules en el lado derecho de la hoja", "Un sol con expresión triste en la esquina superior izquierda", "Varias figuras humanas pequeñas en la parte inferior". Enumera entre 4 y 10 rasgos DISTINTOS; no repitas ni reformules el mismo rasgo.
+- "interpretacion": texto EXTENSO y detallado, de MÍNIMO DOS PÁRRAFOS, que relacione CADA rasgo observado con el contexto del niño (si se proporcionó). Explica el porqué de cada posible lectura emocional y desarrolla las ideas; no te limites en la longitud. Es un campo obligatorio: nunca lo dejes vacío ni con una sola frase.
 - "emocion_predominante": la emoción principal que el dibujo podría estar expresando.
 - "intensidad": uno de "baja", "media" o "alta".
-- "lectura_orientativa": síntesis clara para el adulto, de VARIAS frases, con sugerencias concretas de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional. Es un campo obligatorio: nunca lo dejes vacío.
+- "lectura_orientativa": síntesis clara para el adulto, de MÍNIMO UN PÁRRAFO, con sugerencias concretas de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional. Es un campo obligatorio: nunca lo dejes vacío.
 
 Los campos "interpretacion" y "lectura_orientativa" deben ser desarrollados y detallados; no los resumas en una sola línea.
 
