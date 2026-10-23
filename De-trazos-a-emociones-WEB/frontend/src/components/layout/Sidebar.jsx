@@ -58,7 +58,7 @@ const Sidebar = ({ active }) => {
           <circle cx="17" cy="17" r="4" />
         </svg>
       </div>
-      <div className="nav-item" title="Reportes (Próximamente)" style={{opacity: 0.4, cursor: 'not-allowed'}}>
+      <div className={`nav-item ${active === 'reportes' ? 'active' : ''}`} title="Reportes" onClick={() => navigate('/reportes')}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
           <path d="M14 2v6h6M9 13h6M9 17h4" />

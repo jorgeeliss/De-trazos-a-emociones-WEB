@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, FileDown } from 'lucide-react';
 import { api } from '../../api';
-import { exportarPdf } from '../../utils/exportarPdf';
+import { exportarAnalisis } from '../../utils/exportarPdf';
 import './ExportPdfModal.css';
 
 // Convierte el objectURL de la imagen (blob) en dataURL para incrustarlo en el PDF.
@@ -53,7 +53,7 @@ const ExportPdfModal = ({ analisis, imgUrl, onClose }) => {
         .replace(/[̀-ͯ]/g, '')
         .replace(/\s+/g, '-');
 
-      await exportarPdf({
+      await exportarAnalisis({
         detalle: incDetalle ? analisis : null,
         imagenDataUrl,
         historial,

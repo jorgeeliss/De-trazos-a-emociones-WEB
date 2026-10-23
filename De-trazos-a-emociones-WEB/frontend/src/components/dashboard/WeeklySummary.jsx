@@ -1,15 +1,37 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './WeeklySummary.css';
 import { emotionVisual, intensityInfo, emocionPredominante, esEmocionNegativa, formatFechaCorta } from '../../utils/emociones';
 import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
+import { exportarAnalisis } from '../../utils/exportarPdf';
 
 const alturaPorIntensidad = { 1: '22px', 2: '40px', 3: '56px' };
+
+const slug = (s) =>
+  String(s || 'nino').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
 
 const WeeklySummary = ({ child }) => {
   const navigate = useNavigate();
   const { precargarContexto, nuevaSesion } = useAnalisisSesion();
+  const [generandoPdf, setGenerandoPdf] = useState(false);
   const analisis = child?.analisis || [];
   const nombre = child?.nombre && child.nombre !== 'Sin nombre' ? child.nombre : 'el niño';
+
+  const exportarPdfNino = async () => {
+    if (!analisis.length || generandoPdf) return;
+    setGenerandoPdf(true);
+    try {
+      await exportarAnalisis({
+        detalle: null,
+        historial: { nombre, lista: analisis },
+        nombreArchivo: `de-trazos-${slug(child?.nombre)}.pdf`,
+      });
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setGenerandoPdf(false);
+    }
+  };
 
   // Lleva el contexto del niño al Analyzer para no volver a pedirlo todo.
   const contextoNino = analisis[0]?.contexto_nino;
@@ -111,13 +133,14 @@ const WeeklySummary = ({ child }) => {
               <span className="qa-icon">📊</span>
               Ver historial
             </div>
-            <div className="qa-btn" title="Próximamente" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+            <div
+              className="qa-btn"
+              onClick={exportarPdfNino}
+              style={analisis.length === 0 || generandoPdf ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+              title={analisis.length === 0 ? 'Sin análisis para exportar' : 'Exportar el historial en PDF'}
+            >
               <span className="qa-icon">📄</span>
-              Exportar PDF
-            </div>
-            <div className="qa-btn" title="Próximamente" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
-              <span className="qa-icon">💬</span>
-              Compartir
+              {generandoPdf ? 'Generando…' : 'Exportar PDF'}
             </div>
           </div>
         </div>

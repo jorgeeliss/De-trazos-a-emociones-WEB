@@ -1,0 +1,121 @@
+.rep-page {
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text);
+  font-family: var(--sans);
+  padding: 2.5rem 1.5rem;
+}
+
+.rep-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.rep-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--muted);
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+  margin-bottom: 1.5rem;
+}
+.rep-back:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.rep-title {
+  font-family: var(--heading);
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0 0 0.4rem;
+}
+
+.rep-sub {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0 0 2rem;
+}
+
+.rep-empty {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.rep-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 1.75rem;
+}
+
+.rep-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.rep-card-emoji {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.rep-card-info {
+  min-width: 0;
+}
+
+.rep-card-name {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.rep-card-meta {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.rep-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #fff;
+  padding: 13px 22px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all 0.2s ease;
+}
+.rep-download:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+.rep-download:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
