@@ -164,6 +164,125 @@ function parsearRespuestaIA(rawContent) {
     };
 }
 
+// Construye el bloque de contexto del niño para el prompt, a partir de un objeto.
+function construirContextoFinal(ctx = {}) {
+    const {
+        nombre, edad, fecha_nacimiento, genero,
+        situacion_actual, comportamiento, diagnostico_previo,
+        dibujo_espontaneo, comento_mientras, tiempo_dibujo
+    } = ctx;
+
+    const edadCalculada = edadDesdeFecha(fecha_nacimiento) ?? (edad ? parseInt(edad, 10) : null);
+
+    let contextoNino = "";
+    if (nombre || edadCalculada != null || genero) {
+        contextoNino += "## Información del niño\n";
+        if (nombre) contextoNino += `- Nombre: ${nombre}\n`;
+        if (edadCalculada != null) contextoNino += `- Edad: ${edadCalculada} años\n`;
+        if (genero) contextoNino += `- Género: ${genero}\n`;
+        contextoNino += "\n";
+    }
+    if (situacion_actual || comportamiento || diagnostico_previo) {
+        contextoNino += "## Situación actual\n";
+        if (situacion_actual) contextoNino += `- Situación en casa/entorno: ${situacion_actual}\n`;
+        if (comportamiento) contextoNino += `- Comportamiento reciente: ${comportamiento}\n`;
+        if (diagnostico_previo) contextoNino += `- Diagnóstico previo: ${diagnostico_previo}\n`;
+        contextoNino += "\n";
+    }
+    if (dibujo_espontaneo || comento_mientras || tiempo_dibujo) {
+        contextoNino += "## Contexto del dibujo\n";
+        if (dibujo_espontaneo) contextoNino += `- ¿Fue espontáneo?: ${dibujo_espontaneo}\n`;
+        if (comento_mientras) contextoNino += `- Comentó mientras dibujaba: ${comento_mientras}\n`;
+        if (tiempo_dibujo) contextoNino += `- Tiempo que tardó: ${tiempo_dibujo}\n`;
+        contextoNino += "\n";
+    }
+
+    return contextoNino.trim()
+        ? `Ten en cuenta el siguiente contexto del niño para enriquecer tu análisis:\n\n${contextoNino}\n`
+        : "";
+}
+
+// Prompt de sistema para el análisis del dibujo.
+function mensajeSistema(contextoFinal) {
+    return `
+Eres una herramienta de apoyo orientativo que observa dibujos infantiles para ayudar a adultos (familias, docentes y psicólogos) a acompañar al niño. No eres un profesional clínico y no emites diagnósticos.
+
+Observa ÚNICAMENTE lo que aparece en el dibujo. No inventes ni menciones elementos que no estén presentes en la imagen.
+
+${contextoFinal}
+
+Para interpretar el dibujo, apóyate en este marco (son posibles lecturas, no reglas fijas; exprésalas siempre con lenguaje probabilístico):
+
+1. Uso del color:
+   - Colores cálidos (rojo, amarillo, naranja): podrían reflejar alegría, energía o enojo.
+   - Colores fríos (azul, verde, morado): podrían reflejar calma, tristeza o tranquilidad.
+   - Colores oscuros o apagados: podrían indicar miedo, tristeza o inseguridad.
+2. Trazos y presión aparente:
+   - Trazos fuertes o marcados: posible intensidad emocional, enojo o ansiedad.
+   - Trazos suaves o débiles: posible timidez, tristeza o baja energía.
+3. Formas y composición:
+   - Figuras grandes: posible seguridad o necesidad de destacar.
+   - Figuras pequeñas: posible inseguridad o introversión.
+   - Elementos repetitivos o desordenados: posible ansiedad o estrés.
+4. Contenido del dibujo: personas, familia, animales o naturaleza; expresiones faciales de los personajes; escenarios (hogar, escuela, lugares abiertos o cerrados).
+5. Espacio y distribución: uso del espacio (centrado, disperso, vacío); elementos aislados o agrupados; posibles omisiones.
+
+El contexto del niño y el contexto cultural pueden cambiar el significado de un mismo rasgo; tenlo en cuenta al interpretar.
+
+Reglas de lenguaje (obligatorias):
+- Usa lenguaje orientativo y tentativo ("podría sugerir", "parece", "podría estar relacionado con"). Nunca uses lenguaje clínico ni diagnóstico ("el niño padece", "tiene un trastorno").
+- No hagas afirmaciones categóricas sobre la salud mental del niño.
+- Recuerda que un mismo trazo puede significar cosas distintas según el niño y su contexto.
+
+Devuelve un objeto JSON con EXACTAMENTE estas claves:
+- "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). Cada elemento debe ser una FRASE NATURAL Y COMPLETA en español, NUNCA una etiqueta, palabras sueltas ni texto con guiones bajos. Ejemplos del formato correcto: "Lluvia representada con líneas azules en el lado derecho de la hoja", "Un sol con expresión triste en la esquina superior izquierda", "Varias figuras humanas pequeñas en la parte inferior". Enumera entre 4 y 10 rasgos DISTINTOS; no repitas ni reformules el mismo rasgo.
+- "interpretacion": análisis EXTENSO, detallado y PROFESIONAL, de 2 a 3 párrafos (al menos 6 frases en total). Relaciona CADA rasgo observado con el posible estado emocional y con el contexto del niño (si se proporcionó), explicando el porqué de cada lectura. Desarrolla cada idea; no resumas. Es un campo obligatorio: nunca lo dejes vacío ni con una sola frase.
+- "emocion_predominante": la emoción principal que el dibujo podría estar expresando.
+- "intensidad": uno de "baja", "media" o "alta".
+- "lectura_orientativa": síntesis PROFESIONAL para el adulto, de al menos 4 frases, con sugerencias concretas y accionables de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional. Es un campo obligatorio: nunca lo dejes vacío.
+
+Los campos "interpretacion" y "lectura_orientativa" son los más importantes: deben ser desarrollados, detallados y redactados con buena gramática y un tono cuidado y profesional, manteniendo siempre el lenguaje orientativo (nunca clínico ni diagnóstico). No los resumas en una o dos frases.
+
+Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
+`;
+}
+
+// Ejecuta el análisis con la IA (o un resultado simulado en modo mock).
+async function obtenerAnalisisIA(imagenBase64, contextoFinal) {
+    if (AI_MODE === "mock") {
+        await new Promise((resolve) => setTimeout(resolve, 2500));
+        return { resultado: generarAnalisisSimulado(), aviso: undefined };
+    }
+
+    const response = await axios.post(OLLAMA_URL, {
+        model: OLLAMA_MODEL,
+        format: resolverFormatoOllama(),
+        messages: [
+            { role: "system", content: mensajeSistema(contextoFinal) },
+            { role: "user", content: "Analiza esta imagen", images: [imagenBase64] }
+        ],
+        stream: false,
+        options: {
+            num_predict: OLLAMA_NUM_PREDICT,
+            num_ctx: OLLAMA_NUM_CTX,
+            temperature: 0.3,
+            repeat_penalty: 1.2,
+            repeat_last_n: 256
+        },
+        keep_alive: "10m"
+    }, {
+        timeout: 0,
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity
+    });
+
+    const parseo = parsearRespuestaIA(response.data.message.content);
+    return {
+        resultado: parseo.datos,
+        aviso: parseo.ok ? undefined : "El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo."
+    };
+}
+
 /* =========================
    TEST
 ========================= */
@@ -216,7 +335,6 @@ app.post(
         return res.status(400).json({ error: "No se envió ninguna imagen" });
     }
 
-    // Extraer contexto del niño desde el body (campos de texto del FormData)
     const {
         nombre,
         edad,
@@ -230,149 +348,25 @@ app.post(
         tiempo_dibujo
     } = req.body;
 
-    // Edad para el prompt: se calcula de la fecha de nacimiento si está; si no, se usa la edad guardada (registros viejos).
-    const edadCalculada = edadDesdeFecha(fecha_nacimiento) ?? (edad ? parseInt(edad, 10) : null);
-
-    // Construir bloque de contexto dinámico
-    let contextoNino = "";
-
-    if (nombre || edadCalculada != null || genero) {
-        contextoNino += "## Información del niño\n";
-        if (nombre) contextoNino += `- Nombre: ${nombre}\n`;
-        if (edadCalculada != null) contextoNino += `- Edad: ${edadCalculada} años\n`;
-        if (genero) contextoNino += `- Género: ${genero}\n`;
-        contextoNino += "\n";
-    }
-
-    if (situacion_actual || comportamiento || diagnostico_previo) {
-        contextoNino += "## Situación actual\n";
-        if (situacion_actual) contextoNino += `- Situación en casa/entorno: ${situacion_actual}\n`;
-        if (comportamiento) contextoNino += `- Comportamiento reciente: ${comportamiento}\n`;
-        if (diagnostico_previo) contextoNino += `- Diagnóstico previo: ${diagnostico_previo}\n`;
-        contextoNino += "\n";
-    }
-
-    if (dibujo_espontaneo || comento_mientras || tiempo_dibujo) {
-        contextoNino += "## Contexto del dibujo\n";
-        if (dibujo_espontaneo) contextoNino += `- ¿Fue espontáneo?: ${dibujo_espontaneo}\n`;
-        if (comento_mientras) contextoNino += `- Comentó mientras dibujaba: ${comento_mientras}\n`;
-        if (tiempo_dibujo) contextoNino += `- Tiempo que tardó: ${tiempo_dibujo}\n`;
-        contextoNino += "\n";
-    }
-
-    const contextoFinal = contextoNino.trim()
-        ? `Ten en cuenta el siguiente contexto del niño para enriquecer tu análisis:\n\n${contextoNino}\n`
-        : "";
+    // En modo "solo dibujo" el body no trae contexto, así que esto queda vacío.
+    const contextoFinal = construirContextoFinal(req.body);
 
     try {
-        // Optimización: Redimensionar y comprimir la imagen para que el modelo la procese más rápido
+        // Redimensionar y comprimir la imagen para que el modelo la procese más rápido.
         const processedImagePath = req.file.path + "-resized.jpg";
         await sharp(req.file.path)
-            .resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true }) // Limitar tamaño máximo
-            .jpeg({ quality: 80 }) // Compresión para reducir el peso
+            .resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true })
+            .jpeg({ quality: 80 })
             .toFile(processedImagePath);
 
-        // Modo simulado: no se llama a Ollama. Se devuelve un resultado de ejemplo
-        // tras una breve espera, pero se guarda en MongoDB como un análisis normal.
-        let resultadoJSON;
-        let avisoParseo;
-
-        if (AI_MODE === "mock") {
-            await new Promise((resolve) => setTimeout(resolve, 2500));
-            resultadoJSON = generarAnalisisSimulado();
-        } else {
         const imagenBase64 = fs.readFileSync(processedImagePath, { encoding: "base64" });
+        const { resultado: resultadoJSON, aviso: avisoParseo } = await obtenerAnalisisIA(imagenBase64, contextoFinal);
 
-        const response = await axios.post(OLLAMA_URL, {
-            model: OLLAMA_MODEL,
-            format: resolverFormatoOllama(),
-            messages: [
-                {
-                    role: "system",
-                    content: `
-Eres una herramienta de apoyo orientativo que observa dibujos infantiles para ayudar a adultos (familias, docentes y psicólogos) a acompañar al niño. No eres un profesional clínico y no emites diagnósticos.
-
-Observa ÚNICAMENTE lo que aparece en el dibujo. No inventes ni menciones elementos que no estén presentes en la imagen.
-
-${contextoFinal}
-
-Para interpretar el dibujo, apóyate en este marco (son posibles lecturas, no reglas fijas; exprésalas siempre con lenguaje probabilístico):
-
-1. Uso del color:
-   - Colores cálidos (rojo, amarillo, naranja): podrían reflejar alegría, energía o enojo.
-   - Colores fríos (azul, verde, morado): podrían reflejar calma, tristeza o tranquilidad.
-   - Colores oscuros o apagados: podrían indicar miedo, tristeza o inseguridad.
-2. Trazos y presión aparente:
-   - Trazos fuertes o marcados: posible intensidad emocional, enojo o ansiedad.
-   - Trazos suaves o débiles: posible timidez, tristeza o baja energía.
-3. Formas y composición:
-   - Figuras grandes: posible seguridad o necesidad de destacar.
-   - Figuras pequeñas: posible inseguridad o introversión.
-   - Elementos repetitivos o desordenados: posible ansiedad o estrés.
-4. Contenido del dibujo: personas, familia, animales o naturaleza; expresiones faciales de los personajes; escenarios (hogar, escuela, lugares abiertos o cerrados).
-5. Espacio y distribución: uso del espacio (centrado, disperso, vacío); elementos aislados o agrupados; posibles omisiones.
-
-El contexto del niño y el contexto cultural pueden cambiar el significado de un mismo rasgo; tenlo en cuenta al interpretar.
-
-Reglas de lenguaje (obligatorias):
-- Usa lenguaje orientativo y tentativo ("podría sugerir", "parece", "podría estar relacionado con"). Nunca uses lenguaje clínico ni diagnóstico ("el niño padece", "tiene un trastorno").
-- No hagas afirmaciones categóricas sobre la salud mental del niño.
-- Recuerda que un mismo trazo puede significar cosas distintas según el niño y su contexto.
-
-Devuelve un objeto JSON con EXACTAMENTE estas claves:
-- "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). Cada elemento debe ser una FRASE NATURAL Y COMPLETA en español, NUNCA una etiqueta, palabras sueltas ni texto con guiones bajos. Ejemplos del formato correcto: "Lluvia representada con líneas azules en el lado derecho de la hoja", "Un sol con expresión triste en la esquina superior izquierda", "Varias figuras humanas pequeñas en la parte inferior". Enumera entre 4 y 10 rasgos DISTINTOS; no repitas ni reformules el mismo rasgo.
-- "interpretacion": análisis EXTENSO, detallado y PROFESIONAL, de 2 a 3 párrafos (al menos 6 frases en total). Relaciona CADA rasgo observado con el posible estado emocional y con el contexto del niño (si se proporcionó), explicando el porqué de cada lectura. Desarrolla cada idea; no resumas. Es un campo obligatorio: nunca lo dejes vacío ni con una sola frase.
-- "emocion_predominante": la emoción principal que el dibujo podría estar expresando.
-- "intensidad": uno de "baja", "media" o "alta".
-- "lectura_orientativa": síntesis PROFESIONAL para el adulto, de al menos 4 frases, con sugerencias concretas y accionables de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional. Es un campo obligatorio: nunca lo dejes vacío.
-
-Los campos "interpretacion" y "lectura_orientativa" son los más importantes: deben ser desarrollados, detallados y redactados con buena gramática y un tono cuidado y profesional, manteniendo siempre el lenguaje orientativo (nunca clínico ni diagnóstico). No los resumas en una o dos frases.
-
-Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
-`
-                },
-                {
-                    role: "user",
-                    content: "Analiza esta imagen",
-                    images: [imagenBase64]
-                }
-            ],
-            stream: false,
-            // Análisis exhaustivo: priorizamos calidad sobre velocidad.
-            // En equipos sin GPU conviene bajar num_predict/num_ctx vía .env.
-            // repeat_penalty/repeat_last_n frenan los bucles de repetición del modelo.
-            options: {
-                num_predict: OLLAMA_NUM_PREDICT,
-                num_ctx: OLLAMA_NUM_CTX,
-                temperature: 0.3,
-                repeat_penalty: 1.2,
-                repeat_last_n: 256
-            },
-            keep_alive: "10m"
-        }, {
-            // El análisis puede tardar varios minutos; sin timeout corto.
-            timeout: 0,
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity
-        });
-
-        // Parseo robusto: si el JSON llega incompleto, recuperamos lo que se pueda.
-        const parseo = parsearRespuestaIA(response.data.message.content);
-        resultadoJSON = parseo.datos;
-        if (!parseo.ok) {
-            avisoParseo = "El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo.";
-            console.error("La IA no devolvió un JSON válido; se guardó el texto recuperado.");
-        }
-        }
-
-        // Eliminar solo el archivo original temporal, nos quedamos con el resized
+        // Eliminar solo el archivo original temporal, nos quedamos con el resized.
         fs.unlinkSync(req.file.path);
-
-        // El processedImagePath queda guardado permanentemente
         const rutaImagenGuardada = "/uploads/" + path.basename(processedImagePath);
 
-        // Modo "solo dibujo": no se guarda de una; el usuario decide después
-        // (guardar como independiente, asignar a un niño, o descartar).
+        // Modo "solo dibujo": no se guarda de una; el usuario decide después.
         if (req.body.persistir === "false") {
             return res.json({
                 analisis: resultadoJSON,
@@ -383,26 +377,16 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
             });
         }
 
-        // Guardar en la base de datos
         const nuevoAnalisis = new Analysis({
             usuarioId: req.usuario.id,
-
             contexto_nino: {
-                nombre,
-                edad,
-                fecha_nacimiento,
-                genero,
-                situacion_actual,
-                comportamiento,
-                diagnostico_previo,
-                dibujo_espontaneo,
-                comento_mientras,
-                tiempo_dibujo
+                nombre, edad, fecha_nacimiento, genero,
+                situacion_actual, comportamiento, diagnostico_previo,
+                dibujo_espontaneo, comento_mientras, tiempo_dibujo
             },
-
             ruta_imagen: rutaImagenGuardada,
-
-            resultado_ia: resultadoJSON
+            resultado_ia: resultadoJSON,
+            analizado_sin_contexto: false
         });
 
         await nuevoAnalisis.save();
@@ -466,7 +450,9 @@ app.post("/analisis/guardar", verificarToken, async (req, res) => {
             contexto_nino: independiente ? {} : (contexto_nino || {}),
             ruta_imagen: "/uploads/" + nombreArchivo,
             resultado_ia: analisis,
-            independiente: !!independiente
+            independiente: !!independiente,
+            // Se guarda desde el modo "solo dibujo": el análisis se hizo sin contexto.
+            analizado_sin_contexto: true
         });
 
         await nuevo.save();
@@ -489,6 +475,84 @@ app.post("/analisis/descartar", verificarToken, (req, res) => {
         fs.unlink(rutaFisica, () => {});
     }
     res.json({ ok: true });
+});
+
+/* =========================
+   ASIGNAR UN DIBUJO INDEPENDIENTE A UN NIÑO
+========================= */
+
+app.patch("/analisis/:id/asignar", verificarToken, async (req, res) => {
+    const { id } = req.params;
+    const { contexto_nino } = req.body;
+
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+        return res.status(400).json({ error: "Identificador inválido" });
+    }
+    if (!contexto_nino || !contexto_nino.nombre) {
+        return res.status(400).json({ error: "Falta el niño al que asignar" });
+    }
+
+    try {
+        const analisis = await Analysis.findOne({ _id: id, usuarioId: req.usuario.id });
+        if (!analisis) {
+            return res.status(404).json({ error: "Análisis no encontrado" });
+        }
+
+        analisis.independiente = false;
+        analisis.contexto_nino = {
+            nombre: contexto_nino.nombre,
+            edad: contexto_nino.edad,
+            fecha_nacimiento: contexto_nino.fecha_nacimiento,
+            genero: contexto_nino.genero
+        };
+        // Sigue siendo un análisis hecho sin contexto hasta que se reanalice.
+        analisis.analizado_sin_contexto = true;
+
+        await analisis.save();
+        res.json({ ok: true });
+
+    } catch (error) {
+        console.error("Error asignando el análisis:", error);
+        res.status(500).json({ error: "Error asignando el análisis" });
+    }
+});
+
+/* =========================
+   REANALIZAR UN DIBUJO YA GUARDADO, AHORA CON CONTEXTO
+========================= */
+
+app.post("/analisis/:id/reanalizar", verificarToken, async (req, res) => {
+    const { id } = req.params;
+
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+        return res.status(400).json({ error: "Identificador inválido" });
+    }
+
+    try {
+        const analisis = await Analysis.findOne({ _id: id, usuarioId: req.usuario.id });
+        if (!analisis || !analisis.ruta_imagen) {
+            return res.status(404).json({ error: "Análisis no encontrado" });
+        }
+
+        const rutaFisica = path.join(uploadsDir, path.basename(analisis.ruta_imagen));
+        if (!fs.existsSync(rutaFisica)) {
+            return res.status(404).json({ error: "La imagen ya no está disponible" });
+        }
+
+        const contextoFinal = construirContextoFinal(analisis.contexto_nino || {});
+        const imagenBase64 = fs.readFileSync(rutaFisica, { encoding: "base64" });
+        const { resultado, aviso } = await obtenerAnalisisIA(imagenBase64, contextoFinal);
+
+        analisis.resultado_ia = resultado;
+        analisis.analizado_sin_contexto = false;
+        await analisis.save();
+
+        res.json({ analisis: resultado, aviso, simulado: resultado.simulado === true });
+
+    } catch (error) {
+        console.error("Error reanalizando:", error);
+        res.status(500).json({ error: "Error reanalizando el dibujo" });
+    }
 });
 
 /* =========================

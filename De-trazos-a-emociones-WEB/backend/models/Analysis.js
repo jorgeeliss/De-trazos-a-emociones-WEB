@@ -36,6 +36,12 @@ const AnalysisSchema = new mongoose.Schema({
         default: false
     },
 
+    // true = el análisis se generó sin el contexto del niño (modo solo dibujo).
+    analizado_sin_contexto: {
+        type: Boolean,
+        default: false
+    },
+
     fecha: {
         type: Date,
         default: Date.now
