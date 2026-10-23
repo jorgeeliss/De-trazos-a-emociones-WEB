@@ -1,0 +1,71 @@
+.analyzing-box {
+  background: var(--card, #181828);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.07));
+  border-radius: 18px;
+  padding: 32px 24px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.analyzing-spinner {
+  width: 46px;
+  height: 46px;
+  border: 3px solid rgba(139, 121, 242, 0.2);
+  border-top-color: var(--purple, #8b79f2);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.analyzing-current {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text, #ffffff);
+  animation: aparecer 0.4s ease;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.analyzing-icon {
+  font-size: 20px;
+}
+
+.analyzing-steps {
+  display: flex;
+  gap: 8px;
+}
+
+.as-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border2, rgba(255, 255, 255, 0.12));
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.as-dot.on {
+  background: var(--purple, #8b79f2);
+}
+
+.as-dot.active {
+  transform: scale(1.4);
+  box-shadow: 0 0 10px rgba(139, 121, 242, 0.6);
+}
+
+.analyzing-note {
+  font-size: 13px;
+  color: var(--muted, #a1a1aa);
+}

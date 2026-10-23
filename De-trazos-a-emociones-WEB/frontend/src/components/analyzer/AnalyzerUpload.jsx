@@ -1,5 +1,6 @@
 import { Upload, X, ArrowLeft, Sparkles, AlertCircle } from 'lucide-react';
 import './AnalyzerUpload.css';
+import AnalyzingProgress from './AnalyzingProgress';
 
 const AnalyzerUpload = ({
   setStep, selectedFile, previewUrl,
@@ -64,11 +65,7 @@ const AnalyzerUpload = ({
         </div>
       )}
 
-      {isAnalyzing && (
-        <div className="analyzing-notice">
-          El análisis puede tardar varios minutos. No cierres esta ventana.
-        </div>
-      )}
+      {isAnalyzing && <AnalyzingProgress />}
 
       <div className="nav-row">
         {mostrarVolver && (
