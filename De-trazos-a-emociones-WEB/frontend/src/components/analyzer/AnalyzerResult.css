@@ -238,15 +238,42 @@ details summary::-webkit-details-marker {
   line-height: 1.6;
 }
 
-.sa-list {
-  margin: 0;
-  padding-left: 20px;
-  color: #e5e7eb;
-  line-height: 1.6;
+.rasgos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.sa-list li {
-  margin-bottom: 6px;
+.rasgo-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.rasgo-item:hover {
+  background: rgba(45, 212, 191, 0.07);
+  transform: translateX(3px);
+}
+
+.rasgo-dot {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: #2dd4bf;
+  box-shadow: 0 0 8px rgba(45, 212, 191, 0.5);
+}
+
+.rasgo-text {
+  color: #e5e7eb;
+  line-height: 1.55;
+  font-size: 14px;
 }
 
 .analysis-notice {

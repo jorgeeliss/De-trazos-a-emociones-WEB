@@ -56,11 +56,14 @@ const AnalyzerResult = ({ analysisResult, STYLES, resetAll, previewUrl }) => {
             {analysisResult.rasgos && analysisResult.rasgos.length > 0 && (
               <div className="sa-section">
                 <h4 className="sa-title">Rasgos observados</h4>
-                <ul className="sa-list">
+                <div className="rasgos-grid">
                   {analysisResult.rasgos.map((rasgo, i) => (
-                    <li key={i}>{rasgo}</li>
+                    <div key={i} className="rasgo-item">
+                      <span className="rasgo-dot"></span>
+                      <span className="rasgo-text">{rasgo}</span>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
 
