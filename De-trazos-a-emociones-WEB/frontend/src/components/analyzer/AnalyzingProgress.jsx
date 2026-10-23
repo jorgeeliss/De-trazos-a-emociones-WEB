@@ -13,7 +13,9 @@ const FASES = [
 
 const AnalyzingProgress = () => {
   const [i, setI] = useState(0);
+  const [pct, setPct] = useState(6);
 
+  // El texto de la fase avanza cada ~2.8 s (es informativo).
   useEffect(() => {
     const id = setInterval(() => {
       setI((prev) => (prev < FASES.length - 1 ? prev + 1 : prev));
@@ -21,7 +23,15 @@ const AnalyzingProgress = () => {
     return () => clearInterval(id);
   }, []);
 
-  const pct = Math.round(((i + 1) / FASES.length) * 100);
+  // La barra avanza rápido al inicio y se desacelera acercándose a un tope (~92%);
+  // nunca llega a 100%. Cuando el análisis realmente termina, este componente
+  // desaparece y se muestra el resultado.
+  useEffect(() => {
+    const id = setInterval(() => {
+      setPct((p) => (p < 92 ? p + (92 - p) * 0.05 : p));
+    }, 600);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="analyzing-box">
