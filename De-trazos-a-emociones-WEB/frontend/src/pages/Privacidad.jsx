@@ -48,6 +48,9 @@ const Privacidad = () => (
         La aplicación trata datos e imágenes de niños de 4 a 12 años. Conforme al art. 7 de la Ley 1581 y al art. 12
         del Decreto 1377, su tratamiento atiende el interés superior del menor y requiere el consentimiento de su
         representante legal, que el usuario declara haber obtenido. Los niños no tienen cuenta ni usan la aplicación.
+        La autorización del representante legal forma parte de los datos que deben existir para el tratamiento, pero la
+        aplicación <strong>no la solicita, no la almacena ni la verifica</strong>: su obtención y verificación
+        corresponden a la <strong>institución o entidad profesional</strong> que utiliza la herramienta.
       </p>
 
       <h2>6. Uso en la investigación</h2>

@@ -57,6 +57,11 @@ const Terminos = () => (
         Ley 1098 de 2006, art. 8). El usuario se compromete a usar la información solo con fines de acompañamiento y a
         no divulgarla indebidamente.
       </p>
+      <p>
+        La aplicación <strong>no solicita, no almacena ni verifica</strong> esa autorización del representante legal.
+        Su obtención y su verificación son responsabilidad del usuario y de la <strong>institución o entidad
+        profesional</strong> que utiliza la herramienta, no de la aplicación.
+      </p>
 
       <h2>6. Uso aceptable</h2>
       <ul>

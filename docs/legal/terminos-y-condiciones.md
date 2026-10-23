@@ -19,7 +19,7 @@ Personas adultas (mayores de 18 años) en rol de padre/madre/tutor, profesor o p
 Información veraz y responsabilidad sobre las credenciales. El registro está sujeto a verificación del correo y a aprobación de un administrador del proyecto; sin aprobación no hay acceso. Las cuentas pueden rechazarse o suspenderse; cada decisión queda registrada y el administrador mantiene confidencialidad.
 
 ## 5. Responsabilidad sobre los datos de menores
-Quien registre a un niño, su contexto o un dibujo declara contar con el consentimiento del representante legal y es responsable de ello. Se atiende el interés superior del menor (Ley 1581/2012 art. 7; Decreto 1377/2013 art. 12; Ley 1098/2006 art. 8).
+Quien registre a un niño, su contexto o un dibujo declara contar con el consentimiento del representante legal y es responsable de ello. Se atiende el interés superior del menor (Ley 1581/2012 art. 7; Decreto 1377/2013 art. 12; Ley 1098/2006 art. 8). La aplicación no solicita, no almacena ni verifica esa autorización del representante legal: su obtención y verificación son responsabilidad del usuario y de la institución o entidad profesional que utiliza la herramienta.
 
 ## 6. Uso aceptable
 - No subir contenido ilícito, ofensivo o ajeno a dibujos infantiles.

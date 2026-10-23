@@ -27,7 +27,7 @@ El "diagnóstico previo" es dato de salud (sensible, arts. 5 y 6): opcional, no 
 
 ## 5. Datos de menores
 
-Niños de 4 a 12 años. Art. 7 Ley 1581 y art. 12 Decreto 1377: interés superior y consentimiento del representante legal. Los niños no tienen cuenta.
+Niños de 4 a 12 años. Art. 7 Ley 1581 y art. 12 Decreto 1377: interés superior y consentimiento del representante legal. Los niños no tienen cuenta. La autorización del representante legal forma parte de los datos que deben existir para el tratamiento, pero la aplicación no la solicita, no la almacena ni la verifica: su obtención y verificación corresponden a la institución o entidad profesional que utiliza la herramienta.
 
 ## 6. Uso en la investigación
 
