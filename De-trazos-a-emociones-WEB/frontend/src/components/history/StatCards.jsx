@@ -1,4 +1,3 @@
-import React from 'react';
 import './StatCards.css';
 
 const StatCards = ({ sessions = [] }) => {

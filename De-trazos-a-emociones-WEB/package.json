@@ -1,14 +1,16 @@
 {
-  "name": "proyecto-ollama",
+  "name": "de-trazos-a-emociones-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "backend/server.js",
   "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Backend de la aplicación De trazos a emociones (Express + MongoDB + Ollama).",
   "dependencies": {
     "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",

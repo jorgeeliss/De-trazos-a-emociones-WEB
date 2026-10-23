@@ -31,7 +31,7 @@ const AnalyzerUpload = ({
               onDragLeave={(e) => e.currentTarget.classList.remove('drag')}
               onDrop={handleDrop}
             >
-              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" />
+              <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/jpeg,image/png,image/webp" />
               <div className="upload-icon">
                 <Upload size={28} />
               </div>

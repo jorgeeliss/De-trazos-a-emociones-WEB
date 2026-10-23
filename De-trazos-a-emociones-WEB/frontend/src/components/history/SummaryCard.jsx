@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './SummaryCard.css';
 
 const SummaryCard = ({ sessions = [], dotsHeight = ['0px', '0px', '0px', '0px', '0px', '0px', '0px'] }) => {

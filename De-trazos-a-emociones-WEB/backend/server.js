@@ -29,7 +29,15 @@ const verificarToken = require("./middleware/authMiddleware");
 connectDB();
 
 const app = express();
-app.use(cors());
+
+// CORS restringido al origen del frontend (configurable por .env).
+// Por defecto se permite el Vite local; CORS_ORIGIN admite varios separados por coma.
+const origenesPermitidos = (process.env.CORS_ORIGIN || "http://localhost:5173")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+app.use(cors({ origin: origenesPermitidos }));
+
 app.use(express.static("public"));
 // Las imágenes de los dibujos NO se sirven públicamente. Se entregan solo al
 // dueño del análisis a través del endpoint protegido GET /analisis/:id/imagen.
@@ -40,7 +48,17 @@ const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
-const upload = multer({ dest: uploadsDir });
+
+// Solo imágenes JPG, PNG o WEBP, máximo 8 MB.
+const TIPOS_IMAGEN = ["image/jpeg", "image/png", "image/webp"];
+const upload = multer({
+    dest: uploadsDir,
+    limits: { fileSize: 8 * 1024 * 1024 },
+    fileFilter: (req, file, cb) => {
+        if (TIPOS_IMAGEN.includes(file.mimetype)) cb(null, true);
+        else cb(new Error("Formato no permitido. Usa JPG, PNG o WEBP."));
+    }
+});
 
 /* =========================
    CONFIGURACIÓN DEL ANÁLISIS CON OLLAMA
@@ -289,37 +307,6 @@ async function obtenerAnalisisIA(imagenBase64, contextoFinal) {
 
 app.get("/", (req, res) => {
     res.send("Servidor con MiniCPM-V funcionando");
-});
-
-/* =========================
-   TEXTO
-========================= */
-
-app.post("/preguntar", verificarToken, async (req, res) => {
-
-    const pregunta = req.body.pregunta;
-
-    if (!pregunta) {
-        return res.status(400).json({ error: "Debes enviar una pregunta" });
-    }
-
-    try {
-        const response = await axios.post("http://127.0.0.1:11434/api/chat", {
-            model: "llama-3.2-vision",
-            messages: [
-                { role: "system", content: "Responde claro, corto y en español." },
-                { role: "user", content: pregunta }
-            ],
-            stream: false,
-            options: { num_predict: 120, temperature: 0.3 },
-            keep_alive: "10m"
-        });
-
-        res.json({ respuesta: response.data.message.content });
-
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
 });
 
 /* =========================
@@ -661,6 +648,19 @@ app.delete("/analisis/:id", verificarToken, async (req, res) => {
         console.error("Error eliminando análisis:", error);
         res.status(500).json({ error: "Error eliminando el análisis" });
     }
+});
+
+/* =========================
+   MANEJO DE ERRORES (p. ej. validaciones de Multer)
+========================= */
+
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+    if (!err) return next();
+    const mensaje = err.code === "LIMIT_FILE_SIZE"
+        ? "La imagen supera el tamaño máximo (8 MB)."
+        : (err.message || "Error en la solicitud");
+    res.status(400).json({ error: mensaje });
 });
 
 /* =========================

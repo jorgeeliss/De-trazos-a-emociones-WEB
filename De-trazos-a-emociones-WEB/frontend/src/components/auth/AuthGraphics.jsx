@@ -1,4 +1,3 @@
-import React from 'react';
 import './AuthGraphics.css';
 
 const AuthGraphics = ({ title, highlight, subtitle }) => {

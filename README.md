@@ -21,11 +21,15 @@ Trabajo de grado de Ingeniería de Sistemas de la **Corporación Universitaria A
 
 ## Cómo funciona
 
-El flujo de la aplicación (página `/app`) tiene tres pasos:
+En la página `/app` hay dos modos:
 
-1. **Contexto:** se registran los datos del niño (nombre, edad, género, situación actual, comportamiento reciente, diagnóstico previo, si el dibujo fue espontáneo, comentarios mientras dibujaba, tiempo que tardó).
-2. **Dibujo:** se sube la imagen del dibujo (arrastrando o seleccionando el archivo).
-3. **Análisis:** se muestra la emoción predominante, la intensidad (baja, media o alta) y el análisis completo generado por el modelo, junto con el aviso de que no reemplaza un diagnóstico clínico.
+- **Con contexto del niño** (3 pasos):
+  1. **Contexto:** datos del niño (nombre, **fecha de nacimiento** —la edad se calcula sola—, género, situación actual, comportamiento reciente, diagnóstico previo opcional, y el contexto del dibujo: si fue espontáneo, comentarios, tiempo que tardó).
+  2. **Dibujo:** se sube la imagen (arrastrando o seleccionando; JPG, PNG o WEBP).
+  3. **Análisis:** rasgos observados, interpretación, emoción predominante, intensidad y lectura orientativa, con el aviso de que no reemplaza un diagnóstico.
+- **Solo dibujo:** analiza un dibujo sin contexto y, al final, se decide **guardarlo como dibujo independiente**, **asignarlo a un niño existente** o **no guardarlo**.
+
+El análisis en curso y el borrador del contexto **se conservan al cambiar de página**, y al terminar llega un aviso. El dashboard y el historial muestran el seguimiento por niño con datos reales; los dibujos independientes tienen su propia vista y pueden asignarse a un niño (y **reanalizarse con su contexto**).
 
 ## Stack real
 
@@ -35,35 +39,36 @@ El flujo de la aplicación (página `/app`) tiene tres pasos:
 - **Backend:** Node.js + Express 5, `multer` (subida de imágenes) y `sharp` (redimensiona a máximo 800 px, JPEG calidad 80).
 - **Autenticación:** JWT (`jsonwebtoken`) + `bcryptjs` con 12 rondas.
 - **Base de datos:** MongoDB con Mongoose, conectada por `MONGO_URI` (el equipo usa MongoDB Atlas).
-- **IA:** Ollama local en `http://127.0.0.1:11434/api/chat`.
-  - Análisis de imágenes (`/analizar-imagen`): modelo `minicpm-v`.
-  - Ruta de texto (`/preguntar`): modelo `llama-3.2-vision` (esta ruta existe en el backend pero el frontend no la usa).
+- **IA:** Ollama local en `http://127.0.0.1:11434/api/chat`, modelo `minicpm-v` por defecto (configurable con `OLLAMA_MODEL`). El JSON se fuerza por esquema (`format`) o `format: "json"` según `OLLAMA_FORMAT_MODE`. Existe además un modo simulado (`AI_MODE=mock`) para probar el flujo sin Ollama.
+- **Estado global (frontend):** un React Context (`AnalisisSesionContext`) mantiene la sesión de análisis viva al navegar entre páginas y avisa cuando termina.
 
 ## Estructura del repositorio
 
 La raíz del repositorio (donde está `.git`) solo contiene este README, `CLAUDE.md`, `.gitignore` y una carpeta anidada **con el mismo nombre del repo**, que es donde vive el código:
 
-```
+```text
 De-trazos-a-emociones-WEB/          ← raíz del repo (.git)
 ├── README.md, CLAUDE.md, .gitignore
+├── docs/                           ← PRUEBAS.md, legal/ (textos de términos y privacidad)
 └── De-trazos-a-emociones-WEB/      ← carpeta del proyecto
-    ├── package.json                ← dependencias del BACKEND (name: "proyecto-ollama")
+    ├── package.json                ← dependencias del BACKEND (name: "de-trazos-a-emociones-backend")
     ├── backend/
     │   ├── server.js                ← app Express, rutas de análisis e historial
     │   ├── database.js              ← conexión Mongoose
     │   ├── models/User.js, Analysis.js
     │   ├── routes/auth.js           ← /auth/register y /auth/login
-    │   ├── routes/authRoutes.js     ← vacío, sin uso
     │   └── middleware/authMiddleware.js
-    ├── middleware/authMiddleware.js ← duplicado de backend/, sin uso
     ├── uploads/                     ← imágenes procesadas (ver "Privacidad y ética")
     └── frontend/                    ← proyecto Vite independiente, con su propio package.json
         ├── src/App.jsx, main.jsx, api.js, ProtectedRoute.jsx
-        ├── src/pages/ (Login, Register, Analyzer, Dashboard, History)
-        └── src/components/ (analyzer/, auth/, dashboard/, history/, layout/)
+        ├── src/context/            ← AnalisisSesionContext (sesión de análisis global)
+        ├── src/pages/ (Login, Register, Analyzer, Dashboard, History, Terminos, Privacidad)
+        ├── src/components/ (analyzer/, auth/, common/, dashboard/, history/, layout/)
+        ├── src/data/actividades.js ← catálogo fijo de actividades por emoción
+        └── src/utils/emociones.js  ← helpers de emoción, intensidad, edad y cumpleaños
 ```
 
-El backend **no tiene su propio `package.json`**: sus dependencias están declaradas en el `package.json` de la raíz del proyecto (carpeta anidada).
+El backend **no tiene su propio `package.json`**: sus dependencias están declaradas en el `package.json` de la raíz del proyecto (carpeta anidada), que ahora se llama `de-trazos-a-emociones-backend`. Se eliminaron el `middleware/` duplicado de la raíz del proyecto y el `routes/authRoutes.js` vacío.
 
 ## Requisitos
 
@@ -83,11 +88,12 @@ El backend **no tiene su propio `package.json`**: sus dependencias están declar
    ```bash
    cd De-trazos-a-emociones-WEB
    npm install
-   cd backend
-   cp .env.example .env   # y completa los valores reales
-   node server.js
+   cp backend/.env.example backend/.env   # y completa los valores reales
+   npm start        # equivale a: node backend/server.js
+   # o, con recarga automática en desarrollo:
+   npm run dev      # node --watch backend/server.js
    ```
-   El servidor arranca en el puerto `3000` por defecto. **Debes ejecutarlo desde la carpeta `backend/`**, porque el archivo `.env` y la carpeta de subidas se resuelven de forma relativa al directorio actual.
+   El servidor arranca en el puerto `3000` por defecto. Puedes ejecutarlo desde la carpeta del proyecto con `npm start` / `npm run dev`; las rutas de `.env` y de la carpeta de subidas se resuelven respecto a la ubicación de `server.js`.
 
 3. **Frontend**
    ```bash
@@ -107,8 +113,13 @@ Definidas en `De-trazos-a-emociones-WEB/backend/.env` (ver plantilla en [`backen
 | `JWT_SECRET` | Sí | — | Secreto para firmar los JWT. |
 | `JWT_EXPIRES_IN` | No | `2h` | Vigencia del token. |
 | `PORT` | No | `3000` | Puerto del backend. |
+| `CORS_ORIGIN` | No | `http://localhost:5173` | Origen(es) permitido(s) para CORS, separados por coma. |
+| `DNS_SERVERS` | No | DNS del sistema | Servidores DNS a forzar (coma), solo si la red no resuelve el SRV de Atlas (`queryTxt ETIMEOUT`). Ej.: `8.8.8.8,1.1.1.1`. |
 | `OLLAMA_FORMAT_MODE` | No | `schema` | Cómo se fuerza el JSON en Ollama: `schema` (requiere Ollama ≥ 0.5.0) o `json` (versiones más antiguas). |
 | `AI_MODE` | No | `ollama` | Motor de análisis: `ollama` (real) o `mock` (resultado simulado para probar el flujo sin Ollama). |
+| `OLLAMA_MODEL` | No | `minicpm-v` | Modelo de visión para el análisis. |
+| `OLLAMA_NUM_PREDICT` | No | `4000` | Longitud máxima de la respuesta. Bájalo en equipos sin GPU para que no tarde tanto. |
+| `OLLAMA_NUM_CTX` | No | `8192` | Tamaño del contexto. Bájalo en equipos con pocos recursos. |
 
 > **Modo simulado (`AI_MODE=mock`):** con este valor, `/analizar-imagen` **no llama a Ollama**; devuelve en 2-3 segundos un resultado de ejemplo (marcado con `simulado: true`) y lo guarda en MongoDB como un análisis normal. La interfaz muestra el aviso "Resultado simulado (modo de prueba)". Sirve para probar el flujo completo en equipos sin Ollama. **Nunca debe usarse en la prueba piloto ni con dibujos reales.**
 
@@ -118,36 +129,45 @@ Definidas en `De-trazos-a-emociones-WEB/backend/.env` (ver plantilla en [`backen
 |---|---|---|---|
 | GET | `/` | No | Texto de prueba. |
 | POST | `/auth/register` | No | Registro. Campos: `nombre`, `apellido`, `email`, `password` (mínimo 8 caracteres), `rol` (`padre` \| `psicologo` \| `profesor`). |
-| POST | `/auth/login` | No | Inicio de sesión. Devuelve `{ token, usuario: { id, nombre, email } }`. |
-| POST | `/analizar-imagen` | Bearer | `multipart/form-data` con el campo `imagen` + campos de contexto del niño. Llama a Ollama, guarda el resultado en MongoDB y devuelve `{ analisis, id, imagen }`. |
+| POST | `/auth/login` | No | Inicio de sesión. Devuelve `{ token, usuario: { id, nombre, email, rol } }`. |
+| POST | `/analizar-imagen` | Bearer | `multipart/form-data` con el campo `imagen` + campos de contexto del niño. Llama a Ollama y devuelve `{ analisis, id, imagen }`. Con `persistir=false` analiza sin guardar (modo "solo dibujo"). |
 | GET | `/analisis` | Bearer | Historial de análisis del usuario autenticado, del más reciente al más antiguo. |
-| POST | `/preguntar` | Bearer | Pregunta de texto a Ollama (modelo `llama-3.2-vision`). El frontend no la usa actualmente. |
-| GET | `/uploads/*` | No | Archivos estáticos de las imágenes procesadas. |
+| DELETE | `/analisis/:id` | Bearer | Elimina un análisis y su imagen. |
+| POST | `/analisis/eliminar-varios` | Bearer | Elimina varios análisis por lista de ids (p. ej. al borrar un niño en cascada). |
+| PATCH | `/analisis/:id/asignar` | Bearer | Asigna un dibujo independiente a un niño. |
+| POST | `/analisis/:id/reanalizar` | Bearer | Reanaliza un dibujo con el contexto del niño. |
+| POST | `/analisis/guardar` | Bearer | Guarda un análisis que se hizo sin persistir (independiente o asignado a un niño). |
+| POST | `/analisis/descartar` | Bearer | Descarta un análisis no guardado y borra su imagen temporal. |
+| GET | `/analisis/:id/imagen` | Bearer | Sirve la imagen del dibujo solo al usuario dueño (no hay carpeta pública). |
 
 ## Estado del proyecto
 
-**Funciona:**
-- Registro e inicio de sesión con JWT.
-- El flujo completo de tres pasos en `/app` guarda el análisis en MongoDB.
-- El historial (`SessionsList`, `StatCards`, `SummaryCard`, `HistoryChildBar`) consulta datos reales de `/analisis`.
+**Implementado:**
+- Registro e inicio de sesión con JWT; el login guarda el usuario y el rol viaja en el token.
+- Rutas de subida corregidas (resueltas respecto a `server.js`) e **imágenes protegidas tras autenticación** (`GET /analisis/:id/imagen`, sin carpeta pública).
+- `/app` con dos modos: **con contexto** (3 pasos) y **solo dibujo**. El análisis en curso y el borrador del contexto se conservan al cambiar de página, y al terminar llega un aviso.
+- Prompt reescrito con encuadre orientativo: `rasgos_observados`, `interpretacion`, `emocion_predominante`, `intensidad`, `lectura_orientativa`; sin lenguaje clínico.
+- **Dashboard e historial con datos reales** por niño (resumen, línea de tiempo, gráfica de emociones y comparación "antes y ahora" de dos análisis reales). Actividades sugeridas desde un catálogo fijo por emoción (`src/data/actividades.js`), no generadas por IA.
+- Agregar y eliminar niño (borrado en cascada de sus análisis e imágenes).
+- Dibujos independientes (tarjetas) con opción de asignarlos a un niño y reanalizarlos con su contexto.
+- **Fecha de nacimiento** en lugar de edad (la edad se calcula) y recordatorio de cumpleaños.
+- Términos y Condiciones y Política de Privacidad con contenido real, enlazados desde el registro.
+- Marca "De trazos a emociones" y tipografía consistente en todas las páginas.
+- Límite de tamaño (8 MB) y de tipo (JPG, PNG, WEBP) en la subida; CORS restringido a `CORS_ORIGIN`; `dns.setServers` ahora es opcional (`DNS_SERVERS`).
+- Modo simulado (`AI_MODE=mock`) para probar el flujo sin Ollama.
 
-**Simulado o pendiente:**
-- El **Dashboard** (`ChildSwitcher`, `WeeklySummary`, `TimelineSection`, `ActivitiesSection`, `ComparisonSection`) muestra siempre a un niño ficticio ("Sofía") con textos inventados, no datos reales.
-- En el **Historial**, `ChartCard` es un gráfico SVG estático y la alerta solo aparece si el niño se llama "Sofia".
-- Los botones de **Niños**, **Reportes** y **Configuración** del menú lateral no navegan a ninguna parte.
-- No existe el modo "sin contexto / con contexto" (comparar el análisis del mismo dibujo con y sin la información del niño) que describen los resultados académicos.
+**Pendiente:**
+- **Registro con aprobación por correo** antes de dar acceso (el administrador aproba viendo nombre, correo, rol e institución).
+- **Autorización del representante legal** (los 4 métodos descritos en `CLAUDE.md`, con `nodemailer`).
+- Botones "Contactar especialista", "Exportar PDF", "Reportes" y "Configuración": implementarlos o deshabilitarlos con "Próximamente".
+- No hay tests automatizados.
 
-**Problemas conocidos (ver también `CLAUDE.md` para el detalle completo):**
-- 🟠 Rutas de subida inconsistentes entre `multer` y `express.static`.
-- 🟠 El login no guarda el usuario en `localStorage` (desajuste `usuario` / `data.user`), y el rol no viaja en el token.
-- 🟠 El prompt del modelo pide "observaciones clínicas" y actuar como "experto en psicología infantil", lo que contradice el encuadre ético del proyecto.
-- 🟡 CORS abierto a cualquier origen, sin límites de tamaño/tipo en la subida de archivos, JWT en `localStorage`, `dns.setServers` forzado en el backend.
-- 🟡 Duplicados y sobrantes: `middleware/` repetido, `routes/authRoutes.js` vacío, paquete llamado `proyecto-ollama`, proxy de Vite sin uso real, README de frontend con la plantilla por defecto de Vite.
-- 🟡 No hay tests automatizados ni scripts `start`/`dev` en el backend.
+> El detalle completo del plan por pasos y el estado de cada problema están en `CLAUDE.md`.
 
 ## Privacidad y ética
 
 - La aplicación procesa dibujos y datos de menores de edad; su uso requiere **consentimiento informado** de los padres o tutores y del centro educativo/clínico correspondiente.
+- **Las imágenes de los dibujos no son públicas:** se sirven solo al usuario autenticado dueño del análisis (`GET /analisis/:id/imagen`); no hay carpeta estática abierta. El frontend las carga con el token (`fetch` → blob → `URL.createObjectURL`).
 - **La carpeta `uploads/` no se versiona en git** (`De-trazos-a-emociones-WEB/uploads/` y `De-trazos-a-emociones-WEB/backend/uploads/` están en `.gitignore`). Anteriormente había ~120 imágenes versionadas en el repositorio; eran **imágenes de prueba tomadas de internet, no dibujos reales de niños**, y ya se quitaron del seguimiento de git (los archivos siguen en disco localmente, pero no se suben a GitHub). No vuelvas a versionar imágenes de esa carpeta, sean de prueba o reales.
 - Evita registrar datos sensibles innecesarios (por ejemplo, el nombre real del niño o un diagnóstico previo en texto libre); cuando sea posible, usa alias.
 - Ningún texto de la interfaz, del prompt de IA o de la documentación debe presentarse como diagnóstico clínico.

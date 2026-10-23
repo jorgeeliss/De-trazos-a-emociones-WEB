@@ -1,4 +1,3 @@
-import React from 'react';
 import { Sparkles, RefreshCw } from 'lucide-react';
 import './AnalyzerResult.css';
 
