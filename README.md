@@ -111,8 +111,9 @@ Definidas en `De-trazos-a-emociones-WEB/backend/.env` (ver plantilla en [`backen
 |---|---|---|---|
 | `MONGO_URI` | Sí | — | Cadena de conexión a MongoDB. Si falta, el proceso termina. |
 | `JWT_SECRET` | Sí | — | Secreto para firmar los JWT. |
-| `JWT_EXPIRES_IN` | No | `2h` | Vigencia del token. |
+| `JWT_EXPIRES_IN` | No | `24h` | Vigencia del token. Al expirar, la app redirige al login. |
 | `PORT` | No | `3000` | Puerto del backend. |
+| `ADMIN_EMAILS` | No | — | Correos de administradores (coma). Quien se registre con uno queda admin y aprobado; los demás quedan pendientes hasta que un admin los apruebe. |
 | `CORS_ORIGIN` | No | `http://localhost:5173` | Origen(es) permitido(s) para CORS, separados por coma. |
 | `DNS_SERVERS` | No | DNS del sistema | Servidores DNS a forzar (coma), solo si la red no resuelve el SRV de Atlas (`queryTxt ETIMEOUT`). Ej.: `8.8.8.8,1.1.1.1`. |
 | `OLLAMA_FORMAT_MODE` | No | `schema` | Cómo se fuerza el JSON en Ollama: `schema` (requiere Ollama ≥ 0.5.0) o `json` (versiones más antiguas). |
@@ -128,8 +129,8 @@ Definidas en `De-trazos-a-emociones-WEB/backend/.env` (ver plantilla en [`backen
 | Método | Ruta | Auth | Descripción |
 |---|---|---|---|
 | GET | `/` | No | Texto de prueba. |
-| POST | `/auth/register` | No | Registro. Campos: `nombre`, `apellido`, `email`, `password` (mínimo 8 caracteres), `rol` (`padre` \| `psicologo` \| `profesor`). |
-| POST | `/auth/login` | No | Inicio de sesión. Devuelve `{ token, usuario: { id, nombre, email, rol } }`. |
+| POST | `/auth/register` | No | Registro. Campos: `nombre`, `apellido`, `email`, `password` (mínimo 8 caracteres), `rol` (`padre` \| `psicologo` \| `profesor`), `institucion` (opcional). La cuenta queda **pendiente** de aprobación (o aprobada si el correo está en `ADMIN_EMAILS`). |
+| POST | `/auth/login` | No | Inicio de sesión. Bloquea las cuentas no aprobadas (403). Devuelve `{ token, usuario: { id, nombre, email, rol, esAdmin } }`. |
 | POST | `/analizar-imagen` | Bearer | `multipart/form-data` con el campo `imagen` + campos de contexto del niño. Llama a Ollama y devuelve `{ analisis, id, imagen }`. Con `persistir=false` analiza sin guardar (modo "solo dibujo"). |
 | GET | `/analisis` | Bearer | Historial de análisis del usuario autenticado, del más reciente al más antiguo. |
 | DELETE | `/analisis/:id` | Bearer | Elimina un análisis y su imagen. |
@@ -139,6 +140,12 @@ Definidas en `De-trazos-a-emociones-WEB/backend/.env` (ver plantilla en [`backen
 | POST | `/analisis/guardar` | Bearer | Guarda un análisis que se hizo sin persistir (independiente o asignado a un niño). |
 | POST | `/analisis/descartar` | Bearer | Descarta un análisis no guardado y borra su imagen temporal. |
 | GET | `/analisis/:id/imagen` | Bearer | Sirve la imagen del dibujo solo al usuario dueño (no hay carpeta pública). |
+| GET | `/perfil/me` | Bearer | Datos del usuario autenticado (incluye `institucion`, `esAdmin`, `tieneFoto`). |
+| POST | `/perfil/foto` | Bearer | Sube/actualiza la foto de perfil (`multipart`, campo `foto`; se recorta a 256×256). |
+| GET | `/perfil/foto` | Bearer | Sirve la foto de perfil del propio usuario. |
+| DELETE | `/perfil` | Bearer | Elimina la cuenta y, en cascada, sus análisis, imágenes y foto. |
+| GET | `/admin/usuarios?estado=` | Bearer (admin) | Lista usuarios por estado (`pendiente` por defecto). |
+| PATCH | `/admin/usuarios/:id` | Bearer (admin) | Aprueba o rechaza una cuenta (`{ accion: "aprobar" \| "rechazar" }`). |
 
 ## Estado del proyecto
 
@@ -155,13 +162,18 @@ Definidas en `De-trazos-a-emociones-WEB/backend/.env` (ver plantilla en [`backen
 - Marca "De trazos a emociones" y tipografía consistente en todas las páginas.
 - Límite de tamaño (8 MB) y de tipo (JPG, PNG, WEBP) en la subida; CORS restringido a `CORS_ORIGIN`; `dns.setServers` ahora es opcional (`DNS_SERVERS`).
 - Modo simulado (`AI_MODE=mock`) para probar el flujo sin Ollama.
+- **Acceso protegido:** todas las páginas privadas exigen sesión válida; si el token (24 h) expira, la app redirige al login.
+- **Registro con aprobación del administrador:** las cuentas nuevas quedan pendientes; el admin (definido por `ADMIN_EMAILS`) las aprueba o rechaza en `/admin` viendo nombre, correo, rol e institución.
+- **Menú de perfil/cuenta:** foto de perfil, ver correo, cerrar sesión, cambiar de cuenta y eliminar cuenta (con borrado en cascada).
+- **Tema claro/oscuro y 4 paletas de color** (página de Configuración), guardado por dispositivo.
+- **Exportar a PDF** con selección de contenido (detalle del análisis y/o historial del niño).
 
 **Pendiente:**
-- **Registro con aprobación por correo** antes de dar acceso (el administrador aproba viendo nombre, correo, rol e institución).
-- **Autorización del representante legal** (los 4 métodos descritos en `CLAUDE.md`, con `nodemailer`).
-- Botones "Contactar especialista", "Exportar PDF", "Reportes" y "Configuración": implementarlos o deshabilitarlos con "Próximamente".
+- Botones "Contactar especialista" y "Reportes": implementarlos o deshabilitarlos con "Próximamente".
 - No hay tests automatizados.
 
+> La **autorización del representante legal** no se valida dentro de la aplicación por decisión del proyecto: su obtención y verificación son responsabilidad de la institución o entidad profesional (ver Términos y Privacidad).
+>
 > El detalle completo del plan por pasos y el estado de cada problema están en `CLAUDE.md`.
 
 ## Privacidad y ética
