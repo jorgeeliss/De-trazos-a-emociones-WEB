@@ -1,6 +1,7 @@
 import { Trash2 } from 'lucide-react';
 import './SessionsList.css';
 import { api } from '../../api';
+import AuthImage from '../common/AuthImage';
 
 const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect }) => {
 
@@ -69,7 +70,7 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
               >
                 <div className="session-thumb" style={{padding: 0, overflow: 'hidden', background: '#f0f0f0'}}>
                   {session.ruta_imagen ? (
-                    <img src={`http://localhost:3000${session.ruta_imagen}`} alt="Dibujo" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                    <AuthImage analisisId={session._id} alt="Dibujo" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
                   ) : '🖼️'}
                 </div>
                 <div className="session-info">

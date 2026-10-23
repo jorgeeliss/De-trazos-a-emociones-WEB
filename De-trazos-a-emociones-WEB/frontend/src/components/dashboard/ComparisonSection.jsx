@@ -3,13 +3,12 @@ import { ArrowRight } from 'lucide-react';
 import './ComparisonSection.css';
 import { emotionVisual, emocionPredominante, formatFecha, formatFechaCorta } from '../../utils/emociones';
 import { actividadesPara } from '../../data/actividades';
-
-const API_URL = 'http://localhost:3000';
+import AuthImage from '../common/AuthImage';
 
 const Miniatura = ({ analisis, onClick }) => {
   const visual = emotionVisual(analisis?.resultado_ia?.emocion_predominante || '');
   if (analisis?.ruta_imagen) {
-    return <img className="compare-thumb" src={`${API_URL}${analisis.ruta_imagen}`} alt="Dibujo" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }} />;
+    return <AuthImage analisisId={analisis._id} className="compare-thumb" alt="Dibujo" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }} />;
   }
   return <div className="compare-thumb" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>{visual.emoji}</div>;
 };

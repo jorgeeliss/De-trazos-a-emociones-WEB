@@ -31,7 +31,8 @@ connectDB();
 const app = express();
 app.use(cors());
 app.use(express.static("public"));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Las imágenes de los dibujos NO se sirven públicamente. Se entregan solo al
+// dueño del análisis a través del endpoint protegido GET /analisis/:id/imagen.
 app.use(express.json());
 app.use("/auth", authRoutes);
 
@@ -407,6 +408,39 @@ app.get("/analisis", verificarToken, async (req, res) => {
         res.status(500).json({
             error: "Error obteniendo el historial"
         });
+    }
+});
+
+/* =========================
+   IMAGEN PROTEGIDA DE UN ANÁLISIS
+========================= */
+
+app.get("/analisis/:id/imagen", verificarToken, async (req, res) => {
+    const { id } = req.params;
+
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+        return res.status(400).json({ error: "Identificador inválido" });
+    }
+
+    try {
+        // Solo el dueño del análisis puede ver su imagen.
+        const analisis = await Analysis.findOne({ _id: id, usuarioId: req.usuario.id });
+
+        if (!analisis || !analisis.ruta_imagen) {
+            return res.status(404).json({ error: "Imagen no encontrada" });
+        }
+
+        const rutaFisica = path.join(uploadsDir, path.basename(analisis.ruta_imagen));
+
+        if (!fs.existsSync(rutaFisica)) {
+            return res.status(404).json({ error: "Imagen no encontrada" });
+        }
+
+        res.sendFile(rutaFisica);
+
+    } catch (error) {
+        console.error("Error obteniendo la imagen:", error);
+        res.status(500).json({ error: "Error obteniendo la imagen" });
     }
 });
 

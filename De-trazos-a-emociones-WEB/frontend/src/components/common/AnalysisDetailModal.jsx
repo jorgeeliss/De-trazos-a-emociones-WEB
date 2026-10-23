@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, ZoomIn } from 'lucide-react';
 import './AnalysisDetailModal.css';
 import { emotionVisual, intensityInfo, formatFecha } from '../../utils/emociones';
@@ -7,6 +7,33 @@ const API_URL = 'http://localhost:3000';
 
 const AnalysisDetailModal = ({ analisis, onClose }) => {
   const [zoom, setZoom] = useState(false);
+  const [imgUrl, setImgUrl] = useState(null);
+
+  const tieneImagen = !!analisis?.ruta_imagen;
+  const analisisId = analisis?._id;
+
+  // Carga la imagen protegida con el token (un solo fetch, reusado en el detalle y el zoom).
+  useEffect(() => {
+    let cancelado = false;
+    let objectUrl;
+    const cargar = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${API_URL}/analisis/${analisisId}/imagen`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok || cancelado) return;
+        const blob = await res.blob();
+        if (cancelado) return;
+        objectUrl = URL.createObjectURL(blob);
+        setImgUrl(objectUrl);
+      } catch {
+        /* sin imagen */
+      }
+    };
+    if (analisisId && tieneImagen) cargar();
+    return () => { cancelado = true; if (objectUrl) URL.revokeObjectURL(objectUrl); };
+  }, [analisisId, tieneImagen]);
 
   if (!analisis) return null;
 
@@ -14,7 +41,6 @@ const AnalysisDetailModal = ({ analisis, onClose }) => {
   const visual = emotionVisual(r.emocion_predominante || '');
   const inten = intensityInfo(r.intensidad || '');
   const rasgos = Array.isArray(r.rasgos_observados) ? r.rasgos_observados.filter(Boolean) : [];
-  const imgUrl = analisis.ruta_imagen ? `${API_URL}${analisis.ruta_imagen}` : null;
   const lectura = r.lectura_orientativa || r.analisis_completo || 'Sin lectura disponible para este análisis.';
 
   return (
