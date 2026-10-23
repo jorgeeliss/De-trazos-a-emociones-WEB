@@ -1,8 +1,8 @@
-import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import './SessionsList.css';
+import { api } from '../../api';
 
-const SessionsList = ({ sessions = [], activeChildName = '' }) => {
+const SessionsList = ({ sessions = [], activeChildName = '', onDeleted }) => {
 
   const getEmotionColor = (emotionStr = '') => {
     const lower = emotionStr.toLowerCase();
@@ -10,7 +10,7 @@ const SessionsList = ({ sessions = [], activeChildName = '' }) => {
     if (lower.includes('tristeza') || lower.includes('melancolía') || lower.includes('miedo')) return { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', stroke: '#60a5fa' };
     if (lower.includes('alegría') || lower.includes('felicidad')) return { bg: 'rgba(45,212,191,0.15)', color: '#2dd4bf', stroke: '#2dd4bf' };
     if (lower.includes('calma') || lower.includes('tranquilidad')) return { bg: 'rgba(168,158,224,0.15)', color: '#a89ee0', stroke: '#a89ee0' };
-    return { bg: 'rgba(251,191,36,0.15)', color: '#fbbf24', stroke: '#fbbf24' }; 
+    return { bg: 'rgba(251,191,36,0.15)', color: '#fbbf24', stroke: '#fbbf24' };
   };
 
   const getIntensityProps = (intStr = '') => {
@@ -24,6 +24,16 @@ const SessionsList = ({ sessions = [], activeChildName = '' }) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', options);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('¿Eliminar este análisis? Esta acción no se puede deshacer.')) return;
+    try {
+      await api.eliminarAnalisis(id);
+      if (onDeleted) onDeleted(id);
+    } catch (e) {
+      alert(e.message);
+    }
   };
 
   return (
@@ -49,11 +59,8 @@ const SessionsList = ({ sessions = [], activeChildName = '' }) => {
             const isToday = new Date().toDateString() === dateObj.toDateString();
             const datePrefix = isToday ? 'Hoy · ' : '';
 
-            // Generamos una gráfica visual aleatoria o usamos una por defecto para la decoración
-            const sparkPoints = '0,25 13,20 26,15 39,10 52,8 65,5 80,3';
-
             return (
-              <div key={i} className="session-row">
+              <div key={session._id || i} className="session-row">
                 <div className="session-thumb" style={{padding: 0, overflow: 'hidden', background: '#f0f0f0'}}>
                   {session.ruta_imagen ? (
                     <img src={`http://localhost:3000${session.ruta_imagen}`} alt="Dibujo" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
@@ -67,16 +74,19 @@ const SessionsList = ({ sessions = [], activeChildName = '' }) => {
                     </span>
                   </div>
                 </div>
-                <svg className="sparkline" viewBox="0 0 80 30">
-                  <polyline points={sparkPoints} fill="none" stroke={colors.stroke} strokeWidth="2" strokeLinecap="round" />
-                </svg>
                 <div className="session-intensity">
                   <div className="intensity-label">Intensidad</div>
                   <div className="intensity-badge" style={{background: intensity.bg, color: intensity.color}}>
                     {intensity.label}
                   </div>
                 </div>
-                <ChevronRight className="session-arrow" size={20} />
+                <button
+                  className="session-delete"
+                  title="Eliminar análisis"
+                  onClick={() => handleDelete(session._id)}
+                >
+                  <Trash2 size={18} />
+                </button>
               </div>
             );
           })

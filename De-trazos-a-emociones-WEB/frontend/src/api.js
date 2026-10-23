@@ -79,6 +79,25 @@ export const api = {
     return data;
   },
 
+  eliminarAnalisis: async (id) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/analisis/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error al eliminar el análisis");
+    }
+
+    return data;
+  },
+
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");

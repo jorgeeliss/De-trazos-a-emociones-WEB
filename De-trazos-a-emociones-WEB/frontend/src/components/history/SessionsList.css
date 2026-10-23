@@ -139,3 +139,20 @@
 .history-wrapper .btn-outline-small:hover {
   background: rgba(255,255,255,0.1);
 }
+
+.session-delete {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.session-delete:hover {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}

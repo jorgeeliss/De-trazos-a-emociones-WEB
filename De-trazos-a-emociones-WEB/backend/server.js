@@ -411,6 +411,41 @@ app.get("/analisis", verificarToken, async (req, res) => {
 });
 
 /* =========================
+   BORRAR UN ANÁLISIS
+========================= */
+
+app.delete("/analisis/:id", verificarToken, async (req, res) => {
+    const { id } = req.params;
+
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+        return res.status(400).json({ error: "Identificador inválido" });
+    }
+
+    try {
+        // Solo se puede borrar un análisis propio.
+        const analisis = await Analysis.findOne({ _id: id, usuarioId: req.usuario.id });
+
+        if (!analisis) {
+            return res.status(404).json({ error: "Análisis no encontrado" });
+        }
+
+        // Borrar la imagen del disco si existe (ignora el error si ya no está).
+        if (analisis.ruta_imagen) {
+            const rutaFisica = path.join(uploadsDir, path.basename(analisis.ruta_imagen));
+            fs.unlink(rutaFisica, () => {});
+        }
+
+        await Analysis.deleteOne({ _id: analisis._id });
+
+        res.json({ mensaje: "Análisis eliminado" });
+
+    } catch (error) {
+        console.error("Error eliminando análisis:", error);
+        res.status(500).json({ error: "Error eliminando el análisis" });
+    }
+});
+
+/* =========================
    SERVIDOR
 ========================= */
 

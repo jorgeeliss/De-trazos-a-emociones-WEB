@@ -70,6 +70,10 @@ const History = () => {
   const ultimos3 = activeSessions.slice(0, 3);
   const mostrarAlerta = ultimos3.length >= 3 && ultimos3.every(s => esEmocionNegativa(s.resultado_ia?.emocion_predominante || ''));
 
+  const handleDeleted = (id) => {
+    setHistoryData(prev => prev.filter(a => a._id !== id));
+  };
+
   return (
     <div className="history-wrapper">
       <div className="bg-orb orb-1"></div>
@@ -121,7 +125,7 @@ const History = () => {
             <StatCards sessions={activeSessions} />
 
             {/* LISTA DE SESIONES */}
-            <SessionsList sessions={activeSessions} activeChildName={activeChild} />
+            <SessionsList sessions={activeSessions} activeChildName={activeChild} onDeleted={handleDeleted} />
           </>
         )}
       </main>
