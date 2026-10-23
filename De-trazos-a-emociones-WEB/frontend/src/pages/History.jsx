@@ -33,17 +33,16 @@ const History = () => {
         const data = await api.getAnalisis();
         setHistoryData(data);;
         
-        // Extraer niños únicos
+        // Extraer niños únicos (igual que el Dashboard: los análisis sin nombre
+        // se agrupan bajo "Sin nombre" para que no se pierdan).
         const uniqueChildrenMap = new Map();
         data.forEach(item => {
-          if (item.contexto_nino && item.contexto_nino.nombre) {
-            const name = item.contexto_nino.nombre;
-            if (!uniqueChildrenMap.has(name)) {
-              uniqueChildrenMap.set(name, item.contexto_nino);
-            }
+          const name = (item.contexto_nino?.nombre || '').trim() || 'Sin nombre';
+          if (!uniqueChildrenMap.has(name)) {
+            uniqueChildrenMap.set(name, { ...(item.contexto_nino || {}), nombre: name });
           }
         });
-        
+
         const childrenArray = Array.from(uniqueChildrenMap.values());
         setChildren(childrenArray);
         
@@ -61,9 +60,10 @@ const History = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const activeSessions = historyData.filter(item =>
-    item.contexto_nino && item.contexto_nino.nombre === activeChild
-  );
+  const activeSessions = historyData.filter(item => {
+    const name = (item.contexto_nino?.nombre || '').trim() || 'Sin nombre';
+    return name === activeChild;
+  });
 
   // Alerta orientativa (no diagnóstica): los 3 análisis más recientes del niño
   // muestran emociones negativas. Es una señal para conversar, no un diagnóstico.

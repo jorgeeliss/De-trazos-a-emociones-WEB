@@ -14,7 +14,7 @@
 }
 
 .compare-thumb {
-  flex: 1;
+  width: 100%;
   aspect-ratio: 1;
   border-radius: 16px;
   background: rgba(30, 30, 48, 0.6);
@@ -25,7 +25,14 @@
   justify-content: center;
   gap: 10px;
   font-size: 32px;
+  overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Cuando la miniatura es una imagen (no el emoji placeholder) */
+img.compare-thumb {
+  object-fit: cover;
+  display: block;
 }
 
 .compare-card:hover .compare-thumb {
