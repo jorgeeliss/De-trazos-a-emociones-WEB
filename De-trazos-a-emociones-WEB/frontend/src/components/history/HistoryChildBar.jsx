@@ -1,4 +1,3 @@
-import React from 'react';
 import './HistoryChildBar.css';
 
 const HistoryChildBar = ({ childrenList, activeChild, setActiveChild }) => {
@@ -30,7 +29,7 @@ const HistoryChildBar = ({ childrenList, activeChild, setActiveChild }) => {
         </div>
       )}
 
-      <div className="child-pill" style={{borderStyle: 'dashed'}}>
+      <div className="child-pill" style={{borderStyle: 'dashed', opacity: 0.5, cursor: 'not-allowed'}} title="Próximamente">
         <div className="child-avatar" style={{background: 'rgba(255,255,255,0.05)', color: 'var(--muted)'}}>+</div>
         <span className="child-name" style={{color: 'var(--muted)'}}>Agregar niño</span>
       </div>

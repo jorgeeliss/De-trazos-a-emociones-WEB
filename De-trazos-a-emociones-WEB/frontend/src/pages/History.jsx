@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Plus, AlertTriangle } from 'lucide-react';
 import './History.css';
 import { api } from '../api';
+import { esEmocionNegativa } from '../utils/emociones';
 
 import Sidebar from '../components/layout/Sidebar';
 import HistoryChildBar from '../components/history/HistoryChildBar';
@@ -17,17 +18,15 @@ const History = () => {
   const [children, setChildren] = useState([]);
   const [activeChild, setActiveChild] = useState('');
   const [loading, setLoading] = useState(true);
-  
-  const [barsWidth, setBarsWidth] = useState(['0%', '0%', '0%', '0%']);
+
   const [dotsHeight, setDotsHeight] = useState(['0px', '0px', '0px', '0px', '0px', '0px', '0px']);
 
   useEffect(() => {
-    // Para las animaciones de las gráficas
+    // Animación decorativa de los puntos de actividad semanal del resumen.
     const timer = setTimeout(() => {
-      setBarsWidth(['62%', '38%', '24%', '15%']);
       setDotsHeight(['8px', '14px', '10px', '18px', '12px', '24px', '6px']);
     }, 300);
-    
+
     // Obtener el historial real del backend
     const fetchHistory = async () => {
       try {
@@ -62,9 +61,14 @@ const History = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const activeSessions = historyData.filter(item => 
+  const activeSessions = historyData.filter(item =>
     item.contexto_nino && item.contexto_nino.nombre === activeChild
   );
+
+  // Alerta orientativa (no diagnóstica): los 3 análisis más recientes del niño
+  // muestran emociones negativas. Es una señal para conversar, no un diagnóstico.
+  const ultimos3 = activeSessions.slice(0, 3);
+  const mostrarAlerta = ultimos3.length >= 3 && ultimos3.every(s => esEmocionNegativa(s.resultado_ia?.emocion_predominante || ''));
 
   return (
     <div className="history-wrapper">
@@ -88,17 +92,16 @@ const History = () => {
           </div>
         </div>
 
-        {/* ALERT */}
-        {activeChild === 'Sofia' && activeSessions.length > 2 && (
+        {/* ALERTA ORIENTATIVA (por regla documentada, no por nombre) */}
+        {mostrarAlerta && (
           <div className="alert-banner">
             <div className="alert-icon">
               <AlertTriangle color="#f87171" size={20} />
             </div>
             <div className="alert-text">
-              <div className="alert-title">Alerta emocional — {activeChild}</div>
-              <div className="alert-sub">Múltiples emociones negativas detectadas recientemente. Se recomienda atención.</div>
+              <div className="alert-title">Señal para acompañar — {activeChild}</div>
+              <div className="alert-sub">Los 3 análisis más recientes muestran emociones que suelen asociarse a malestar. Podría ser útil conversar con calma o, si lo consideras, con un profesional. Esto es orientativo, no un diagnóstico.</div>
             </div>
-            <button className="alert-btn">Ver detalle</button>
           </div>
         )}
 
@@ -110,7 +113,7 @@ const History = () => {
 
             {/* CUADRÍCULA SUPERIOR */}
             <div className="grid-top">
-              <ChartCard activeChildName={activeChild} />
+              <ChartCard sessions={activeSessions} activeChildName={activeChild} />
               <SummaryCard sessions={activeSessions} dotsHeight={dotsHeight} />
             </div>
 
