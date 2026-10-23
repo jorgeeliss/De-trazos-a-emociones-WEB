@@ -1,5 +1,55 @@
 const API_URL = "http://localhost:3000";
 
+/* =========================
+   MANEJO DE SESIÓN
+========================= */
+
+const limpiarSesion = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+};
+
+// La sesión dejó de ser válida: limpiamos y mandamos al login obligatorio.
+const forzarLogin = () => {
+  limpiarSesion();
+  if (window.location.pathname !== "/login") {
+    window.location.replace("/login?expirado=1");
+  }
+};
+
+// Decodifica el payload del JWT y comprueba que exista y no haya expirado.
+export const tokenVigente = () => {
+  const token = localStorage.getItem("token");
+  if (!token) return false;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (!payload.exp) return true; // sin exp lo tratamos como vigente
+    return payload.exp * 1000 > Date.now();
+  } catch {
+    return false;
+  }
+};
+
+// fetch autenticado: agrega el Bearer y, ante un 401/403, cierra la sesión.
+const authFetch = async (url, options = {}) => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (response.status === 401 || response.status === 403) {
+    forzarLogin();
+    throw new Error("Tu sesión expiró. Vuelve a iniciar sesión.");
+  }
+
+  return response;
+};
+
 export const api = {
   register: async (userData) => {
     const response = await fetch(`${API_URL}/auth/register`, {
@@ -42,13 +92,7 @@ export const api = {
   },
 
   getAnalisis: async () => {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`${API_URL}/analisis`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await authFetch(`${API_URL}/analisis`);
 
     const data = await response.json();
 
@@ -60,13 +104,8 @@ export const api = {
   },
 
   analizarImagen: async (formData) => {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`${API_URL}/analizar-imagen`, {
+    const response = await authFetch(`${API_URL}/analizar-imagen`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
       body: formData,
     });
 
@@ -80,13 +119,8 @@ export const api = {
   },
 
   eliminarAnalisis: async (id) => {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`${API_URL}/analisis/${id}`, {
+    const response = await authFetch(`${API_URL}/analisis/${id}`, {
       method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
 
     const data = await response.json();
@@ -99,13 +133,10 @@ export const api = {
   },
 
   guardarAnalisis: async (payload) => {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`${API_URL}/analisis/guardar`, {
+    const response = await authFetch(`${API_URL}/analisis/guardar`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(payload),
     });
@@ -120,13 +151,10 @@ export const api = {
   },
 
   asignarAnalisis: async (id, contexto_nino) => {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`${API_URL}/analisis/${id}/asignar`, {
+    const response = await authFetch(`${API_URL}/analisis/${id}/asignar`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ contexto_nino }),
     });
@@ -141,13 +169,8 @@ export const api = {
   },
 
   reanalizar: async (id) => {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`${API_URL}/analisis/${id}/reanalizar`, {
+    const response = await authFetch(`${API_URL}/analisis/${id}/reanalizar`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
 
     const data = await response.json();
@@ -160,26 +183,20 @@ export const api = {
   },
 
   descartarAnalisis: async (imagen) => {
-    const token = localStorage.getItem("token");
-
-    await fetch(`${API_URL}/analisis/descartar`, {
+    await authFetch(`${API_URL}/analisis/descartar`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ imagen }),
     });
   },
 
   eliminarNino: async (ids) => {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`${API_URL}/analisis/eliminar-varios`, {
+    const response = await authFetch(`${API_URL}/analisis/eliminar-varios`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ids }),
     });
@@ -194,7 +211,6 @@ export const api = {
   },
 
   logout: () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    limpiarSesion();
   },
 };

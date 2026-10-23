@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Mail, Lock } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
 import './AuthCommon.css';
@@ -8,6 +8,8 @@ import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sesionExpirada = searchParams.get('expirado') === '1';
   const { nuevaSesion } = useAnalisisSesion();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -66,6 +68,12 @@ const handleSubmit = async (e) => {
             <h1>Iniciar sesión</h1>
             <p>Inicia sesión con tu correo electrónico</p>
           </div>
+
+          {sesionExpirada && (
+            <div className="auth-aviso" role="alert">
+              Tu sesión expiró por seguridad. Vuelve a iniciar sesión.
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">

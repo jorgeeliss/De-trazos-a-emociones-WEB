@@ -77,6 +77,16 @@
   font-size: 1rem;
 }
 
+.auth-container .auth-aviso {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fcd9a1;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  margin-bottom: 1.75rem;
+}
+
 .auth-container .form-group {
   margin-bottom: 1.5rem;
 }
