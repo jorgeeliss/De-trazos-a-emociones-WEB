@@ -12,8 +12,8 @@
 
 .upload-area:hover,
 .upload-area.drag {
-  border-color: #4f46e5;
-  background: rgba(79, 70, 229, 0.05);
+  border-color: var(--purple, #8b79f2);
+  background: rgba(139, 121, 242, 0.06);
 }
 
 .upload-area input[type="file"] {
@@ -30,7 +30,7 @@
   width: 64px;
   height: 64px;
   margin: 0 auto 16px;
-  background: rgba(96, 165, 250, 0.1);
+  background: var(--purple-dim, rgba(139, 121, 242, 0.15));
   border-radius: 16px;
   display: flex;
   align-items: center;

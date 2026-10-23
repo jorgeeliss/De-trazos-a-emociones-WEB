@@ -47,8 +47,8 @@
 .field input:focus,
 .field select:focus,
 .field textarea:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+  border-color: var(--purple, #8b79f2);
+  box-shadow: 0 0 0 2px rgba(139, 121, 242, 0.25);
 }
 
 .field textarea {
@@ -103,6 +103,6 @@
 }
 
 .radio-opt.selected {
-  background: #4f46e5;
+  background: var(--purple, #8b79f2);
   color: #ffffff;
 }
