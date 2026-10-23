@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, Eye } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
@@ -176,7 +176,7 @@ const Register = () => {
 
             <label className="checkbox-group">
               <input type="checkbox" required />
-              <span>Acepto los <a href="#">Términos y Condiciones</a> y la <a href="#">Política de Privacidad</a> de De trazos a emociones.</span>
+              <span>Acepto los <a href="/terminos" target="_blank" rel="noreferrer">Términos y Condiciones</a> y la <a href="/privacidad" target="_blank" rel="noreferrer">Política de Privacidad</a> de De trazos a emociones.</span>
             </label>
 
             <button type="submit" className="btn-submit">
