@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import './Dashboard.css';
 import { api } from '../api';
-import { emotionVisual, emocionPredominante } from '../utils/emociones';
+import { emotionVisual, emocionPredominante, infoCumple } from '../utils/emociones';
 
 import Sidebar from '../components/layout/Sidebar';
 import ChildSwitcher from '../components/dashboard/ChildSwitcher';
@@ -11,6 +11,7 @@ import ActivitiesSection from '../components/dashboard/ActivitiesSection';
 import ComparisonSection from '../components/dashboard/ComparisonSection';
 import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
 import BrandHeader from '../components/common/BrandHeader';
+import BirthdayBanner from '../components/dashboard/BirthdayBanner';
 
 const Dashboard = () => {
   const [activeChild, setActiveChild] = useState(null);
@@ -60,6 +61,11 @@ const Dashboard = () => {
   const emocionSel = selected ? emocionPredominante(selected.analisis) : null;
   const emojiSel = emotionVisual(emocionSel || '').emoji;
 
+  // Cumpleaños hoy o mañana entre los niños registrados.
+  const cumples = children
+    .map((c) => ({ nino: c, cumple: infoCumple(c.fecha_nacimiento) }))
+    .filter((x) => x.cumple);
+
   return (
     <div className="dashboard-container">
       <div className="bg-orb orb-1"></div>
@@ -70,6 +76,8 @@ const Dashboard = () => {
 
       <main className="main">
         <BrandHeader />
+
+        <BirthdayBanner cumples={cumples} />
 
         {/* WELCOME */}
         <div className="welcome">

@@ -1,0 +1,40 @@
+.bday-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.bday-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(139, 121, 242, 0.14), rgba(45, 212, 191, 0.08));
+  border: 1px solid rgba(139, 121, 242, 0.3);
+}
+
+.bday-emoji {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.bday-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text, #ffffff);
+  margin-bottom: 4px;
+}
+
+.bday-sub {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted, #a1a1aa);
+}
+
+.bday-sub strong {
+  color: var(--purple-light, #a89ee0);
+  font-weight: 600;
+}

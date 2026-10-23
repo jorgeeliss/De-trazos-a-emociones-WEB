@@ -49,6 +49,21 @@ export function textoEdad({ fecha_nacimiento, edad } = {}) {
   return '';
 }
 
+// Si el cumpleaños es hoy o mañana, devuelve { cuando, edad }; si no, null.
+export function infoCumple(fechaNacimiento) {
+  if (!fechaNacimiento) return null;
+  const nac = new Date(fechaNacimiento);
+  if (isNaN(nac.getTime())) return null;
+  const hoy = new Date();
+  const manana = new Date(hoy);
+  manana.setDate(hoy.getDate() + 1);
+  const mismaFecha = (d) => d.getMonth() === nac.getMonth() && d.getDate() === nac.getDate();
+  const edadActual = edadDesde(fechaNacimiento) ?? 0;
+  if (mismaFecha(hoy)) return { cuando: 'hoy', edad: edadActual };
+  if (mismaFecha(manana)) return { cuando: 'mañana', edad: edadActual + 1 };
+  return null;
+}
+
 export function formatFecha(fecha) {
   if (!fecha) return '';
   const d = new Date(fecha);
