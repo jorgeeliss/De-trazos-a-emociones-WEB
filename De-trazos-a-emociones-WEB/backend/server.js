@@ -279,12 +279,12 @@ Reglas de lenguaje (obligatorias):
 
 Devuelve un objeto JSON con EXACTAMENTE estas claves:
 - "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). Cada elemento debe ser una FRASE NATURAL Y COMPLETA en español, NUNCA una etiqueta, palabras sueltas ni texto con guiones bajos. Ejemplos del formato correcto: "Lluvia representada con líneas azules en el lado derecho de la hoja", "Un sol con expresión triste en la esquina superior izquierda", "Varias figuras humanas pequeñas en la parte inferior". Enumera entre 4 y 10 rasgos DISTINTOS; no repitas ni reformules el mismo rasgo.
-- "interpretacion": texto EXTENSO y detallado, de MÍNIMO DOS PÁRRAFOS, que relacione CADA rasgo observado con el contexto del niño (si se proporcionó). Explica el porqué de cada posible lectura emocional y desarrolla las ideas; no te limites en la longitud. Es un campo obligatorio: nunca lo dejes vacío ni con una sola frase.
+- "interpretacion": análisis EXTENSO, detallado y PROFESIONAL, de 2 a 3 párrafos (al menos 6 frases en total). Relaciona CADA rasgo observado con el posible estado emocional y con el contexto del niño (si se proporcionó), explicando el porqué de cada lectura. Desarrolla cada idea; no resumas. Es un campo obligatorio: nunca lo dejes vacío ni con una sola frase.
 - "emocion_predominante": la emoción principal que el dibujo podría estar expresando.
 - "intensidad": uno de "baja", "media" o "alta".
-- "lectura_orientativa": síntesis clara para el adulto, de MÍNIMO UN PÁRRAFO, con sugerencias concretas de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional. Es un campo obligatorio: nunca lo dejes vacío.
+- "lectura_orientativa": síntesis PROFESIONAL para el adulto, de al menos 4 frases, con sugerencias concretas y accionables de acompañamiento y un recordatorio de que esto no reemplaza la valoración de un profesional. Es un campo obligatorio: nunca lo dejes vacío.
 
-Los campos "interpretacion" y "lectura_orientativa" deben ser desarrollados y detallados; no los resumas en una sola línea.
+Los campos "interpretacion" y "lectura_orientativa" son los más importantes: deben ser desarrollados, detallados y redactados con buena gramática y un tono cuidado y profesional, manteniendo siempre el lenguaje orientativo (nunca clínico ni diagnóstico). No los resumas en una o dos frases.
 
 Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
 `
@@ -302,7 +302,7 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
             options: {
                 num_predict: OLLAMA_NUM_PREDICT,
                 num_ctx: OLLAMA_NUM_CTX,
-                temperature: 0.2,
+                temperature: 0.3,
                 repeat_penalty: 1.2,
                 repeat_last_n: 256
             },
