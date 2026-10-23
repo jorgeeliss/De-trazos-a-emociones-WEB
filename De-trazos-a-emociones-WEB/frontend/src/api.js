@@ -98,6 +98,27 @@ export const api = {
     return data;
   },
 
+  eliminarNino: async (ids) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/analisis/eliminar-varios`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error al eliminar el niño");
+    }
+
+    return data;
+  },
+
   logout: () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");

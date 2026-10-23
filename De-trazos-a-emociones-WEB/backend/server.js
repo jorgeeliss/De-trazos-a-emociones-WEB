@@ -445,6 +445,46 @@ app.get("/analisis/:id/imagen", verificarToken, async (req, res) => {
 });
 
 /* =========================
+   BORRAR VARIOS ANÁLISIS (p. ej. todos los de un niño)
+========================= */
+
+app.post("/analisis/eliminar-varios", verificarToken, async (req, res) => {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ error: "Debes enviar una lista de ids" });
+    }
+
+    const validos = ids.filter((id) => /^[0-9a-fA-F]{24}$/.test(id));
+    if (validos.length === 0) {
+        return res.status(400).json({ error: "No hay identificadores válidos" });
+    }
+
+    try {
+        // Solo análisis propios.
+        const analisis = await Analysis.find({ _id: { $in: validos }, usuarioId: req.usuario.id });
+
+        for (const a of analisis) {
+            if (a.ruta_imagen) {
+                const rutaFisica = path.join(uploadsDir, path.basename(a.ruta_imagen));
+                fs.unlink(rutaFisica, () => {});
+            }
+        }
+
+        const result = await Analysis.deleteMany({
+            _id: { $in: analisis.map((a) => a._id) },
+            usuarioId: req.usuario.id
+        });
+
+        res.json({ eliminados: result.deletedCount });
+
+    } catch (error) {
+        console.error("Error eliminando análisis:", error);
+        res.status(500).json({ error: "Error eliminando los análisis" });
+    }
+});
+
+/* =========================
    BORRAR UN ANÁLISIS
 ========================= */
 

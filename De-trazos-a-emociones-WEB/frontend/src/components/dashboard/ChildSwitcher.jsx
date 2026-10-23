@@ -1,8 +1,24 @@
-import { Plus } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import './ChildSwitcher.css';
 import { emotionVisual, emocionPredominante } from '../../utils/emociones';
+import { api } from '../../api';
 
-const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild }) => {
+const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) => {
+  const navigate = useNavigate();
+
+  const handleDelete = async (e, nino) => {
+    e.stopPropagation();
+    const n = nino.analisis.length;
+    if (!window.confirm(`¿Eliminar a "${nino.nombre}" y sus ${n} análisis? Se borrarán también sus dibujos. Esta acción no se puede deshacer.`)) return;
+    try {
+      await api.eliminarNino(nino.analisis.map((a) => a._id));
+      if (onDeleted) onDeleted(nino.analisis.map((a) => a._id));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   return (
     <div className="child-switcher">
       {ninos.map((nino) => {
@@ -21,10 +37,13 @@ const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild }) => {
               <div className="child-cage">{nino.edad ? `${nino.edad} años` : `${nino.analisis.length} análisis`}</div>
             </div>
             <span className="child-mood">{visual.emoji}</span>
+            <button className="child-delete" title="Eliminar niño" onClick={(e) => handleDelete(e, nino)}>
+              <Trash2 size={16} />
+            </button>
           </div>
         );
       })}
-      <div className="add-child" title="Próximamente" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+      <div className="add-child" title="Registrar un niño nuevo con su contexto" onClick={() => navigate('/app')}>
         <Plus size={18} />
         Agregar niño
       </div>

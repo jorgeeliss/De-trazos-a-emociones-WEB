@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import './HistoryChildBar.css';
 
 const HistoryChildBar = ({ childrenList, activeChild, setActiveChild }) => {
+  const navigate = useNavigate();
   return (
     <div className="child-bar">
       {childrenList && childrenList.map((child, i) => {
@@ -29,7 +31,7 @@ const HistoryChildBar = ({ childrenList, activeChild, setActiveChild }) => {
         </div>
       )}
 
-      <div className="child-pill" style={{borderStyle: 'dashed', opacity: 0.5, cursor: 'not-allowed'}} title="Próximamente">
+      <div className="child-pill" style={{borderStyle: 'dashed', cursor: 'pointer'}} title="Registrar un niño nuevo con su contexto" onClick={() => navigate('/app')}>
         <div className="child-avatar" style={{background: 'rgba(255,255,255,0.05)', color: 'var(--muted)'}}>+</div>
         <span className="child-name" style={{color: 'var(--muted)'}}>Agregar niño</span>
       </div>

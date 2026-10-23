@@ -43,6 +43,11 @@ const Dashboard = () => {
     return [...map.values()];
   }, [historyData]);
 
+  const handleNinoEliminado = (ids) => {
+    const borrados = new Set(ids);
+    setHistoryData((prev) => prev.filter((a) => !borrados.has(a._id)));
+  };
+
   // El niño seleccionado por defecto es el primero; al hacer clic se actualiza activeChild.
   const selected = children.find((c) => c.nombre === activeChild) || children[0] || null;
   const nombreUsuario = JSON.parse(localStorage.getItem('user') || '{}').nombre || 'Usuario';
@@ -84,7 +89,7 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            <ChildSwitcher ninos={children} activeChild={selected?.nombre} setActiveChild={setActiveChild} />
+            <ChildSwitcher ninos={children} activeChild={selected?.nombre} setActiveChild={setActiveChild} onDeleted={handleNinoEliminado} />
 
             <WeeklySummary child={selected} />
 
