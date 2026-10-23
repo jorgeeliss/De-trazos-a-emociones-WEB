@@ -1,8 +1,16 @@
 const path = require("path");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
-const dns = require("dns");
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
+// Por defecto se usa el DNS del sistema (lo más compatible, incluidos datos
+// móviles). Si una red no resuelve el registro SRV de Atlas (error
+// "queryTxt ETIMEOUT"), se pueden forzar DNS externos definiendo DNS_SERVERS
+// en el .env, por ejemplo: DNS_SERVERS=8.8.8.8,1.1.1.1
+if (process.env.DNS_SERVERS) {
+    const dns = require("dns");
+    dns.setServers(
+        process.env.DNS_SERVERS.split(",").map((s) => s.trim()).filter(Boolean)
+    );
+}
 
 const express = require("express");
 const axios = require("axios");
