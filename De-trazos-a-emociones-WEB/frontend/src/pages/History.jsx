@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, AlertTriangle } from 'lucide-react';
 import './History.css';
@@ -11,6 +11,7 @@ import ChartCard from '../components/history/ChartCard';
 import SummaryCard from '../components/history/SummaryCard';
 import StatCards from '../components/history/StatCards';
 import SessionsList from '../components/history/SessionsList';
+import IndependientesGrid from '../components/history/IndependientesGrid';
 import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
 import BrandHeader from '../components/common/BrandHeader';
 
@@ -19,74 +20,84 @@ const INDEP = '__independientes__';
 const History = () => {
   const navigate = useNavigate();
   const [historyData, setHistoryData] = useState([]);
-  const [children, setChildren] = useState([]);
-  const [hayIndependientes, setHayIndependientes] = useState(false);
   const [activeChild, setActiveChild] = useState('');
   const [loading, setLoading] = useState(true);
   const [detalle, setDetalle] = useState(null);
-
   const [dotsHeight, setDotsHeight] = useState(['0px', '0px', '0px', '0px', '0px', '0px', '0px']);
 
+  // Refresco simple (tras asignar un independiente). No cambia el niño activo.
+  const recargar = async () => {
+    try {
+      const data = await api.getAnalisis();
+      setHistoryData(data);
+    } catch (err) {
+      console.error('Error recargando historial:', err);
+    }
+  };
+
   useEffect(() => {
-    // Animación decorativa de los puntos de actividad semanal del resumen.
     const timer = setTimeout(() => {
       setDotsHeight(['8px', '14px', '10px', '18px', '12px', '24px', '6px']);
     }, 300);
 
-    // Obtener el historial real del backend
-    const fetchHistory = async () => {
+    const cargarInicial = async () => {
       try {
         const data = await api.getAnalisis();
-        setHistoryData(data);;
-        
-        // Extraer niños únicos (los análisis sin nombre se agrupan como "Sin nombre").
-        // Los dibujos independientes NO son niños: van en su propia vista.
-        const uniqueChildrenMap = new Map();
+        setHistoryData(data);
+        const nombres = [];
         let indep = false;
-        data.forEach(item => {
-          if (item.independiente) { indep = true; return; }
-          const name = (item.contexto_nino?.nombre || '').trim() || 'Sin nombre';
-          if (!uniqueChildrenMap.has(name)) {
-            uniqueChildrenMap.set(name, { ...(item.contexto_nino || {}), nombre: name });
-          }
-        });
-
-        const childrenArray = Array.from(uniqueChildrenMap.values());
-        setChildren(childrenArray);
-        setHayIndependientes(indep);
-
-        if (childrenArray.length > 0) {
-          setActiveChild(childrenArray[0].nombre);
-        } else if (indep) {
-          setActiveChild(INDEP);
+        for (const it of data) {
+          if (it.independiente) { indep = true; continue; }
+          const n = (it.contexto_nino?.nombre || '').trim() || 'Sin nombre';
+          if (!nombres.includes(n)) nombres.push(n);
         }
-        setLoading(false);
+        if (nombres.length) setActiveChild(nombres[0]);
+        else if (indep) setActiveChild(INDEP);
       } catch (err) {
-        console.error("Error fetching history:", err);
+        console.error('Error fetching history:', err);
+      } finally {
         setLoading(false);
       }
     };
-    
-    fetchHistory();
+
+    cargarInicial();
     return () => clearTimeout(timer);
   }, []);
 
+  // Niños y existencia de independientes derivados de los datos (se actualizan solos).
+  const { children, hayIndependientes } = useMemo(() => {
+    const map = new Map();
+    let indep = false;
+    for (const item of historyData) {
+      if (item.independiente) { indep = true; continue; }
+      const name = (item.contexto_nino?.nombre || '').trim() || 'Sin nombre';
+      if (!map.has(name)) map.set(name, { ...(item.contexto_nino || {}), nombre: name });
+    }
+    return { children: [...map.values()], hayIndependientes: indep };
+  }, [historyData]);
+
+  const esIndep = activeChild === INDEP;
+
   const activeSessions = historyData.filter(item => {
-    if (activeChild === INDEP) return item.independiente === true;
+    if (esIndep) return item.independiente === true;
     if (item.independiente) return false;
     const name = (item.contexto_nino?.nombre || '').trim() || 'Sin nombre';
     return name === activeChild;
   });
 
-  const activeChildName = activeChild === INDEP ? 'Dibujos independientes' : activeChild;
+  const activeChildName = esIndep ? 'Dibujos independientes' : activeChild;
 
-  // Alerta orientativa (no diagnóstica): los 3 análisis más recientes del niño
-  // muestran emociones negativas. Es una señal para conversar, no un diagnóstico.
   const ultimos3 = activeSessions.slice(0, 3);
-  const mostrarAlerta = ultimos3.length >= 3 && ultimos3.every(s => esEmocionNegativa(s.resultado_ia?.emocion_predominante || ''));
+  const mostrarAlerta = !esIndep && ultimos3.length >= 3 && ultimos3.every(s => esEmocionNegativa(s.resultado_ia?.emocion_predominante || ''));
 
   const handleDeleted = (id) => {
     setHistoryData(prev => prev.filter(a => a._id !== id));
+    setDetalle(prev => (prev && prev._id === id ? null : prev));
+  };
+
+  const handleActualizado = (id, nuevoResultado) => {
+    setHistoryData(prev => prev.map(a => (a._id === id ? { ...a, resultado_ia: nuevoResultado, analizado_sin_contexto: false } : a)));
+    setDetalle(prev => (prev && prev._id === id ? { ...prev, resultado_ia: nuevoResultado, analizado_sin_contexto: false } : prev));
   };
 
   return (
@@ -99,17 +110,16 @@ const History = () => {
       <main className="main">
         <BrandHeader />
 
-        {/* BARRA SUPERIOR */}
         <div className="topbar">
           <div>
             <div className="page-title">Historial <span>emocional</span></div>
-            <div style={{fontSize: '14px', color: 'var(--muted)', marginTop: '6px', fontWeight: 400}}>Seguimiento longitudinal por niño · Últimas 8 semanas</div>
+            <div style={{fontSize: '14px', color: 'var(--muted)', marginTop: '6px', fontWeight: 400}}>Seguimiento longitudinal por niño</div>
           </div>
           <div className="topbar-right">
             <button
               className="btn-new"
               onClick={() => {
-                const contexto = activeSessions[0]?.contexto_nino;
+                const contexto = (!esIndep && activeSessions[0]?.contexto_nino) || undefined;
                 navigate('/app', contexto ? { state: { contexto } } : undefined);
               }}
             >
@@ -119,7 +129,6 @@ const History = () => {
           </div>
         </div>
 
-        {/* ALERTA ORIENTATIVA (por regla documentada, no por nombre) */}
         {mostrarAlerta && (
           <div className="alert-banner">
             <div className="alert-icon">
@@ -144,22 +153,37 @@ const History = () => {
               independientesKey={INDEP}
             />
 
-            {/* CUADRÍCULA SUPERIOR */}
-            <div className="grid-top">
-              <ChartCard sessions={activeSessions} activeChildName={activeChildName} />
-              <SummaryCard sessions={activeSessions} dotsHeight={dotsHeight} />
-            </div>
+            {esIndep ? (
+              <IndependientesGrid
+                sessions={activeSessions}
+                ninos={children}
+                onSelect={setDetalle}
+                onDeleted={handleDeleted}
+                onAsignado={recargar}
+              />
+            ) : (
+              <>
+                <div className="grid-top">
+                  <ChartCard sessions={activeSessions} activeChildName={activeChildName} />
+                  <SummaryCard sessions={activeSessions} dotsHeight={dotsHeight} />
+                </div>
 
-            {/* TARJETAS DE ESTADÍSTICAS */}
-            <StatCards sessions={activeSessions} />
+                <StatCards sessions={activeSessions} />
 
-            {/* LISTA DE SESIONES */}
-            <SessionsList sessions={activeSessions} activeChildName={activeChildName} onDeleted={handleDeleted} onSelect={setDetalle} />
+                <SessionsList sessions={activeSessions} activeChildName={activeChildName} onDeleted={handleDeleted} onSelect={setDetalle} />
+              </>
+            )}
           </>
         )}
       </main>
 
-      {detalle && <AnalysisDetailModal analisis={detalle} onClose={() => setDetalle(null)} />}
+      {detalle && (
+        <AnalysisDetailModal
+          analisis={detalle}
+          onClose={() => setDetalle(null)}
+          onActualizado={handleActualizado}
+        />
+      )}
     </div>
   );
 };

@@ -119,6 +119,46 @@ export const api = {
     return data;
   },
 
+  asignarAnalisis: async (id, contexto_nino) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/analisis/${id}/asignar`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ contexto_nino }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error al asignar el análisis");
+    }
+
+    return data;
+  },
+
+  reanalizar: async (id) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/analisis/${id}/reanalizar`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error al reanalizar");
+    }
+
+    return data;
+  },
+
   descartarAnalisis: async (imagen) => {
     const token = localStorage.getItem("token");
 

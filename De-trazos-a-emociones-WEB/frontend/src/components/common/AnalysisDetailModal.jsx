@@ -1,13 +1,18 @@
 import { useState, useEffect } from 'react';
-import { X, ZoomIn } from 'lucide-react';
+import { X, ZoomIn, RefreshCw } from 'lucide-react';
 import './AnalysisDetailModal.css';
 import { emotionVisual, intensityInfo, formatFecha } from '../../utils/emociones';
+import { api } from '../../api';
+import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 
 const API_URL = 'http://localhost:3000';
 
-const AnalysisDetailModal = ({ analisis, onClose }) => {
+const AnalysisDetailModal = ({ analisis, onClose, onActualizado }) => {
   const [zoom, setZoom] = useState(false);
   const [imgUrl, setImgUrl] = useState(null);
+  const [resultadoLocal, setResultadoLocal] = useState(null);
+  const [yaReanalizado, setYaReanalizado] = useState(false);
+  const [reanalizando, setReanalizando] = useState(false);
 
   const tieneImagen = !!analisis?.ruta_imagen;
   const analisisId = analisis?._id;
@@ -37,11 +42,28 @@ const AnalysisDetailModal = ({ analisis, onClose }) => {
 
   if (!analisis) return null;
 
-  const r = analisis.resultado_ia || {};
+  const r = resultadoLocal || analisis.resultado_ia || {};
   const visual = emotionVisual(r.emocion_predominante || '');
   const inten = intensityInfo(r.intensidad || '');
   const rasgos = Array.isArray(r.rasgos_observados) ? r.rasgos_observados.filter(Boolean) : [];
   const lectura = r.lectura_orientativa || r.analisis_completo || 'Sin lectura disponible para este análisis.';
+
+  const sinContexto = !yaReanalizado && analisis.analizado_sin_contexto;
+  const puedeReanalizar = sinContexto && !analisis.independiente;
+
+  const reanalizar = async () => {
+    setReanalizando(true);
+    try {
+      const data = await api.reanalizar(analisis._id);
+      setResultadoLocal(data.analisis);
+      setYaReanalizado(true);
+      if (onActualizado) onActualizado(analisis._id, data.analisis);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setReanalizando(false);
+    }
+  };
 
   return (
     <div className="adm-overlay" onClick={onClose}>
@@ -55,6 +77,21 @@ const AnalysisDetailModal = ({ analisis, onClose }) => {
             <span className="adm-intensity" style={{ color: inten.color }}>Intensidad {inten.label}</span>
           </div>
         </div>
+
+        {sinContexto && (
+          <div className="adm-sincontexto">
+            <span className="adm-badge-sc">Analizado sin contexto</span>
+            {puedeReanalizar ? (
+              <button className="adm-reanalizar" onClick={reanalizar} disabled={reanalizando}>
+                <RefreshCw size={14} /> Reanalizar con contexto
+              </button>
+            ) : (
+              <span className="adm-sc-hint">Asígnalo a un niño para reanalizar con su contexto.</span>
+            )}
+          </div>
+        )}
+
+        {reanalizando && <AnalyzingProgress />}
 
         {imgUrl && (
           <div className="adm-image-wrap" onClick={() => setZoom(true)} title="Ampliar dibujo">
