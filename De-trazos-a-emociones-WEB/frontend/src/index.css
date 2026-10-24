@@ -11,6 +11,7 @@
   --surface: #13131f;
   --card: #181828;
   --card2: #1e1e30;
+  --sunken: #070617;       /* superficie hundida: inputs, dropzone, slider */
   --border: rgba(255, 255, 255, 0.07);
   --border2: rgba(255, 255, 255, 0.12);
   --border-solid: #2b2740;
@@ -50,12 +51,13 @@
 /* ===== TEMA CLARO ===== */
 /* Mayor especificidad (:root[...] = 0,2,0) para ganarle a cualquier :root. */
 :root[data-theme="light"] {
-  --bg-dark: #f4f3fb;
+  --bg-dark: #e9e7f3;
   --bg-panel: #ffffff;
   --surface: #ffffff;
-  --card: #ffffff;
-  --card2: #f2f0fa;
-  --border: rgba(26, 22, 48, 0.1);
+  --card: #fbfaff;
+  --card2: #f1eff8;
+  --sunken: #eceafa;
+  --border: rgba(26, 22, 48, 0.12);
   --border2: rgba(26, 22, 48, 0.16);
   --border-solid: #e2def0;
   --text: #1a1626;

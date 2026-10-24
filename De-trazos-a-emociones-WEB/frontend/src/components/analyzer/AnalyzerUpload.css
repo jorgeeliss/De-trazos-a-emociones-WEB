@@ -3,7 +3,7 @@
   position: relative;
   border: 2px dashed rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  background: var(--card);
+  background: var(--sunken);
   padding: 3rem 2rem;
   text-align: center;
   cursor: pointer;
@@ -61,7 +61,7 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  background: var(--card);
+  background: var(--sunken);
 }
 
 .preview-img-wrap img {
