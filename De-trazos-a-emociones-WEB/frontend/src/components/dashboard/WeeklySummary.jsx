@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Sparkles, History, FileDown } from 'lucide-react';
 import './WeeklySummary.css';
 import { emotionVisual, intensityInfo, emocionPredominante, esEmocionNegativa, formatFechaCorta } from '../../utils/emociones';
 import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
@@ -126,11 +127,11 @@ const WeeklySummary = ({ child }) => {
           </div>
           <div className="quick-actions">
             <div className="qa-btn" onClick={irNuevoAnalisis}>
-              <span className="qa-icon">🎨</span>
+              <span className="qa-icon"><Sparkles size={18} /></span>
               Nuevo análisis
             </div>
             <div className="qa-btn" onClick={() => navigate('/historial')}>
-              <span className="qa-icon">📊</span>
+              <span className="qa-icon"><History size={18} /></span>
               Ver historial
             </div>
             <div
@@ -139,7 +140,7 @@ const WeeklySummary = ({ child }) => {
               style={analisis.length === 0 || generandoPdf ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
               title={analisis.length === 0 ? 'Sin análisis para exportar' : 'Exportar el historial en PDF'}
             >
-              <span className="qa-icon">📄</span>
+              <span className="qa-icon"><FileDown size={18} /></span>
               {generandoPdf ? 'Generando…' : 'Exportar PDF'}
             </div>
           </div>

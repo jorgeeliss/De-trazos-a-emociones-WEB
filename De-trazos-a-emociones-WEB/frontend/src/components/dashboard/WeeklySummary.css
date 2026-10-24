@@ -260,10 +260,19 @@
 }
 
 .qa-icon {
-  font-size: 24px;
-  transition: transform 0.3s;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-dim);
+  color: var(--accent);
+  transition: all 0.3s;
 }
 
 .qa-btn:hover .qa-icon {
-  transform: scale(1.1);
+  transform: scale(1.08);
+  background: var(--accent);
+  color: #fff;
 }
