@@ -318,7 +318,7 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #f9fafb;
+  color: var(--text);
 }
 
 .analyzer-wrapper .card-subtitle {
@@ -356,7 +356,7 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #f9fafb;
+  color: var(--text);
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -406,7 +406,7 @@
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #f9fafb;
+  color: var(--text);
   cursor: pointer;
   margin-top: 12px;
   display: flex;

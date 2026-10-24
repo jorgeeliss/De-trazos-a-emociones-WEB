@@ -33,7 +33,7 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  background: rgba(30, 30, 48, 0.6);
+  background: var(--card2);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 16px;

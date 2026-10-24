@@ -11,7 +11,7 @@ const AnalyzerUpload = ({
     <div id="screen-2" className="screen">
       <div className="card">
         <div className="card-header">
-          <div className="card-icon" style={{background: 'rgba(167, 139, 250, 0.15)', color: '#ffffff'}}>
+          <div className="card-icon" style={{background: 'rgba(167, 139, 250, 0.15)', color: 'var(--accent)'}}>
             <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
               <rect x="2" y="2" width="14" height="14" rx="3" />
               <circle cx="6.5" cy="6.5" r="1.5" />

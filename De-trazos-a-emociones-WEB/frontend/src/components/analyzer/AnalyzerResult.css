@@ -92,14 +92,14 @@
 .intensity-value {
   font-size: 1.8rem;
   font-weight: 500;
-  color: #f9fafb;
+  color: var(--text);
   line-height: 1;
 }
 
 .intensity-track {
   flex: 1;
   height: 8px;
-  background: #040418;
+  background: var(--card);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -147,20 +147,20 @@
 .analysis-card-title {
   font-size: 1.1rem;
   font-weight: 500;
-  color: #f9fafb;
+  color: var(--text);
 }
 
 .analysis-body {
   padding: 24px;
   font-size: 14.5px;
   line-height: 1.7;
-  color: #d1d5db;
+  color: var(--muted);
   white-space: pre-wrap;
 }
 
 details {
   margin-bottom: 2rem;
-  background: #040418;
+  background: var(--card);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -234,7 +234,7 @@ details summary::-webkit-details-marker {
 
 .sa-text {
   margin: 0;
-  color: #e5e7eb;
+  color: var(--muted);
   line-height: 1.6;
 }
 
@@ -271,7 +271,7 @@ details summary::-webkit-details-marker {
 }
 
 .rasgo-text {
-  color: #e5e7eb;
+  color: var(--muted);
   line-height: 1.55;
   font-size: 14px;
 }

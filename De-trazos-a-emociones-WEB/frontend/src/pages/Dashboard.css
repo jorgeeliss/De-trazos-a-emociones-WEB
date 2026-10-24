@@ -140,7 +140,7 @@
 
 /* ESTILO DE TARJETA COMÚN */
 .dashboard-card {
-  background: rgba(24, 24, 40, 0.6);
+  background: var(--card);
   backdrop-filter: blur(10px);
   border: 1px solid var(--border);
   border-radius: 20px;

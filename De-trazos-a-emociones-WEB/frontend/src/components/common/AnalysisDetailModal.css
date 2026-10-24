@@ -15,7 +15,7 @@
   position: relative;
   width: 100%;
   max-width: 620px;
-  background: #11112a;
+  background: var(--card2);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   padding: 28px;
@@ -34,7 +34,7 @@
   right: 16px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #d1d5db;
+  color: var(--muted);
   width: 34px;
   height: 34px;
   border-radius: 10px;
@@ -178,7 +178,7 @@
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: zoom-in;
-  background: #040418;
+  background: var(--card);
 }
 
 .adm-image {
@@ -222,14 +222,14 @@
 .adm-list {
   margin: 0;
   padding-left: 20px;
-  color: #e5e7eb;
+  color: var(--muted);
   line-height: 1.6;
 }
 .adm-list li { margin-bottom: 6px; }
 
 .adm-text {
   margin: 0;
-  color: #e5e7eb;
+  color: var(--muted);
   line-height: 1.7;
   white-space: pre-wrap;
 }

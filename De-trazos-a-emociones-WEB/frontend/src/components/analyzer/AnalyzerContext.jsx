@@ -68,7 +68,7 @@ const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setSt
 
       <div className="card">
         <div className="card-header">
-          <div className="card-icon" style={{background: 'rgba(52, 211, 153, 0.15)', color: '#ffffff'}}>
+          <div className="card-icon" style={{background: 'rgba(52, 211, 153, 0.15)', color: '#10b981'}}>
             <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
               <circle cx="9" cy="9" r="7" />
               <path d="M9 6v4l2.5 2.5" />
@@ -104,7 +104,7 @@ const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setSt
 
       <div className="card">
         <div className="card-header">
-          <div className="card-icon" style={{background: 'rgba(251, 146, 60, 0.15)', color: '#ffffff'}}>
+          <div className="card-icon" style={{background: 'rgba(251, 146, 60, 0.15)', color: '#f97316'}}>
             <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
               <path d="M3 15l3-1 9-9-2-2-9 9-1 3z" />
               <path d="M12 4l2 2" />

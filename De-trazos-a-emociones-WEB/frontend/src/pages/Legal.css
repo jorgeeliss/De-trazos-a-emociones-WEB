@@ -43,7 +43,7 @@
 
 .legal-container p,
 .legal-container li {
-  color: #d1d5db;
+  color: var(--muted);
   line-height: 1.7;
   font-size: 15px;
 }

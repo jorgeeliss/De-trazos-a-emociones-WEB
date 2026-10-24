@@ -17,7 +17,7 @@
   width: 100%;
   aspect-ratio: 1;
   border-radius: 16px;
-  background: rgba(30, 30, 48, 0.6);
+  background: var(--card2);
   border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -58,7 +58,7 @@ img.compare-thumb {
 
 .compare-result {
   margin-top: 20px;
-  background: rgba(30, 30, 48, 0.6);
+  background: var(--card2);
   border-radius: 14px;
   padding: 16px;
   font-size: 13px;
@@ -94,14 +94,14 @@ img.compare-thumb {
   align-items: flex-start;
   gap: 14px;
   padding: 16px;
-  background: rgba(30, 30, 48, 0.4);
+  background: var(--card2);
   border-radius: 14px;
   border: 1px solid transparent;
   transition: all 0.3s;
 }
 
 .tip-item:hover {
-  background: rgba(30, 30, 48, 0.8);
+  background: var(--card2);
   border-color: var(--border2);
   transform: translateX(4px);
 }
@@ -156,7 +156,7 @@ img.compare-thumb {
 
 .compare-select {
   width: 100%;
-  background: rgba(30, 30, 48, 0.8);
+  background: var(--card2);
   color: var(--text);
   border: 1px solid var(--border);
   border-radius: 10px;

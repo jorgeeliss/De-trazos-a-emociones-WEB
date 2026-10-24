@@ -113,7 +113,7 @@
   width: 100%;
   background: transparent;
   border: none;
-  color: #d4d2e0;
+  color: var(--text);
   padding: 10px 12px;
   border-radius: 9px;
   font-size: 0.9rem;
@@ -242,7 +242,7 @@
 .btn-cancelar {
   background: transparent;
   border: 1px solid var(--input-border);
-  color: #d4d2e0;
+  color: var(--text);
 }
 .btn-cancelar:hover:not(:disabled) {
   border-color: #a89ee0;
