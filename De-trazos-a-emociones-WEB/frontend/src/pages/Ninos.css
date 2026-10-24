@@ -11,6 +11,26 @@
   margin: 0 auto;
 }
 
+.ninos-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--muted);
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--sans);
+  margin-bottom: 1.5rem;
+}
+.ninos-back:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
 .ninos-title {
   font-family: var(--heading);
   font-size: 2rem;
