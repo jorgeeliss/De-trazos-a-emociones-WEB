@@ -3,7 +3,7 @@ import { Trash2 } from 'lucide-react';
 import './IndependientesGrid.css';
 import { api } from '../../api';
 import AuthImage from '../common/AuthImage';
-import { emotionVisual, intensityInfo, formatFecha } from '../../utils/emociones';
+import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
 
 const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
   const [ninoSel, setNinoSel] = useState('');
@@ -56,7 +56,7 @@ const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
           </span>
           <span className="ind-inten" style={{ color: inten.color }}>Int. {inten.label}</span>
         </div>
-        <div className="ind-date">{formatFecha(analisis.fecha)}</div>
+        <div className="ind-date">{formatFechaHora(analisis.fecha)}</div>
         <div className="ind-assign" onClick={(e) => e.stopPropagation()}>
           <select value={ninoSel} onChange={(e) => setNinoSel(e.target.value)} disabled={ocupado || ninos.length === 0}>
             <option value="">{ninos.length === 0 ? 'No hay niños' : 'Asignar a…'}</option>

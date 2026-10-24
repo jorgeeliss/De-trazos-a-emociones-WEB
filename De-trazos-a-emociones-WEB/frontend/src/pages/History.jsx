@@ -185,6 +185,7 @@ const History = () => {
           analisis={detalle}
           onClose={() => setDetalle(null)}
           onActualizado={handleActualizado}
+          onDesasignado={() => { recargar(); setDetalle(null); }}
         />
       )}
     </div>

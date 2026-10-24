@@ -103,10 +103,11 @@ export const api = {
     return data;
   },
 
-  analizarImagen: async (formData) => {
+  analizarImagen: async (formData, signal) => {
     const response = await authFetch(`${API_URL}/analizar-imagen`, {
       method: "POST",
       body: formData,
+      signal,
     });
 
     const data = await response.json();
@@ -163,6 +164,20 @@ export const api = {
 
     if (!response.ok) {
       throw new Error(data.error || "Error al asignar el análisis");
+    }
+
+    return data;
+  },
+
+  desasignarAnalisis: async (id) => {
+    const response = await authFetch(`${API_URL}/analisis/${id}/desasignar`, {
+      method: "PATCH",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Error al desasignar el análisis");
     }
 
     return data;

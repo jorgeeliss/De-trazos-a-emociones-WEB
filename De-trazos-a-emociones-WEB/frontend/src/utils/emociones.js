@@ -76,6 +76,23 @@ export function formatFechaCorta(fecha) {
   return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
 }
 
+export function formatHora(fecha) {
+  if (!fecha) return '';
+  return new Date(fecha).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+}
+
+// Fecha y hora completas: "5 de junio de 2026, 14:30".
+export function formatFechaHora(fecha) {
+  if (!fecha) return '';
+  return `${formatFecha(fecha)}, ${formatHora(fecha)}`;
+}
+
+// Fecha y hora cortas: "5 jun · 14:30" (útil para distinguir dibujos del mismo día).
+export function formatFechaHoraCorta(fecha) {
+  if (!fecha) return '';
+  return `${formatFechaCorta(fecha)} · ${formatHora(fecha)}`;
+}
+
 // Emoción predominante (la más frecuente) de una lista de análisis.
 export function emocionPredominante(analisis = []) {
   const conteo = {};

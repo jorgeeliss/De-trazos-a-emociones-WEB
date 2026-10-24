@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react';
-import { X, ZoomIn, RefreshCw, FileDown } from 'lucide-react';
+import { X, ZoomIn, RefreshCw, FileDown, Undo2 } from 'lucide-react';
 import './AnalysisDetailModal.css';
-import { emotionVisual, intensityInfo, formatFecha } from '../../utils/emociones';
+import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
 import { api } from '../../api';
 import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 import ExportPdfModal from './ExportPdfModal';
 
 const API_URL = 'http://localhost:3000';
 
-const AnalysisDetailModal = ({ analisis, onClose, onActualizado }) => {
+const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }) => {
   const [zoom, setZoom] = useState(false);
   const [exportar, setExportar] = useState(false);
   const [imgUrl, setImgUrl] = useState(null);
   const [resultadoLocal, setResultadoLocal] = useState(null);
   const [yaReanalizado, setYaReanalizado] = useState(false);
   const [reanalizando, setReanalizando] = useState(false);
+  const [desasignando, setDesasignando] = useState(false);
 
   const tieneImagen = !!analisis?.ruta_imagen;
   const analisisId = analisis?._id;
@@ -67,13 +68,25 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado }) => {
     }
   };
 
+  const desasignar = async () => {
+    setDesasignando(true);
+    try {
+      await api.desasignarAnalisis(analisis._id);
+      if (onDesasignado) onDesasignado(analisis._id);
+      onClose();
+    } catch (err) {
+      alert(err.message);
+      setDesasignando(false);
+    }
+  };
+
   return (
     <div className="adm-overlay" onClick={onClose}>
       <div className="adm-card" onClick={(e) => e.stopPropagation()}>
         <button className="adm-close" onClick={onClose} title="Cerrar"><X size={20} /></button>
 
         <div className="adm-head">
-          <div className="adm-date">{formatFecha(analisis.fecha)}</div>
+          <div className="adm-date">{formatFechaHora(analisis.fecha)}</div>
           <div className="adm-emotion-row">
             <span className="adm-chip" style={{ background: visual.bg, color: visual.color }}>{visual.emoji} {r.emocion_predominante || 'Sin emoción'}</span>
             <span className="adm-intensity" style={{ color: inten.color }}>Intensidad {inten.label}</span>
@@ -92,6 +105,11 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado }) => {
               </button>
             ) : (
               <span className="adm-sc-hint">Asígnalo a un niño para reanalizar con su contexto.</span>
+            )}
+            {!analisis.independiente && (
+              <button className="adm-desasignar" onClick={desasignar} disabled={desasignando}>
+                <Undo2 size={14} /> {desasignando ? 'Desasignando…' : 'Desasignar'}
+              </button>
             )}
           </div>
         )}

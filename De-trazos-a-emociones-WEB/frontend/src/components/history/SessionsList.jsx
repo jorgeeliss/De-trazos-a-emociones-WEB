@@ -22,9 +22,10 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
   };
 
   const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', options);
+    const fecha = date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+    const hora = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    return `${fecha}, ${hora}`;
   };
 
   const handleDelete = async (e, id) => {

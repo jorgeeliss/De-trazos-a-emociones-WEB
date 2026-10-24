@@ -21,16 +21,18 @@ const Dashboard = () => {
   const [historyData, setHistoryData] = useState([]);
   const [detalle, setDetalle] = useState(null);
 
+  const recargar = async () => {
+    try {
+      const data = await api.getAnalisis();
+      setHistoryData(data);
+    } catch (error) {
+      console.error('Error cargando dashboard:', error);
+    }
+  };
+
   useEffect(() => {
-    const loadDashboard = async () => {
-      try {
-        const data = await api.getAnalisis();
-        setHistoryData(data);
-      } catch (error) {
-        console.error('Error cargando dashboard:', error);
-      }
-    };
-    loadDashboard();
+    const t = setTimeout(() => recargar(), 0);
+    return () => clearTimeout(t);
   }, []);
 
   // Agrupar los análisis reales por niño (hoy identificado por el nombre del
@@ -120,7 +122,13 @@ const Dashboard = () => {
         )}
       </main>
 
-      {detalle && <AnalysisDetailModal analisis={detalle} onClose={() => setDetalle(null)} />}
+      {detalle && (
+        <AnalysisDetailModal
+          analisis={detalle}
+          onClose={() => setDetalle(null)}
+          onDesasignado={() => { recargar(); setDetalle(null); }}
+        />
+      )}
     </div>
   );
 };

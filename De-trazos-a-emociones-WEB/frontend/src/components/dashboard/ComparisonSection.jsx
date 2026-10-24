@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import './ComparisonSection.css';
-import { emotionVisual, emocionPredominante, formatFecha, formatFechaCorta } from '../../utils/emociones';
+import { emotionVisual, emocionPredominante, formatFechaHora, formatFechaHoraCorta } from '../../utils/emociones';
 import { actividadesPara } from '../../data/actividades';
 import AuthImage from '../common/AuthImage';
 
@@ -15,7 +15,7 @@ const Miniatura = ({ analisis, onClick }) => {
 
 const opcionLabel = (a) => {
   const e = a.resultado_ia?.emocion_predominante || 'sin emoción';
-  return `${formatFecha(a.fecha)} · ${e}`;
+  return `${formatFechaHora(a.fecha)} · ${e}`;
 };
 
 const ComparisonSection = ({ child, onSelect }) => {
@@ -80,12 +80,12 @@ const ComparisonSection = ({ child, onSelect }) => {
               <div className="compare-pair">
                 <div style={{ flex: 1, textAlign: 'center' }}>
                   <Miniatura analisis={antes} onClick={onSelect ? () => onSelect(antes) : undefined} />
-                  <div className="compare-date">{formatFechaCorta(antes?.fecha)}</div>
+                  <div className="compare-date">{formatFechaHoraCorta(antes?.fecha)}</div>
                 </div>
                 <div className="compare-arrow"><ArrowRight size={24} /></div>
                 <div style={{ flex: 1, textAlign: 'center' }}>
                   <Miniatura analisis={ahora} onClick={onSelect ? () => onSelect(ahora) : undefined} />
-                  <div className="compare-date">{formatFechaCorta(ahora?.fecha)}</div>
+                  <div className="compare-date">{formatFechaHoraCorta(ahora?.fecha)}</div>
                 </div>
               </div>
 

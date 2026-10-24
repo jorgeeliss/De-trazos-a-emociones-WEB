@@ -6,7 +6,7 @@
 import {
   emotionVisual,
   intensityInfo,
-  formatFecha,
+  formatFechaHora,
   textoEdad,
   emocionPredominante,
 } from './emociones';
@@ -74,7 +74,7 @@ const listaHistorial = (lista) => {
       const inten = intensityInfo(r.intensidad || '');
       return `<div style="display:flex;align-items:center;justify-content:space-between;
         padding:9px 0;border-bottom:1px solid ${BORDER};">
-        <span style="font-size:13px;color:${TEXT};">${esc(formatFecha(a.fecha))}</span>
+        <span style="font-size:13px;color:${TEXT};">${esc(formatFechaHora(a.fecha))}</span>
         <span>${chipEmocion(r.emocion_predominante)}</span>
         <span style="font-size:12px;color:${MUTED};width:110px;text-align:right;">Intensidad ${esc(inten.label)}</span>
       </div>`;
@@ -94,7 +94,7 @@ export const seccionDetalle = (analisis, imagenDataUrl) => {
   const meta = [];
   if (!esIndep && edad) meta.push(esc(edad));
   if (analisis.contexto_nino?.genero) meta.push(esc(analisis.contexto_nino.genero));
-  if (analisis.fecha) meta.push(`Fecha: ${esc(formatFecha(analisis.fecha))}`);
+  if (analisis.fecha) meta.push(`Fecha: ${esc(formatFechaHora(analisis.fecha))}`);
 
   const rasgos = Array.isArray(r.rasgos_observados) ? r.rasgos_observados.filter(Boolean) : [];
   const lectura = r.lectura_orientativa || r.analisis_completo || '';

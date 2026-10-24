@@ -145,6 +145,58 @@
   color: var(--text);
 }
 
+/* Barra "analizando a X" con opción de cambiar de niño */
+.analyzer-wrapper .nino-activo-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  max-width: 560px;
+  margin: 0 auto 1.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 18px;
+}
+
+.analyzer-wrapper .nino-activo-info {
+  font-size: 0.95rem;
+  color: var(--text);
+}
+.analyzer-wrapper .nino-activo-info span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.analyzer-wrapper .nino-activo-acts {
+  display: flex;
+  gap: 8px;
+}
+
+.analyzer-wrapper .nino-activo-btn {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s ease;
+}
+.analyzer-wrapper .nino-activo-btn.ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--input-border);
+}
+.analyzer-wrapper .nino-activo-btn:hover {
+  opacity: 0.9;
+}
+
 /* STEPS */
 .analyzer-wrapper .steps {
   display: flex;

@@ -509,6 +509,36 @@ app.patch("/analisis/:id/asignar", verificarToken, async (req, res) => {
 });
 
 /* =========================
+   DESASIGNAR UN DIBUJO (vuelve a la lista de independientes)
+========================= */
+
+app.patch("/analisis/:id/desasignar", verificarToken, async (req, res) => {
+    const { id } = req.params;
+
+    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
+        return res.status(400).json({ error: "Identificador inválido" });
+    }
+
+    try {
+        const analisis = await Analysis.findOne({ _id: id, usuarioId: req.usuario.id });
+        if (!analisis) {
+            return res.status(404).json({ error: "Análisis no encontrado" });
+        }
+
+        analisis.independiente = true;
+        analisis.contexto_nino = {};
+        analisis.analizado_sin_contexto = true;
+
+        await analisis.save();
+        res.json({ ok: true });
+
+    } catch (error) {
+        console.error("Error desasignando el análisis:", error);
+        res.status(500).json({ error: "Error desasignando el análisis" });
+    }
+});
+
+/* =========================
    REANALIZAR UN DIBUJO YA GUARDADO, AHORA CON CONTEXTO
 ========================= */
 

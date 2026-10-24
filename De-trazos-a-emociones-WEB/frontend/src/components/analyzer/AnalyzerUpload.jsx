@@ -5,7 +5,7 @@ import AnalyzingProgress from './AnalyzingProgress';
 const AnalyzerUpload = ({
   setStep, selectedFile, previewUrl,
   handleDrop, handleFileChange, clearFile, fileInputRef,
-  error, isAnalyzing, analisisInicio, analyze, mostrarVolver = true
+  error, isAnalyzing, analisisInicio, analyze, onCancelar, mostrarVolver = true
 }) => {
   return (
     <div id="screen-2" className="screen">
@@ -65,7 +65,15 @@ const AnalyzerUpload = ({
         </div>
       )}
 
-      {isAnalyzing && <AnalyzingProgress inicio={analisisInicio} />}
+      {isAnalyzing && (
+        <>
+          <AnalyzingProgress inicio={analisisInicio} />
+          <button className="btn-cancelar-analisis" onClick={onCancelar}>
+            <X size={16} style={{ marginRight: '6px', verticalAlign: 'middle' }} />
+            Cancelar análisis
+          </button>
+        </>
+      )}
 
       <div className="nav-row">
         {mostrarVolver && (

@@ -1,5 +1,5 @@
 import './TimelineSection.css';
-import { emotionVisual, intensityInfo, formatFecha } from '../../utils/emociones';
+import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
 
 const resumenDe = (r = {}) => {
   if (r.lectura_orientativa) return r.lectura_orientativa;
@@ -36,7 +36,7 @@ const TimelineSection = ({ child, onSelect }) => {
                   {!esUltimo && <div className="tl-line"></div>}
                 </div>
                 <div className="tl-right">
-                  <div className="tl-date">{i === 0 ? 'Más reciente · ' : ''}{formatFecha(a.fecha)}</div>
+                  <div className="tl-date">{i === 0 ? 'Más reciente · ' : ''}{formatFechaHora(a.fecha)}</div>
                   <div className="tl-emotion-row">
                     <div className="tl-emotion-name">{r.emocion_predominante || 'Sin emoción detectada'}</div>
                   </div>

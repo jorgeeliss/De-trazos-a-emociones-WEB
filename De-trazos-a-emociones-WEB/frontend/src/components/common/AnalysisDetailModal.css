@@ -148,6 +148,29 @@
   cursor: not-allowed;
 }
 
+.adm-desasignar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--input-border);
+  color: var(--muted);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+.adm-desasignar:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.adm-desasignar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .adm-image-wrap {
   position: relative;
   margin-bottom: 20px;

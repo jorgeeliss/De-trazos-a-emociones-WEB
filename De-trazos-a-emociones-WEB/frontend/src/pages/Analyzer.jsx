@@ -26,7 +26,7 @@ const Analyzer = () => {
     selectedFile, previewUrl, isAnalyzing, error, analysisResult,
     pendienteGuardar, guardadoEstado, guardando, ninosExistentes, analisisInicio,
     handleInputChange, handleRadioChange, handleFileChange, handleDrop, clearFile,
-    cargarNinos, cambiarModo, analizar,
+    cargarNinos, cambiarModo, analizar, cancelarAnalisis, nuevaSesion,
     guardarIndependiente, asignarANino, noGuardar, resetAll, setNotificacion,
   } = useAnalisisSesion();
 
@@ -65,6 +65,19 @@ const Analyzer = () => {
                 : 'Completa el contexto del niño y sube su dibujo para obtener un análisis emocional personalizado y profundo.'}
           </p>
         </header>
+
+        {ninoConocido && (
+          <div className="nino-activo-bar">
+            <div className="nino-activo-info">
+              Analizando a <strong>{formData.nombre}</strong>
+              <span>Puedes seguir con el mismo niño o empezar uno nuevo.</span>
+            </div>
+            <div className="nino-activo-acts">
+              <button className="nino-activo-btn" onClick={nuevaSesion}>Analizar otro niño</button>
+              <button className="nino-activo-btn ghost" onClick={() => cambiarModo('solo')}>Solo dibujo</button>
+            </div>
+          </div>
+        )}
 
         {!ninoConocido && (
           <div className="modo-selector">
@@ -118,6 +131,7 @@ const Analyzer = () => {
             isAnalyzing={isAnalyzing}
             analisisInicio={analisisInicio}
             analyze={analizar}
+            onCancelar={cancelarAnalisis}
             mostrarVolver={modo === 'contexto'}
           />
         )}

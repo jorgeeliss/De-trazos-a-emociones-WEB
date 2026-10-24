@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useRef } from 'react';
 import { api } from '../api';
 
 const AnalisisSesionContext = createContext(null);
@@ -68,6 +68,8 @@ export function AnalisisSesionProvider({ children }) {
   // Momento en que arrancó el análisis; permite que la barra de progreso
   // continúe donde iba aunque se cambie de página y se vuelva.
   const [analisisInicio, setAnalisisInicio] = useState(null);
+  // Para poder cancelar el análisis en curso.
+  const abortRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
@@ -162,8 +164,11 @@ export function AnalisisSesionProvider({ children }) {
       Object.entries(formData).forEach(([k, v]) => { if (v) fd.append(k, v); });
     }
 
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
-      const data = await api.analizarImagen(fd);
+      const data = await api.analizarImagen(fd, controller.signal);
       if (!data.analisis) throw new Error('La API no devolvió un campo "analisis"');
       setAnalysisResult(construirResultado(data.analisis, data.aviso));
       if (modo === 'solo') {
@@ -173,10 +178,23 @@ export function AnalisisSesionProvider({ children }) {
       setStep(3);
       setNotificacion({ nombre: formData.nombre?.trim() || 'el dibujo', ts: Date.now() });
     } catch (err) {
-      setError(err.message + '. Verifica que el backend esté corriendo.');
+      // Si se canceló, no es un error que mostrar.
+      if (err.name !== 'AbortError') {
+        setError(err.message + '. Verifica que el backend esté corriendo.');
+      }
     } finally {
+      abortRef.current = null;
       setIsAnalyzing(false);
     }
+  };
+
+  // Cancela el análisis en curso (aborta la petición al backend).
+  const cancelarAnalisis = () => {
+    if (abortRef.current) abortRef.current.abort();
+    abortRef.current = null;
+    setIsAnalyzing(false);
+    setAnalisisInicio(null);
+    setError(null);
   };
 
   const guardarIndependiente = async () => {
@@ -242,7 +260,7 @@ export function AnalisisSesionProvider({ children }) {
     selectedFile, previewUrl, isAnalyzing, error, analysisResult,
     pendienteGuardar, guardadoEstado, guardando, ninosExistentes, notificacion, analisisInicio,
     handleInputChange, handleRadioChange, handleFileChange, handleDrop, clearFile,
-    cargarNinos, nuevaSesion, precargarContexto, cambiarModo, analizar,
+    cargarNinos, nuevaSesion, precargarContexto, cambiarModo, analizar, cancelarAnalisis,
     guardarIndependiente, asignarANino, noGuardar, resetAll, setNotificacion
   };
 
