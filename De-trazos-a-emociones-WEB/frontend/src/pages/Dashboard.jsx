@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import './Dashboard.css';
 import { api } from '../api';
 import { emotionVisual, emocionPredominante, infoCumple } from '../utils/emociones';
@@ -14,7 +15,9 @@ import BrandHeader from '../components/common/BrandHeader';
 import BirthdayBanner from '../components/dashboard/BirthdayBanner';
 
 const Dashboard = () => {
-  const [activeChild, setActiveChild] = useState(null);
+  const location = useLocation();
+  // Permite llegar desde "Mis niños" con un niño ya seleccionado.
+  const [activeChild, setActiveChild] = useState(location.state?.nino || null);
   const [historyData, setHistoryData] = useState([]);
   const [detalle, setDetalle] = useState(null);
 

@@ -242,6 +242,20 @@ export const api = {
     return data;
   },
 
+  eliminarUsuario: async (id) => {
+    const response = await authFetch(`${API_URL}/admin/usuarios/${id}`, {
+      method: "DELETE",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al eliminar la cuenta");
+    }
+
+    return data;
+  },
+
   // --- Perfil / cuenta ---
 
   getPerfil: async () => {

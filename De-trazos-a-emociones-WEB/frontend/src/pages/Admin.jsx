@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Check, X, ArrowLeft, Inbox, RefreshCw } from 'lucide-react';
+import { ShieldCheck, Check, X, ArrowLeft, Inbox, RefreshCw, Ban, Trash2 } from 'lucide-react';
 import { api } from '../api';
 import './Admin.css';
 
@@ -54,6 +54,23 @@ const Admin = () => {
       await api.resolverSolicitud(id, accion);
       // Cambió de estado: se quita de la lista actual.
       setUsuarios((prev) => prev.filter((u) => u._id !== id));
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setProcesando(null);
+    }
+  };
+
+  const eliminar = async (u) => {
+    const ok = window.confirm(
+      `¿Eliminar la cuenta de ${u.nombre} ${u.apellido} (${u.email})? ` +
+        'Se borrarán también todos sus análisis. Esta acción no se puede deshacer.'
+    );
+    if (!ok) return;
+    setProcesando(u._id);
+    try {
+      await api.eliminarUsuario(u._id);
+      setUsuarios((prev) => prev.filter((x) => x._id !== u._id));
     } catch (e) {
       alert(e.message);
     } finally {
@@ -148,28 +165,31 @@ const Admin = () => {
                   </div>
                 </div>
 
-                {filtro === 'pendiente' ? (
-                  <div className="admin-actions">
-                    <button
-                      className="btn-aprobar"
-                      disabled={procesando === u._id}
-                      onClick={() => resolver(u._id, 'aprobar')}
-                    >
-                      <Check size={16} /> Aprobar
+                <div className="admin-actions">
+                  {filtro === 'pendiente' && (
+                    <>
+                      <button className="btn-aprobar" disabled={procesando === u._id} onClick={() => resolver(u._id, 'aprobar')}>
+                        <Check size={16} /> Aprobar
+                      </button>
+                      <button className="btn-rechazar" disabled={procesando === u._id} onClick={() => resolver(u._id, 'rechazar')}>
+                        <X size={16} /> Rechazar
+                      </button>
+                    </>
+                  )}
+                  {filtro === 'aprobado' && (
+                    <button className="btn-rechazar" disabled={procesando === u._id} onClick={() => resolver(u._id, 'rechazar')}>
+                      <Ban size={16} /> Deshabilitar
                     </button>
-                    <button
-                      className="btn-rechazar"
-                      disabled={procesando === u._id}
-                      onClick={() => resolver(u._id, 'rechazar')}
-                    >
-                      <X size={16} /> Rechazar
+                  )}
+                  {filtro === 'rechazado' && (
+                    <button className="btn-aprobar" disabled={procesando === u._id} onClick={() => resolver(u._id, 'aprobar')}>
+                      <Check size={16} /> Habilitar
                     </button>
-                  </div>
-                ) : (
-                  <span className={`estado-badge ${u.estado}`}>
-                    {u.estado === 'aprobado' ? 'Aprobado' : 'Rechazado'}
-                  </span>
-                )}
+                  )}
+                  <button className="btn-eliminar-admin" disabled={procesando === u._id} onClick={() => eliminar(u)}>
+                    <Trash2 size={16} /> Eliminar
+                  </button>
+                </div>
               </div>
             ))}
           </div>

@@ -9,6 +9,7 @@ import Privacidad from './pages/Privacidad';
 import Admin from './pages/Admin';
 import Configuracion from './pages/Configuracion';
 import Reportes from './pages/Reportes';
+import Ninos from './pages/Ninos';
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
 import { ThemeProvider } from './context/ThemeContext';
@@ -75,6 +76,15 @@ function App() {
       element={
         <ProtectedRoute>
           <Reportes />
+        </ProtectedRoute>
+      }
+      />
+
+    <Route
+      path="/ninos"
+      element={
+        <ProtectedRoute>
+          <Ninos />
         </ProtectedRoute>
       }
       />

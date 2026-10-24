@@ -254,8 +254,28 @@
   background: rgba(239, 68, 68, 0.22);
 }
 
+.btn-eliminar-admin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+  transition: all 0.2s ease;
+}
+.btn-eliminar-admin:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.15);
+}
+
 .btn-aprobar:disabled,
-.btn-rechazar:disabled {
+.btn-rechazar:disabled,
+.btn-eliminar-admin:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -286,7 +306,8 @@
     width: 100%;
   }
   .btn-aprobar,
-  .btn-rechazar {
+  .btn-rechazar,
+  .btn-eliminar-admin {
     flex: 1;
     justify-content: center;
   }
