@@ -131,7 +131,7 @@ const WeeklySummary = ({ child }) => {
               Nuevo análisis
             </div>
             <div className="qa-btn" onClick={() => navigate('/historial')}>
-              <span className="qa-icon"><History size={18} /></span>
+              <span className="qa-icon teal"><History size={18} /></span>
               Ver historial
             </div>
             <div
@@ -140,7 +140,7 @@ const WeeklySummary = ({ child }) => {
               style={analisis.length === 0 || generandoPdf ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
               title={analisis.length === 0 ? 'Sin análisis para exportar' : 'Exportar el historial en PDF'}
             >
-              <span className="qa-icon"><FileDown size={18} /></span>
+              <span className="qa-icon azul"><FileDown size={18} /></span>
               {generandoPdf ? 'Generando…' : 'Exportar PDF'}
             </div>
           </div>

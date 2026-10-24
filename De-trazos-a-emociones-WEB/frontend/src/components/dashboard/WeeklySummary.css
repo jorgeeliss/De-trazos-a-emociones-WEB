@@ -276,3 +276,22 @@
   background: var(--accent);
   color: #fff;
 }
+
+/* Color coherente por acción */
+.qa-icon.teal {
+  background: rgba(45, 212, 191, 0.14);
+  color: var(--teal);
+}
+.qa-btn:hover .qa-icon.teal {
+  background: var(--teal);
+  color: #fff;
+}
+
+.qa-icon.azul {
+  background: rgba(96, 165, 250, 0.14);
+  color: var(--blue);
+}
+.qa-btn:hover .qa-icon.azul {
+  background: var(--blue);
+  color: #fff;
+}
