@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-const API_URL = 'http://localhost:3000';
+import { API_URL } from '../../config';
 
 // Carga la imagen protegida de un análisis enviando el token (un <img src> no
 // puede mandar cabeceras, por eso se descarga como blob y se usa un objectURL).

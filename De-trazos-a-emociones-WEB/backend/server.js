@@ -685,6 +685,23 @@ app.delete("/analisis/:id", verificarToken, async (req, res) => {
 });
 
 /* =========================
+   FRONTEND COMPILADO (producción)
+========================= */
+// Si existe frontend/dist (resultado de "npm run build" en frontend/), este
+// mismo servidor lo sirve. Así todo corre en un solo puerto y mismo origen
+// (sin CORS). En desarrollo no existe dist y el frontend corre aparte con Vite.
+const distDir = path.join(__dirname, "..", "frontend", "dist");
+if (fs.existsSync(distDir)) {
+    app.use(express.static(distDir));
+    // Cualquier GET que no sea de la API devuelve index.html (React Router).
+    app.use((req, res, next) => {
+        if (req.method !== "GET") return next();
+        res.sendFile(path.join(distDir, "index.html"));
+    });
+    console.log("Sirviendo frontend compilado desde", distDir);
+}
+
+/* =========================
    MANEJO DE ERRORES (p. ej. validaciones de Multer)
 ========================= */
 

@@ -5,8 +5,7 @@ import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emoci
 import { api } from '../../api';
 import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 import ExportPdfModal from './ExportPdfModal';
-
-const API_URL = 'http://localhost:3000';
+import { API_URL } from '../../config';
 
 const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }) => {
   const [zoom, setZoom] = useState(false);
