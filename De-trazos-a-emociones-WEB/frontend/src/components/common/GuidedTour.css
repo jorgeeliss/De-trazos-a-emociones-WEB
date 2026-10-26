@@ -1,23 +1,32 @@
 .gt-root {
   position: fixed;
   inset: 0;
-  z-index: 4000;
+  z-index: 5000;
 }
 
 /* Capa que bloquea la interacción con la página durante el recorrido. */
 .gt-catch {
   position: fixed;
   inset: 0;
-  z-index: 4000;
+  z-index: 5000;
 }
-.gt-catch.dim {
+
+/* Paso centrado: capa oscurecida con el globo centrado por flexbox. */
+.gt-center {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
   background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
 
 /* Recuadro iluminado sobre el elemento objetivo (el resto queda oscurecido). */
 .gt-spot {
   position: fixed;
-  z-index: 4001;
+  z-index: 5001;
   border-radius: 12px;
   border: 2px solid var(--accent);
   box-shadow: 0 0 0 9999px var(--overlay);
@@ -28,7 +37,7 @@
 /* Globo con la explicación. */
 .gt-tip {
   position: fixed;
-  z-index: 4002;
+  z-index: 5002;
   width: 340px;
   max-width: calc(100vw - 24px);
   background: var(--card);
@@ -39,14 +48,15 @@
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
   animation: gtIn 0.2s ease;
 }
-.gt-tip.centrado {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+
+/* En el paso centrado el globo lo posiciona el flex, no "fixed". */
+.gt-tip.gt-static {
+  position: static;
+  z-index: 5002;
 }
 
 @keyframes gtIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; }
   to { opacity: 1; }
 }
 
