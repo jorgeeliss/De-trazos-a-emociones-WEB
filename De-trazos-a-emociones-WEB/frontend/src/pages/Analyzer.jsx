@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import './Analyzer.css';
 import Sidebar from '../components/layout/Sidebar';
 import AnalyzerContext from '../components/analyzer/AnalyzerContext';
@@ -6,6 +6,7 @@ import AnalyzerUpload from '../components/analyzer/AnalyzerUpload';
 import AnalyzerResult from '../components/analyzer/AnalyzerResult';
 import AnalyzerSavePanel from '../components/analyzer/AnalyzerSavePanel';
 import ProfileMenu from '../components/common/ProfileMenu';
+import Tutorial from '../components/common/Tutorial';
 import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 
 const STYLES = [
@@ -20,6 +21,15 @@ const STYLES = [
 const Analyzer = () => {
   const nombreUsuario = JSON.parse(localStorage.getItem('user') || '{}').nombre || '';
   const fileInputRef = useRef(null);
+
+  // Tutorial de bienvenida: se muestra la primera vez (se recuerda en el dispositivo).
+  const [verTutorial, setVerTutorial] = useState(() => {
+    try { return localStorage.getItem('tutorial_visto') !== '1'; } catch { return false; }
+  });
+  const cerrarTutorial = () => {
+    setVerTutorial(false);
+    try { localStorage.setItem('tutorial_visto', '1'); } catch { /* ignore */ }
+  };
 
   const {
     modo, ninoConocido, step, setStep, formData,
@@ -46,6 +56,8 @@ const Analyzer = () => {
       <Sidebar active="app" />
       <div className="bg-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div className="container">
+
+        <Tutorial open={verTutorial} onClose={cerrarTutorial} />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
           <ProfileMenu />
