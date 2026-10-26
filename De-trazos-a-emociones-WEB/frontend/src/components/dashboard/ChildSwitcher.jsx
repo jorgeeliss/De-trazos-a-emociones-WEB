@@ -45,7 +45,7 @@ const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) =
           </div>
         );
       })}
-      <div className="add-child" title="Registrar un niño nuevo con su contexto" onClick={() => { nuevaSesion(); navigate('/app'); }}>
+      <div className="add-child" data-tour="agregar" title="Registrar un niño nuevo con su contexto" onClick={() => { nuevaSesion(); navigate('/app'); }}>
         <Plus size={18} />
         Agregar niño
       </div>

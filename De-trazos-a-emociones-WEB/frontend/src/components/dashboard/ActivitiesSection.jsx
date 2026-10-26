@@ -12,7 +12,7 @@ const ActivitiesSection = ({ child }) => {
   const [detalle, setDetalle] = useState(null);
 
   return (
-    <div className="dashboard-card activities-section">
+    <div className="dashboard-card activities-section" data-tour="actividades">
       <div className="act-header">
         <div>
           <div className="act-title">Actividades sugeridas</div>

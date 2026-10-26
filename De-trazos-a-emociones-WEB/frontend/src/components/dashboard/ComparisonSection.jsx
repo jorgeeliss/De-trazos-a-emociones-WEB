@@ -50,7 +50,7 @@ const ComparisonSection = ({ child, onSelect }) => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <div className="dashboard-card compare-card">
+      <div className="dashboard-card compare-card" data-tour="comparar">
         <div className="ts-header">
           <div>
             <div className="ts-title">Antes y ahora</div>

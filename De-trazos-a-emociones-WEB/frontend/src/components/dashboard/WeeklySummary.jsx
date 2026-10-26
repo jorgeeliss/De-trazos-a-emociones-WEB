@@ -136,6 +136,7 @@ const WeeklySummary = ({ child }) => {
             </div>
             <div
               className="qa-btn"
+              data-tour="exportar"
               onClick={exportarPdfNino}
               style={analisis.length === 0 || generandoPdf ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
               title={analisis.length === 0 ? 'Sin análisis para exportar' : 'Exportar el historial en PDF'}
