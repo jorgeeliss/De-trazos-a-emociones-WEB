@@ -26,8 +26,13 @@ const GuidedTour = ({ step, index, total, rect, onPrev, onNext, onClose }) => {
     </>
   );
 
-  // Paso centrado (sin elemento que resaltar).
   if (!rect) {
+    // Paso con elemento pero aún sin medir: solo oscurecemos (sin globo) para
+    // evitar que aparezca centrado y luego salte a su posición.
+    if (step.selector) {
+      return <div className="gt-center" />;
+    }
+    // Paso centrado de verdad (bienvenida / cierre).
     return (
       <div className="gt-center">
         <div className="gt-tip gt-static">{contenido}</div>

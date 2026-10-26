@@ -91,7 +91,8 @@ export function TourProvider({ children }) {
       const el = document.querySelector(paso.selector);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => !cancelado && fijarDesde(el), 320);
+        fijarDesde(el); // posición inmediata (evita el parpadeo centrado)
+        setTimeout(() => !cancelado && fijarDesde(el), 350); // reajuste tras el scroll
       } else if (intentos < 30) {
         intentos += 1;
         setTimeout(medir, 120);
