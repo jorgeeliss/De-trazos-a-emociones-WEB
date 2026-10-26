@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sun, Moon, Check, KeyRound } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, Check, KeyRound, Eye, EyeOff } from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
 import { useTheme } from '../context/ThemeContext';
 import { api } from '../api';
@@ -22,6 +22,8 @@ const Configuracion = () => {
   const [pwd, setPwd] = useState({ actual: '', nueva: '', confirmar: '' });
   const [pwdMsg, setPwdMsg] = useState(null);
   const [guardandoPwd, setGuardandoPwd] = useState(false);
+  const [verPwd, setVerPwd] = useState(false);
+  const tipoPwd = verPwd ? 'text' : 'password';
 
   const onPwd = (e) => setPwd((p) => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -99,37 +101,57 @@ const Configuracion = () => {
         <section className="config-section">
           <h2>Cambiar contraseña</h2>
           <form className="pwd-form" onSubmit={cambiarPassword}>
-            <input
-              type="password"
-              name="actual"
-              className="pwd-input"
-              placeholder="Contraseña actual"
-              value={pwd.actual}
-              onChange={onPwd}
-              required
-              autoComplete="current-password"
-            />
-            <input
-              type="password"
-              name="nueva"
-              className="pwd-input"
-              placeholder="Nueva contraseña (mínimo 8 caracteres)"
-              value={pwd.nueva}
-              onChange={onPwd}
-              required
-              autoComplete="new-password"
-            />
+            <div className="pwd-field">
+              <input
+                type={tipoPwd}
+                name="actual"
+                className="pwd-input"
+                placeholder="Contraseña actual"
+                value={pwd.actual}
+                onChange={onPwd}
+                required
+                autoComplete="current-password"
+              />
+              <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
+                {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            <div className="pwd-field">
+              <input
+                type={tipoPwd}
+                name="nueva"
+                className="pwd-input"
+                placeholder="Nueva contraseña"
+                value={pwd.nueva}
+                onChange={onPwd}
+                required
+                autoComplete="new-password"
+              />
+              <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
+                {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            <p className="pwd-hint">Debe tener mínimo 8 caracteres, con mayúscula, minúscula, número y un símbolo.</p>
             <PasswordChecklist password={pwd.nueva} />
-            <input
-              type="password"
-              name="confirmar"
-              className="pwd-input"
-              placeholder="Confirmar nueva contraseña"
-              value={pwd.confirmar}
-              onChange={onPwd}
-              required
-              autoComplete="new-password"
-            />
+
+            <div className="pwd-field">
+              <input
+                type={tipoPwd}
+                name="confirmar"
+                className="pwd-input"
+                placeholder="Confirmar nueva contraseña"
+                value={pwd.confirmar}
+                onChange={onPwd}
+                required
+                autoComplete="new-password"
+              />
+              <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
+                {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
             {pwdMsg && <div className={`pwd-msg ${pwdMsg.tipo}`}>{pwdMsg.texto}</div>}
             <button type="submit" className="pwd-btn" disabled={guardandoPwd}>
               <KeyRound size={16} /> {guardandoPwd ? 'Guardando…' : 'Actualizar contraseña'}

@@ -148,16 +148,46 @@
   max-width: 420px;
 }
 
+.pwd-field {
+  position: relative;
+}
+
 .pwd-input {
+  width: 100%;
   background: var(--sunken);
   border: 1px solid var(--input-border);
   border-radius: 10px;
-  padding: 12px 14px;
+  padding: 12px 44px 12px 14px;
   color: var(--text);
   font-family: var(--sans);
   font-size: 0.95rem;
   outline: none;
   transition: border-color 0.2s ease;
+}
+
+.pwd-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+.pwd-eye:hover {
+  color: var(--text);
+}
+
+.pwd-hint {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.4;
 }
 .pwd-input::placeholder {
   color: var(--muted);

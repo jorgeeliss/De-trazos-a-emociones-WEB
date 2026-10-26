@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, Eye, Building2, CheckCircle, Clock } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Building2, CheckCircle, Clock } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
 import './AuthCommon.css';
 import './Register.css';
@@ -11,6 +11,7 @@ import { passwordValida } from '../utils/password';
 const Register = () => {
   const navigate = useNavigate();
   const [resultado, setResultado] = useState(null);
+  const [verPassword, setVerPassword] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
@@ -157,17 +158,23 @@ const Register = () => {
                   <Lock size={20} />
                 </div>
                 <input
-                  type="password"
+                  type={verPassword ? 'text' : 'password'}
                   id="password"
                   placeholder="Contraseña segura"
                   required
                   value={formData.password}
                   onChange={handleChange}
                 />
-                <div className="eye-icon">
-                  <Eye size={20} />
-                </div>
+                <button
+                  type="button"
+                  className="eye-icon"
+                  onClick={() => setVerPassword((v) => !v)}
+                  aria-label={verPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                >
+                  {verPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
+              <p className="input-hint">Mínimo 8 caracteres, con mayúscula, minúscula, número y un símbolo.</p>
               <PasswordChecklist password={formData.password} />
             </div>
             
