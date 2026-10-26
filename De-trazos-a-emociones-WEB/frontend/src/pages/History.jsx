@@ -112,7 +112,7 @@ const History = () => {
       <main className="main">
         <BrandHeader />
 
-        <div className="topbar">
+        <div className="topbar" data-tour="hist">
           <div>
             <div className="page-title">Historial <span>emocional</span></div>
             <div style={{fontSize: '14px', color: 'var(--muted)', marginTop: '6px', fontWeight: 400}}>Seguimiento longitudinal por niño</div>

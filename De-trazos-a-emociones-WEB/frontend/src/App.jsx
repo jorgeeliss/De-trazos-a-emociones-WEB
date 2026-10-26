@@ -13,12 +13,14 @@ import Ninos from './pages/Ninos';
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
 import { ThemeProvider } from './context/ThemeContext';
+import { TourProvider } from './context/TourContext';
 import { AnalisisSesionProvider } from './context/AnalisisSesionContext';
 import AnalisisToast from './components/common/AnalisisToast';
 
 function App() {
   return (
     <ThemeProvider>
+    <TourProvider>
     <AnalisisSesionProvider>
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -91,6 +93,7 @@ function App() {
           </Routes>
       <AnalisisToast />
     </AnalisisSesionProvider>
+    </TourProvider>
     </ThemeProvider>
         );
       }

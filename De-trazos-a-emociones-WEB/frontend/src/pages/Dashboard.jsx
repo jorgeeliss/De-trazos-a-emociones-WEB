@@ -85,7 +85,7 @@ const Dashboard = () => {
         <BirthdayBanner cumples={cumples} />
 
         {/* WELCOME */}
-        <div className="welcome">
+        <div className="welcome" data-tour="dash">
           <div className="welcome-left">
             <div className="welcome-greeting">
               👋 Hola, {nombreUsuario}

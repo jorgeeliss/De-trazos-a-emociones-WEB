@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sun, Moon, Check, KeyRound, Eye, EyeOff, HelpCircle } from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
 import { useTheme } from '../context/ThemeContext';
+import { useTour } from '../context/TourContext';
 import { api } from '../api';
 import PasswordChecklist from '../components/common/PasswordChecklist';
 import { passwordValida } from '../utils/password';
@@ -25,10 +26,7 @@ const Configuracion = () => {
   const [verPwd, setVerPwd] = useState(false);
   const tipoPwd = verPwd ? 'text' : 'password';
 
-  const iniciarTutorial = () => {
-    try { localStorage.setItem('tutorial_forzar', '1'); } catch { /* ignore */ }
-    navigate('/app');
-  };
+  const { start: iniciarRecorrido } = useTour();
 
   const onPwd = (e) => setPwd((p) => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -64,7 +62,7 @@ const Configuracion = () => {
           <ArrowLeft size={16} /> Volver
         </button>
 
-        <h1 className="config-title">Configuración</h1>
+        <h1 className="config-title" data-tour="config">Configuración</h1>
         <p className="config-sub">Personaliza la apariencia de la aplicación.</p>
 
         <section className="config-section">
@@ -166,7 +164,7 @@ const Configuracion = () => {
 
         <section className="config-section">
           <h2>Ayuda</h2>
-          <button type="button" className="pwd-btn" onClick={iniciarTutorial}>
+          <button type="button" className="pwd-btn" onClick={iniciarRecorrido}>
             <HelpCircle size={16} /> Ver recorrido guiado
           </button>
         </section>

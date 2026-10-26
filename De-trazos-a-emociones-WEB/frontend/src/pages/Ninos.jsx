@@ -51,7 +51,7 @@ const Ninos = () => {
           <ArrowLeft size={16} /> Volver
         </button>
 
-        <h1 className="ninos-title">Mis niños</h1>
+        <h1 className="ninos-title" data-tour="ninos">Mis niños</h1>
         <p className="ninos-sub">Niños registrados a partir de tus análisis con contexto. Toca uno para ver su información.</p>
 
         {cargando ? (
