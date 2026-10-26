@@ -6,7 +6,7 @@ import AnalyzerUpload from '../components/analyzer/AnalyzerUpload';
 import AnalyzerResult from '../components/analyzer/AnalyzerResult';
 import AnalyzerSavePanel from '../components/analyzer/AnalyzerSavePanel';
 import ProfileMenu from '../components/common/ProfileMenu';
-import Tutorial from '../components/common/Tutorial';
+import GuidedTour from '../components/common/GuidedTour';
 import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 
 const STYLES = [
@@ -22,14 +22,30 @@ const Analyzer = () => {
   const nombreUsuario = JSON.parse(localStorage.getItem('user') || '{}').nombre || '';
   const fileInputRef = useRef(null);
 
-  // Tutorial de bienvenida: se muestra la primera vez (se recuerda en el dispositivo).
-  const [verTutorial, setVerTutorial] = useState(() => {
-    try { return localStorage.getItem('tutorial_visto') !== '1'; } catch { return false; }
+  // Recorrido guiado: la primera vez (se recuerda en el dispositivo) o cuando se
+  // pide expresamente desde Configuración (bandera tutorial_forzar).
+  const [verTour, setVerTour] = useState(() => {
+    try {
+      if (localStorage.getItem('tutorial_forzar') === '1') return true;
+      return localStorage.getItem('tutorial_visto') !== '1';
+    } catch { return false; }
   });
-  const cerrarTutorial = () => {
-    setVerTutorial(false);
-    try { localStorage.setItem('tutorial_visto', '1'); } catch { /* ignore */ }
+  const cerrarTour = () => {
+    setVerTour(false);
+    try {
+      localStorage.setItem('tutorial_visto', '1');
+      localStorage.removeItem('tutorial_forzar');
+    } catch { /* ignore */ }
   };
+
+  const pasosTour = [
+    { titulo: `¡Hola, ${nombreUsuario || 'bienvenido'}!`, texto: 'Te muestro en un minuto cómo usar la app. Puedes saltar el recorrido cuando quieras.' },
+    { selector: '[data-tour="nav"]', titulo: 'Menú de navegación', texto: 'Desde esta barra llegas a Analizar, Panel, Historial, Mis niños, Reportes y Configuración.' },
+    { selector: '[data-tour="modo"]', titulo: 'Cómo analizar', texto: 'Elige "Con contexto del niño" para un análisis completo, o "Solo dibujo" para uno rápido que luego puedes guardar.' },
+    { selector: '[data-tour="pasos"]', titulo: 'Sigue los pasos', texto: 'Completa el contexto, sube el dibujo y obtén el análisis. Puedes tocar cada paso para avanzar.' },
+    { selector: '[data-tour="perfil"]', titulo: 'Tu cuenta', texto: 'Aquí cambias tu foto, entras a Configuración (tema y contraseña) o cierras sesión.' },
+    { titulo: '¡Listo!', texto: 'Empieza subiendo un dibujo. Puedes repetir este recorrido en Configuración → Ayuda.' },
+  ];
 
   const {
     modo, ninoConocido, step, setStep, formData,
@@ -57,9 +73,9 @@ const Analyzer = () => {
       <div className="bg-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div className="container">
 
-        <Tutorial open={verTutorial} onClose={cerrarTutorial} />
+        <GuidedTour open={verTour} steps={pasosTour} onClose={cerrarTour} />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+        <div data-tour="perfil" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
           <ProfileMenu />
         </div>
 
@@ -92,7 +108,7 @@ const Analyzer = () => {
         )}
 
         {!ninoConocido && (
-          <div className="modo-selector">
+          <div className="modo-selector" data-tour="modo">
             <button className={`modo-opt ${modo === 'contexto' ? 'active' : ''}`} onClick={() => cambiarModo('contexto')}>
               Con contexto del niño
             </button>
@@ -102,7 +118,7 @@ const Analyzer = () => {
           </div>
         )}
 
-        <div className="steps">
+        <div className="steps" data-tour="pasos">
           {modo === 'contexto' && (
             <>
               <div className={`step ${step === 1 ? 'active' : step > 1 ? 'done' : ''}`} onClick={() => step > 1 && setStep(1)}>

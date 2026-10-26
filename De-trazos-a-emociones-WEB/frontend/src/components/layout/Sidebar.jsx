@@ -12,7 +12,7 @@ const Sidebar = ({ active }) => {
   }
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" data-tour="nav">
       <div className="logo-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round">
           <circle cx="12" cy="12" r="10" />

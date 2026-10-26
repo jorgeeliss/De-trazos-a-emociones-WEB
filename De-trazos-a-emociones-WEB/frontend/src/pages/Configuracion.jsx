@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Sun, Moon, Check, KeyRound, Eye, EyeOff, HelpCircle } from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
-import Tutorial from '../components/common/Tutorial';
 import { useTheme } from '../context/ThemeContext';
 import { api } from '../api';
 import PasswordChecklist from '../components/common/PasswordChecklist';
@@ -25,7 +24,11 @@ const Configuracion = () => {
   const [guardandoPwd, setGuardandoPwd] = useState(false);
   const [verPwd, setVerPwd] = useState(false);
   const tipoPwd = verPwd ? 'text' : 'password';
-  const [verTutorial, setVerTutorial] = useState(false);
+
+  const iniciarTutorial = () => {
+    try { localStorage.setItem('tutorial_forzar', '1'); } catch { /* ignore */ }
+    navigate('/app');
+  };
 
   const onPwd = (e) => setPwd((p) => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -163,8 +166,8 @@ const Configuracion = () => {
 
         <section className="config-section">
           <h2>Ayuda</h2>
-          <button type="button" className="pwd-btn" onClick={() => setVerTutorial(true)}>
-            <HelpCircle size={16} /> Ver tutorial de uso
+          <button type="button" className="pwd-btn" onClick={iniciarTutorial}>
+            <HelpCircle size={16} /> Ver recorrido guiado
           </button>
         </section>
 
@@ -172,8 +175,6 @@ const Configuracion = () => {
           Tu tema y paleta se guardan en este dispositivo.
         </p>
       </div>
-
-      <Tutorial open={verTutorial} onClose={() => setVerTutorial(false)} />
     </div>
   );
 };
