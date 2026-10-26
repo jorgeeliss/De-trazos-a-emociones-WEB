@@ -50,6 +50,20 @@ const authFetch = async (url, options = {}) => {
   return response;
 };
 
+// Lee la respuesta como JSON; si el servidor devolvió algo que no es JSON
+// (por ejemplo una página HTML de error 404 porque el backend está
+// desactualizado o caído), da un mensaje claro en vez de un error de parseo.
+const jsonSeguro = async (response) => {
+  try {
+    return await response.json();
+  } catch {
+    throw new Error(
+      `El servidor respondió de forma inesperada (código ${response.status}). ` +
+        'Verifica que el backend esté corriendo y actualizado.'
+    );
+  }
+};
+
 export const api = {
   register: async (userData) => {
     const response = await fetch(`${API_URL}/auth/register`, {
@@ -60,7 +74,7 @@ export const api = {
       body: JSON.stringify(userData),
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || data.message || "Error al registrarse");
@@ -78,7 +92,7 @@ export const api = {
       body: JSON.stringify(credentials),
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || data.message || "Error al iniciar sesión");
@@ -94,7 +108,7 @@ export const api = {
   getAnalisis: async () => {
     const response = await authFetch(`${API_URL}/analisis`);
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || "Error al obtener análisis");
@@ -110,7 +124,7 @@ export const api = {
       signal,
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || "Error al analizar la imagen");
@@ -124,7 +138,7 @@ export const api = {
       method: "DELETE",
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || "Error al eliminar el análisis");
@@ -142,7 +156,7 @@ export const api = {
       body: JSON.stringify(payload),
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || "Error al guardar el análisis");
@@ -160,7 +174,7 @@ export const api = {
       body: JSON.stringify({ contexto_nino }),
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || "Error al asignar el análisis");
@@ -174,7 +188,7 @@ export const api = {
       method: "PATCH",
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || "Error al desasignar el análisis");
@@ -188,7 +202,7 @@ export const api = {
       method: "POST",
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || "Error al reanalizar");
@@ -216,7 +230,7 @@ export const api = {
       body: JSON.stringify({ ids }),
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.error || "Error al eliminar el niño");
@@ -230,7 +244,7 @@ export const api = {
   getSolicitudes: async (estado = "pendiente") => {
     const response = await authFetch(`${API_URL}/admin/usuarios?estado=${estado}`);
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Error al obtener las solicitudes");
@@ -248,7 +262,7 @@ export const api = {
       body: JSON.stringify({ accion }),
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Error al actualizar la solicitud");
@@ -262,7 +276,7 @@ export const api = {
       method: "DELETE",
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Error al eliminar la cuenta");
@@ -276,7 +290,7 @@ export const api = {
   getPerfil: async () => {
     const response = await authFetch(`${API_URL}/perfil/me`);
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Error al obtener el perfil");
@@ -294,7 +308,7 @@ export const api = {
       body: formData,
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Error al subir la foto");
@@ -328,7 +342,7 @@ export const api = {
       body: JSON.stringify({ actual, nueva }),
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Error al cambiar la contraseña");
@@ -342,7 +356,7 @@ export const api = {
       method: "DELETE",
     });
 
-    const data = await response.json();
+    const data = await jsonSeguro(response);
 
     if (!response.ok) {
       throw new Error(data.message || "Error al eliminar la cuenta");
