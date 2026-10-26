@@ -35,14 +35,33 @@ const GuidedTour = ({ step, index, total, rect, onPrev, onNext, onClose }) => {
     );
   }
 
-  // Paso con elemento resaltado: posiciona el globo arriba o abajo del recuadro.
-  const anchoTip = 340;
-  const espacioAbajo = window.innerHeight - (rect.top + rect.height);
-  const left = Math.min(Math.max(12, rect.left), window.innerWidth - anchoTip - 12);
-  const tipStyle =
-    espacioAbajo > 220
-      ? { top: `${rect.top + rect.height + 12}px`, left: `${left}px` }
-      : { top: `${Math.max(12, rect.top - 12)}px`, left: `${left}px`, transform: 'translateY(-100%)' };
+  // Paso con elemento resaltado: coloca el globo en el lado con más espacio
+  // (abajo, arriba, derecha o izquierda) y siempre dentro de la pantalla.
+  const TIP_W = 340;
+  const TIP_H = 210;
+  const M = 12;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  let top;
+  let left;
+  if (vh - (rect.top + rect.height) >= TIP_H + M) {
+    top = rect.top + rect.height + M; // debajo
+    left = rect.left;
+  } else if (rect.top >= TIP_H + M) {
+    top = rect.top - TIP_H - M; // encima
+    left = rect.left;
+  } else if (vw - (rect.left + rect.width) >= TIP_W + M) {
+    left = rect.left + rect.width + M; // a la derecha
+    top = rect.top;
+  } else {
+    left = rect.left - TIP_W - M; // a la izquierda
+    top = rect.top;
+  }
+  // Mantener el globo dentro de los bordes visibles.
+  top = Math.min(Math.max(M, top), vh - TIP_H - M);
+  left = Math.min(Math.max(M, left), vw - TIP_W - M);
+  const tipStyle = { top: `${top}px`, left: `${left}px` };
 
   return (
     <div className="gt-root">
