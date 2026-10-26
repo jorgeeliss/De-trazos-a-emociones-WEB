@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { esEmailAdmin } = require("../utils/admin");
+const { validarPassword } = require("../utils/password");
 
 const router = express.Router();
 
@@ -24,11 +25,10 @@ router.post("/register", async (req, res) => {
             });
         }
 
-        // Validar longitud mínima de contraseña
-        if (password.length < 8) {
-            return res.status(400).json({
-                message: "La contraseña debe tener al menos 8 caracteres"
-            });
+        // Validar política de contraseña segura
+        const errorPassword = validarPassword(password);
+        if (errorPassword) {
+            return res.status(400).json({ message: errorPassword });
         }
 
         // Normalizar email

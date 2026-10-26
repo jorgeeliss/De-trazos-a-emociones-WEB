@@ -5,6 +5,8 @@ import AuthGraphics from '../components/auth/AuthGraphics';
 import './AuthCommon.css';
 import './Register.css';
 import { api } from '../api';
+import PasswordChecklist from '../components/common/PasswordChecklist';
+import { passwordValida } from '../utils/password';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -29,6 +31,11 @@ const Register = () => {
       e.preventDefault();
 
       try {
+        if (!passwordValida(formData.password)) {
+          alert('La contraseña no cumple los requisitos de seguridad.');
+          return;
+        }
+
         const data = await api.register(formData);
         setResultado({
           estado: data.estado || 'pendiente',
@@ -149,11 +156,11 @@ const Register = () => {
                 <div className="input-icon">
                   <Lock size={20} />
                 </div>
-                <input 
-                  type="password" 
-                  id="password" 
-                  placeholder="Mínimo 8 caracteres" 
-                  required 
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Contraseña segura"
+                  required
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -161,6 +168,7 @@ const Register = () => {
                   <Eye size={20} />
                 </div>
               </div>
+              <PasswordChecklist password={formData.password} />
             </div>
             
             <div className="form-group">

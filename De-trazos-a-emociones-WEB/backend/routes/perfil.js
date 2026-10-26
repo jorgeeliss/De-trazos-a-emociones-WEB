@@ -7,6 +7,7 @@ const path = require("path");
 const User = require("../models/User");
 const Analysis = require("../models/Analysis");
 const verificarToken = require("../middleware/authMiddleware");
+const { validarPassword } = require("../utils/password");
 
 const router = express.Router();
 
@@ -133,8 +134,9 @@ router.post("/cambiar-password", verificarToken, async (req, res) => {
         if (!actual || !nueva) {
             return res.status(400).json({ message: "Debes indicar la contraseña actual y la nueva" });
         }
-        if (nueva.length < 8) {
-            return res.status(400).json({ message: "La nueva contraseña debe tener al menos 8 caracteres" });
+        const errorPassword = validarPassword(nueva);
+        if (errorPassword) {
+            return res.status(400).json({ message: errorPassword });
         }
 
         const usuario = await User.findById(req.usuario.id);

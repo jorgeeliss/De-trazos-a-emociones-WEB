@@ -4,6 +4,8 @@ import { ArrowLeft, Sun, Moon, Check, KeyRound } from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
 import { useTheme } from '../context/ThemeContext';
 import { api } from '../api';
+import PasswordChecklist from '../components/common/PasswordChecklist';
+import { passwordValida } from '../utils/password';
 import './Configuracion.css';
 
 const PALETAS = [
@@ -26,8 +28,8 @@ const Configuracion = () => {
   const cambiarPassword = async (e) => {
     e.preventDefault();
     setPwdMsg(null);
-    if (pwd.nueva.length < 8) {
-      setPwdMsg({ tipo: 'error', texto: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+    if (!passwordValida(pwd.nueva)) {
+      setPwdMsg({ tipo: 'error', texto: 'La nueva contraseña no cumple los requisitos de seguridad.' });
       return;
     }
     if (pwd.nueva !== pwd.confirmar) {
@@ -117,6 +119,7 @@ const Configuracion = () => {
               required
               autoComplete="new-password"
             />
+            <PasswordChecklist password={pwd.nueva} />
             <input
               type="password"
               name="confirmar"
