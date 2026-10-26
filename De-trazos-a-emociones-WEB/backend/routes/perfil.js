@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const sharp = require("sharp");
+const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
 const User = require("../models/User");
@@ -115,6 +116,44 @@ router.get("/foto", verificarToken, async (req, res) => {
     } catch (error) {
         console.error("Error al obtener la foto:", error);
         return res.status(500).json({ message: "Error al obtener la foto" });
+    }
+});
+
+/*
+========================================
+CAMBIAR CONTRASEÑA
+POST /perfil/cambiar-password   body: { actual, nueva }
+========================================
+*/
+
+router.post("/cambiar-password", verificarToken, async (req, res) => {
+    try {
+        const { actual, nueva } = req.body;
+
+        if (!actual || !nueva) {
+            return res.status(400).json({ message: "Debes indicar la contraseña actual y la nueva" });
+        }
+        if (nueva.length < 8) {
+            return res.status(400).json({ message: "La nueva contraseña debe tener al menos 8 caracteres" });
+        }
+
+        const usuario = await User.findById(req.usuario.id);
+        if (!usuario) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        const passwordValida = await bcrypt.compare(actual, usuario.password);
+        if (!passwordValida) {
+            return res.status(400).json({ message: "La contraseña actual no es correcta" });
+        }
+
+        usuario.password = await bcrypt.hash(nueva, 12);
+        await usuario.save();
+
+        return res.json({ message: "Contraseña actualizada" });
+    } catch (error) {
+        console.error("Error cambiando la contraseña:", error);
+        return res.status(500).json({ message: "Error al cambiar la contraseña" });
     }
 });
 

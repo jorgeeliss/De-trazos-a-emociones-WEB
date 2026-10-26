@@ -140,6 +140,68 @@
   font-weight: 600;
 }
 
+/* Cambiar contraseña */
+.pwd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.pwd-input {
+  background: var(--sunken);
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.pwd-input::placeholder {
+  color: var(--muted);
+}
+.pwd-input:focus {
+  border-color: var(--accent);
+}
+
+.pwd-msg {
+  font-size: 0.88rem;
+  padding: 2px 2px;
+}
+.pwd-msg.ok {
+  color: var(--teal);
+}
+.pwd-msg.error {
+  color: #fca5a5;
+}
+
+.pwd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  align-self: flex-start;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #fff;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all 0.2s ease;
+}
+.pwd-btn:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+.pwd-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .config-nota {
   color: var(--muted);
   font-size: 0.85rem;

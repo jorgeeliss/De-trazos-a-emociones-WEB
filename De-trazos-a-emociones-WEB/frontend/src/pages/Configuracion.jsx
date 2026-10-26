@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sun, Moon, Check } from 'lucide-react';
+import { ArrowLeft, Sun, Moon, Check, KeyRound } from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
 import { useTheme } from '../context/ThemeContext';
+import { api } from '../api';
 import './Configuracion.css';
 
 const PALETAS = [
@@ -14,6 +16,35 @@ const PALETAS = [
 const Configuracion = () => {
   const navigate = useNavigate();
   const { tema, paleta, setTema, setPaleta } = useTheme();
+
+  const [pwd, setPwd] = useState({ actual: '', nueva: '', confirmar: '' });
+  const [pwdMsg, setPwdMsg] = useState(null);
+  const [guardandoPwd, setGuardandoPwd] = useState(false);
+
+  const onPwd = (e) => setPwd((p) => ({ ...p, [e.target.name]: e.target.value }));
+
+  const cambiarPassword = async (e) => {
+    e.preventDefault();
+    setPwdMsg(null);
+    if (pwd.nueva.length < 8) {
+      setPwdMsg({ tipo: 'error', texto: 'La nueva contraseña debe tener al menos 8 caracteres.' });
+      return;
+    }
+    if (pwd.nueva !== pwd.confirmar) {
+      setPwdMsg({ tipo: 'error', texto: 'La confirmación no coincide con la nueva contraseña.' });
+      return;
+    }
+    setGuardandoPwd(true);
+    try {
+      await api.cambiarPassword(pwd.actual, pwd.nueva);
+      setPwdMsg({ tipo: 'ok', texto: 'Contraseña actualizada correctamente.' });
+      setPwd({ actual: '', nueva: '', confirmar: '' });
+    } catch (err) {
+      setPwdMsg({ tipo: 'error', texto: err.message });
+    } finally {
+      setGuardandoPwd(false);
+    }
+  };
 
   return (
     <div className="config-page">
@@ -63,8 +94,48 @@ const Configuracion = () => {
           </div>
         </section>
 
+        <section className="config-section">
+          <h2>Cambiar contraseña</h2>
+          <form className="pwd-form" onSubmit={cambiarPassword}>
+            <input
+              type="password"
+              name="actual"
+              className="pwd-input"
+              placeholder="Contraseña actual"
+              value={pwd.actual}
+              onChange={onPwd}
+              required
+              autoComplete="current-password"
+            />
+            <input
+              type="password"
+              name="nueva"
+              className="pwd-input"
+              placeholder="Nueva contraseña (mínimo 8 caracteres)"
+              value={pwd.nueva}
+              onChange={onPwd}
+              required
+              autoComplete="new-password"
+            />
+            <input
+              type="password"
+              name="confirmar"
+              className="pwd-input"
+              placeholder="Confirmar nueva contraseña"
+              value={pwd.confirmar}
+              onChange={onPwd}
+              required
+              autoComplete="new-password"
+            />
+            {pwdMsg && <div className={`pwd-msg ${pwdMsg.tipo}`}>{pwdMsg.texto}</div>}
+            <button type="submit" className="pwd-btn" disabled={guardandoPwd}>
+              <KeyRound size={16} /> {guardandoPwd ? 'Guardando…' : 'Actualizar contraseña'}
+            </button>
+          </form>
+        </section>
+
         <p className="config-nota">
-          Tus preferencias se guardan en este dispositivo.
+          Tu tema y paleta se guardan en este dispositivo.
         </p>
       </div>
     </div>

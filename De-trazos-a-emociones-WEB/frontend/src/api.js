@@ -319,6 +319,24 @@ export const api = {
     }
   },
 
+  cambiarPassword: async (actual, nueva) => {
+    const response = await authFetch(`${API_URL}/perfil/cambiar-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ actual, nueva }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al cambiar la contraseña");
+    }
+
+    return data;
+  },
+
   eliminarCuenta: async () => {
     const response = await authFetch(`${API_URL}/perfil`, {
       method: "DELETE",
