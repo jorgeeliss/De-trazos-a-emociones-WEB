@@ -1,5 +1,4 @@
 import './BrandHeader.css';
-import ProfileMenu from './ProfileMenu';
 
 const BrandHeader = () => (
   <div className="brand-header">
@@ -17,7 +16,6 @@ const BrandHeader = () => (
         <span className="brand-header-sub">Psicología infantil · IA</span>
       </div>
     </div>
-    <ProfileMenu />
   </div>
 );
 

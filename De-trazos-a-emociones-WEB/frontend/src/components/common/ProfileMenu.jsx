@@ -18,7 +18,7 @@ const leerUsuarioLocal = () => {
   }
 };
 
-const ProfileMenu = () => {
+const ProfileMenu = ({ placement }) => {
   const navigate = useNavigate();
   const contRef = useRef(null);
   const fileRef = useRef(null);
@@ -112,7 +112,7 @@ const ProfileMenu = () => {
   };
 
   return (
-    <div className="profile-menu" ref={contRef}>
+    <div className={`profile-menu ${placement === 'sidebar' ? 'en-sidebar' : ''}`} ref={contRef}>
       <button
         className="profile-trigger"
         onClick={() => setAbierto((v) => !v)}

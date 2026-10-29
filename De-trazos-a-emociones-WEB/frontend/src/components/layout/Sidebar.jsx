@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './Sidebar.css';
+import ProfileMenu from '../common/ProfileMenu';
 
 const Sidebar = ({ active }) => {
   const navigate = useNavigate();
@@ -65,11 +66,8 @@ const Sidebar = ({ active }) => {
         </svg>
       </div>
       <div style={{ flex: 1 }}></div>
-      <div className={`nav-item ${active === 'config' ? 'active' : ''}`} title="Configuración" onClick={() => navigate('/configuracion')}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
-        </svg>
+      <div className="sidebar-profile" data-tour="perfil">
+        <ProfileMenu placement="sidebar" />
       </div>
     </aside>
   );

@@ -51,6 +51,17 @@
   transform: rotate(180deg);
 }
 
+/* Variante para la barra lateral: el menú se abre a la derecha y hacia arriba. */
+.profile-menu.en-sidebar .profile-chevron {
+  display: none;
+}
+.profile-menu.en-sidebar .profile-dropdown {
+  top: auto;
+  bottom: 0;
+  right: auto;
+  left: calc(100% + 12px);
+}
+
 /* Menú desplegable */
 .profile-dropdown {
   position: absolute;

@@ -56,3 +56,9 @@
   width: 20px;
   height: 20px;
 }
+
+.sidebar .sidebar-profile {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 4px;
+}

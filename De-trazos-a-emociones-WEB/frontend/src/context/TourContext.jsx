@@ -38,8 +38,7 @@ export function TourProvider({ children }) {
       { route: '/dashboard', selector: '[data-tour="exportar"]', titulo: 'Exportar a PDF', texto: 'Descarga el historial del niño en PDF. También puedes exportar el detalle de cada análisis.' },
       { route: '/historial', selector: '[data-tour="hist"]', titulo: 'Historial y evolución', texto: 'Revisa todos los análisis de un niño y su evolución en el tiempo.' },
       { route: '/ninos', selector: '[data-tour="ninos"]', titulo: 'Mis niños', texto: 'Consulta la información y la situación actual de cada niño registrado.' },
-      { route: '/configuracion', selector: '[data-tour="config"]', titulo: 'Configuración', texto: 'Cambia el tema (claro/oscuro), las paletas de color y tu contraseña.' },
-      { route: '/app', selector: '[data-tour="perfil"]', titulo: 'Tu cuenta', texto: '¡Listo! Desde tu perfil cambias la foto o cierras sesión. Ya puedes empezar subiendo un dibujo.' },
+      { route: '/app', selector: '[data-tour="perfil"]', titulo: 'Tu cuenta', texto: '¡Listo! Desde tu perfil (aquí en la barra) cambias tu foto, entras a Configuración (tema, paletas y contraseña) o cierras sesión. Ya puedes empezar subiendo un dibujo.' },
     ],
     [nombre]
   );

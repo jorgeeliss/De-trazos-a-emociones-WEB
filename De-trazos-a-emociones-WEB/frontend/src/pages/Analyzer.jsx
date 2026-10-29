@@ -5,7 +5,6 @@ import AnalyzerContext from '../components/analyzer/AnalyzerContext';
 import AnalyzerUpload from '../components/analyzer/AnalyzerUpload';
 import AnalyzerResult from '../components/analyzer/AnalyzerResult';
 import AnalyzerSavePanel from '../components/analyzer/AnalyzerSavePanel';
-import ProfileMenu from '../components/common/ProfileMenu';
 import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 import { useTour } from '../context/TourContext';
 
@@ -19,7 +18,6 @@ const STYLES = [
 ];
 
 const Analyzer = () => {
-  const nombreUsuario = JSON.parse(localStorage.getItem('user') || '{}').nombre || '';
   const fileInputRef = useRef(null);
 
   const { start: iniciarTour } = useTour();
@@ -59,13 +57,8 @@ const Analyzer = () => {
       <div className="bg-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div className="container">
 
-        <div data-tour="perfil" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
-          <ProfileMenu />
-        </div>
-
         <header className="hero">
           <div className="hero-left">
-            <div className="hero-greeting">👋 Bienvenido/a{nombreUsuario ? `, ${nombreUsuario}` : ''}</div>
             <h1 className="hero-title">De trazos a <span>emociones</span></h1>
             <p className="hero-sub">
               {ninoConocido
@@ -75,7 +68,6 @@ const Analyzer = () => {
                   : 'Completa el contexto del niño y sube su dibujo para obtener un análisis emocional personalizado y profundo.'}
             </p>
           </div>
-          <div className="hero-emoji">🎨</div>
         </header>
 
         {ninoConocido && (
