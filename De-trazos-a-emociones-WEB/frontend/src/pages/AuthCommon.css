@@ -38,6 +38,16 @@
 
 .auth-container .right-panel {
   min-width: 0;
+  overflow-x: hidden;
+}
+
+/* En pantallas grandes el formulario tiene ancho fijo: mientras su panel se
+   abre, lo va descubriendo sin reacomodar el texto. */
+@media (min-width: 901px) {
+  .auth-container .right-panel .form-container {
+    flex-shrink: 0;
+    min-width: 400px;
+  }
 }
 
 .auth-container.intro .right-panel {
@@ -57,18 +67,23 @@
 }
 
 /* Entrada escalonada al aparecer, cuando el panel ya se está abriendo:
-   marca, encabezado, formulario y pie en orden. */
+   entra desde la derecha, siguiendo el corrimiento del panel. */
+@keyframes authEntradaLado {
+  from { opacity: 0; transform: translateX(28px); }
+  to { opacity: 1; transform: none; }
+}
+
 .auth-container .right-panel.listo .form-container > *,
 .auth-container .right-panel.listo .form-container form > * {
-  animation: authEntrada 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  animation: authEntradaLado 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
 }
-.auth-container .right-panel.listo .form-container > *:nth-child(2) { animation-delay: 0.41s; }
-.auth-container .right-panel.listo .form-container > *:nth-child(3) { animation-delay: 0.47s; }
-.auth-container .right-panel.listo .form-container > *:nth-child(n + 4) { animation-delay: 0.53s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(1) { animation-delay: 0.51s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(2) { animation-delay: 0.57s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(3) { animation-delay: 0.63s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(n + 4) { animation-delay: 0.69s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(2) { animation-delay: 0.4s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(3) { animation-delay: 0.45s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(n + 4) { animation-delay: 0.5s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(1) { animation-delay: 0.48s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(2) { animation-delay: 0.53s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(3) { animation-delay: 0.58s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(n + 4) { animation-delay: 0.63s; }
 
 .auth-container .brand {
   display: flex;

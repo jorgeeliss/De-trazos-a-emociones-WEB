@@ -33,17 +33,18 @@ const ONDA = [
 ];
 
 // Tiempos del ciclo (ms desde que empieza a formarse). Cada etapa empieza
-// cuando la anterior terminó; la marca aparece a los ~4,7 s.
-const T_EMPIEZA = 200; // un instante de puntos dispersos antes de dibujar
-const T_CIRCULO = 380; // desfase entre círculos
-const T_TRAZO = 700; // cuánto tarda en salir cada círculo completo
-const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 250; // con los 4 círculos ya trazados
-const D_RELLENO = 550;
-const PASO_RELLENO = 100;
+// cuando la anterior terminó. A los ~3 s el logo completo empieza a ir a la
+// marca y, a la vez, el panel se corre y entra el formulario (alAcomodar).
+const T_EMPIEZA = 150; // un instante de puntos dispersos antes de dibujar
+const T_CIRCULO = 300; // desfase entre círculos
+const T_TRAZO = 600; // cuánto tarda en salir cada círculo completo
+const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 150; // con los 4 círculos ya trazados
+const D_RELLENO = 450;
+const PASO_RELLENO = 80;
 const T_ONDA = T_RELLENO + 3 * PASO_RELLENO + D_RELLENO - 100; // logo relleno: se traza la onda
-const D_ONDA = 650;
-const T_ACOMODO = T_ONDA + D_ONDA + 200; // logo grande completo un instante
-const D_ACOMODO = 800;
+const D_ONDA = 550;
+const T_ACOMODO = T_ONDA + D_ONDA + 50; // logo grande completo: va a la marca
+const D_ACOMODO = 900; // igual que el corrimiento del panel (AuthCommon.css)
 const T_MARCA = T_ACOMODO + D_ACOMODO;
 const D_CRUCE = 400; // el lienzo cede el lugar a la marca real
 const D_DESHACER = 700;
@@ -62,6 +63,10 @@ export function crearTrazoLogo(canvas, {
   ubicarMarca,
   // Se llama con true cuando la marca real debe verse y con false al deshacerse.
   alMostrarMarca = () => {},
+  // Se llama una vez, cuando el logo completo empieza a ir a la marca.
+  alAcomodar = () => {},
+  // Sin intro (ya vista en esta sesión): la marca directamente, con los puntos de fondo.
+  inmediato = false,
   reducido = false,
 }) {
   const ctx = canvas.getContext('2d');
@@ -80,6 +85,7 @@ export function crearTrazoLogo(canvas, {
   let inicio = performance.now();
   let deshaciendo = null; // momento en que empezó a deshacerse
   let marcaVisible = false;
+  let avisoAcomodo = false;
   let destruido = false; // tras destruir() no vuelve a animarse
 
   // Mide el lienzo. Si cambió de ancho (el panel se corre al terminar), los
@@ -200,6 +206,10 @@ export function crearTrazoLogo(canvas, {
     // usa el tiempo del ciclo anterior (mostraba la marca antes de tiempo).
     if (deshaciendo && ahora - deshaciendo > D_DESHACER) formar(true);
     const t = ahora - inicio;
+    if (!deshaciendo && t >= T_ACOMODO && !avisoAcomodo) {
+      avisoAcomodo = true;
+      alAcomodar();
+    }
     if (!deshaciendo && t > T_MARCA) mostrarMarca(true);
 
     caja = cajaEn(t);
@@ -356,7 +366,9 @@ export function crearTrazoLogo(canvas, {
     mostrarMarca(true);
     pintar(performance.now());
   } else {
-    formar();
+    // Con intro ya vista, la marca directamente (un clic la vuelve a formar).
+    if (inmediato) mostrarMarca(true);
+    else formar();
     zona.addEventListener('pointermove', alMover);
     zona.addEventListener('pointerleave', alSalir);
     zona.addEventListener('click', alClic);

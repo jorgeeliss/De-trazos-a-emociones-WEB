@@ -12,12 +12,15 @@ const S_BASE = 64;
 
 // Panel izquierdo del login y el registro: puntos que dibujan el logo en grande
 // y lo llevan a su lugar en la marca (logo + nombre, como en las páginas), que
-// entonces aparece real (trazoLogo.js). Al terminar avisa con "alTerminar".
-const AuthGraphics = ({ alTerminar = () => {} }) => {
+// entonces aparece real (trazoLogo.js). Cuando el logo completo empieza a ir a
+// la marca avisa con "alTerminar" (el panel se corre y entra el formulario).
+// Con "sinIntro" (ya vista en esta sesión) muestra la marca directamente.
+const AuthGraphics = ({ alTerminar = () => {}, sinIntro = false }) => {
   const canvasRef = useRef(null);
   const marcaRef = useRef(null);
   const logoRef = useRef(null);
   const terminarRef = useRef(alTerminar);
+  const sinIntroRef = useRef(sinIntro); // se decide al montar
   const [marcaVisible, setMarcaVisible] = useState(false);
 
   useEffect(() => {
@@ -61,6 +64,9 @@ const AuthGraphics = ({ alTerminar = () => {} }) => {
       ubicar,
       ubicarMarca,
       reducido: prefiereMenosMovimiento(),
+      inmediato: sinIntroRef.current,
+      // El logo y el panel se mueven a la vez: un solo movimiento.
+      alAcomodar: () => terminarRef.current(),
       alMostrarMarca: (si) => {
         setMarcaVisible(si);
         if (si) terminarRef.current();

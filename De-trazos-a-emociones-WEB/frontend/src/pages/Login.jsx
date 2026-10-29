@@ -14,7 +14,7 @@ const Login = () => {
   const sesionExpirada = searchParams.get('expirado') === '1';
   const { nuevaSesion } = useAnalisisSesion();
   // El formulario aparece cuando el logo termina de formarse (o al primer clic/tecla).
-  const [introLista, terminarIntro] = useIntroAuth();
+  const [introLista, terminarIntro, introVista] = useIntroAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -57,7 +57,7 @@ const Login = () => {
   return (
     <div className={`auth-container ${introLista ? '' : 'intro'}`}>
       {/* Panel Izquierdo - Gráficos */}
-      <AuthGraphics alTerminar={terminarIntro} />
+      <AuthGraphics alTerminar={terminarIntro} sinIntro={introVista} />
 
       {/* Panel Derecho - Formulario */}
       <div className={`right-panel ${introLista ? 'listo' : 'esperando'}`}>
