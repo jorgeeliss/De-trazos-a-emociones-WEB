@@ -148,3 +148,32 @@ a {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Entrada suave y escalonada del contenido (como en el Historial). */
+.analyzer-wrapper .container > *,
+.rep-container > *,
+.ninos-container > *,
+.admin-container > *,
+.config-container > * {
+  animation: fadeUp 0.55s ease both;
+}
+.analyzer-wrapper .container > *:nth-child(2),
+.rep-container > *:nth-child(2),
+.ninos-container > *:nth-child(2),
+.admin-container > *:nth-child(2),
+.config-container > *:nth-child(2) { animation-delay: 0.07s; }
+.analyzer-wrapper .container > *:nth-child(3),
+.rep-container > *:nth-child(3),
+.ninos-container > *:nth-child(3),
+.admin-container > *:nth-child(3),
+.config-container > *:nth-child(3) { animation-delay: 0.14s; }
+.analyzer-wrapper .container > *:nth-child(4),
+.rep-container > *:nth-child(4),
+.ninos-container > *:nth-child(4),
+.admin-container > *:nth-child(4),
+.config-container > *:nth-child(4) { animation-delay: 0.21s; }
+.analyzer-wrapper .container > *:nth-child(n + 5),
+.rep-container > *:nth-child(n + 5),
+.ninos-container > *:nth-child(n + 5),
+.admin-container > *:nth-child(n + 5),
+.config-container > *:nth-child(n + 5) { animation-delay: 0.28s; }
