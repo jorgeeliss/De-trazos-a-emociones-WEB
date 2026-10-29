@@ -28,10 +28,15 @@ const AuthGraphics = ({ alTerminar = () => {} }) => {
     const canvas = canvasRef.current;
     const marca = marcaRef.current;
 
-    // Marca centrada en el panel y ajustada al ancho.
+    // Marca centrada en el panel. Su tamaño sale del ancho final del panel
+    // (mientras se forma el logo ocupa toda la pantalla y luego se corre), así
+    // no cambia de tamaño al correrse. 1.1 / 2.1: proporción de los paneles;
+    // 64: margen horizontal del panel del formulario (2rem a cada lado).
     const ubicar = (w, h) => {
+      const contenedor = canvas.parentElement.parentElement;
+      const anchoFinal = Math.min(w, (((contenedor?.clientWidth || w) - 64) * 1.1) / 2.1);
       marca.style.setProperty('--marca-s', `${S_BASE}px`);
-      const s = Math.max(44, Math.min(84, (S_BASE * (w - 96)) / (marca.offsetWidth || 1)));
+      const s = Math.max(44, Math.min(84, (S_BASE * (anchoFinal - 96)) / (marca.offsetWidth || 1)));
       marca.style.setProperty('--marca-s', `${s}px`);
       const centroY = h / 2;
       marca.style.top = `${centroY}px`;

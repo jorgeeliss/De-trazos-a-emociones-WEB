@@ -2,10 +2,10 @@
 // dispersos y dibujan sus círculos en grande; se rellenan, se traza la onda y,
 // con el logo ya completo, se encoge y se desplaza hasta su lugar en la marca
 // (logo + nombre, como en las páginas). Ahí se muestra la marca real
-// (componente Logo) y el lienzo se desvanece. Se forma una vez; un clic sobre
-// el panel la deshace en puntos y la vuelve a formar.
+// (componente Logo) y el lienzo se desvanece. Alrededor flotan puntos sueltos.
+// Se forma una vez; un clic sobre el panel la deshace y la vuelve a formar.
 // Geometría igual a components/common/Logo.jsx (viewBox 48 x 48).
-import { TAU, azar, suave, aRgb, rebotar, apartarDe, ajustarLienzo } from '../common/crayon';
+import { TAU, azar, suave, aRgb, derivar, rebotar, apartarDe, ajustarLienzo } from '../common/crayon';
 
 const CIRCULOS = [
   { x: 19, y: 19 },
@@ -33,20 +33,20 @@ const ONDA = [
 ];
 
 // Tiempos del ciclo (ms desde que empieza a formarse). Cada etapa empieza
-// cuando la anterior terminó; la marca aparece a los ~6,5 s.
-const T_EMPIEZA = 300; // un momento de puntos dispersos antes de dibujar
-const T_CIRCULO = 550; // desfase entre círculos
-const T_TRAZO = 900; // cuánto tarda en salir cada círculo completo
-const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 400; // con los 4 círculos ya trazados
-const D_RELLENO = 750;
-const PASO_RELLENO = 130;
+// cuando la anterior terminó; la marca aparece a los ~4,7 s.
+const T_EMPIEZA = 200; // un instante de puntos dispersos antes de dibujar
+const T_CIRCULO = 380; // desfase entre círculos
+const T_TRAZO = 700; // cuánto tarda en salir cada círculo completo
+const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 250; // con los 4 círculos ya trazados
+const D_RELLENO = 550;
+const PASO_RELLENO = 100;
 const T_ONDA = T_RELLENO + 3 * PASO_RELLENO + D_RELLENO - 100; // logo relleno: se traza la onda
-const D_ONDA = 850;
-const T_ACOMODO = T_ONDA + D_ONDA + 300; // logo grande completo y quieto un momento
-const D_ACOMODO = 1000;
+const D_ONDA = 650;
+const T_ACOMODO = T_ONDA + D_ONDA + 200; // logo grande completo un instante
+const D_ACOMODO = 800;
 const T_MARCA = T_ACOMODO + D_ACOMODO;
-const D_CRUCE = 450; // el lienzo cede el lugar a la marca real
-const D_DESHACER = 800;
+const D_CRUCE = 400; // el lienzo cede el lugar a la marca real
+const D_DESHACER = 700;
 
 const mezclar = (a, b, p) => ({
   cx: a.cx + (b.cx - a.cx) * p,
@@ -73,7 +73,8 @@ export function crearTrazoLogo(canvas, {
   let caja = grande;
   let colores = ['139, 121, 242'];
   let opacidad = 0.85;
-  let puntos = [];
+  let puntos = []; // los que dibujan el logo
+  let sueltos = []; // puntos que flotan de fondo
   let cursor = null;
   let raf = 0;
   let inicio = performance.now();
@@ -81,11 +82,19 @@ export function crearTrazoLogo(canvas, {
   let marcaVisible = false;
   let destruido = false; // tras destruir() no vuelve a animarse
 
+  // Mide el lienzo. Si cambió de ancho (el panel se corre al terminar), los
+  // puntos sueltos se reparten en proporción para seguir cubriendo el espacio.
   const medir = () => {
+    const anchoAntes = w;
     [w, h] = ajustarLienzo(canvas, ctx);
     grande = ubicar(w, h);
     marca = ubicarMarca();
     k = Math.max(0.8, Math.min(2.4, grande.tam / 150));
+    if (anchoAntes && w && anchoAntes !== w) {
+      const f = w / anchoAntes;
+      for (const s of sueltos) s.x *= f;
+      for (const p of puntos) if (p.sale === Infinity || performance.now() < p.sale) p.x *= f;
+    }
   };
 
   const leerColores = () => {
@@ -148,6 +157,18 @@ export function crearTrazoLogo(canvas, {
     });
   };
 
+  const crearSueltos = () => {
+    const cantidad = Math.max(12, Math.min(90, Math.round((w * h) / 11000)));
+    sueltos = Array.from({ length: cantidad }, () => ({
+      ...posicionAlAzar(),
+      vx: azar(-0.15, 0.15),
+      vy: azar(-0.15, 0.15),
+      r: azar(1, 2.2) * k,
+      color: Math.floor(Math.random() * 4),
+      alfa: azar(0.25, 0.5),
+    }));
+  };
+
   // Se deshace desde la marca: puntos hacia afuera y luego vuelve a formarse.
   const deshacer = () => {
     if (deshaciendo) return;
@@ -176,7 +197,7 @@ export function crearTrazoLogo(canvas, {
 
   const actualizar = (ahora) => {
     // Primero el posible reinicio, y después el tiempo del ciclo: así nunca se
-    // usa el tiempo del ciclo anterior (antes mostraba la marca antes de tiempo).
+    // usa el tiempo del ciclo anterior (mostraba la marca antes de tiempo).
     if (deshaciendo && ahora - deshaciendo > D_DESHACER) formar(true);
     const t = ahora - inicio;
     if (!deshaciendo && t > T_MARCA) mostrarMarca(true);
@@ -195,8 +216,8 @@ export function crearTrazoLogo(canvas, {
         } else {
           const rx = tx + Math.sin(ahora / 900 + p.fase) * 0.5 * k;
           const ry = ty + Math.cos(ahora / 1100 + p.fase) * 0.5 * k;
-          p.vx = (p.vx + (rx - p.x) * 0.04) * 0.85;
-          p.vy = (p.vy + (ry - p.y) * 0.04) * 0.85;
+          p.vx = (p.vx + (rx - p.x) * 0.05) * 0.83;
+          p.vy = (p.vy + (ry - p.y) * 0.05) * 0.83;
         }
       } else {
         p.vx = (p.vx + azar(-0.025, 0.025)) * 0.98;
@@ -206,6 +227,15 @@ export function crearTrazoLogo(canvas, {
       if (!acomodando) apartarDe(p, cursor, 32 * k);
       p.x += p.vx;
       p.y += p.vy;
+    }
+    for (const s of sueltos) {
+      derivar(s, 0.25);
+      rebotar(s, w, h, 12 * k);
+      apartarDe(s, cursor, 32 * k);
+      s.vx *= 0.99;
+      s.vy *= 0.99;
+      s.x += s.vx;
+      s.y += s.vy;
     }
   };
 
@@ -222,9 +252,19 @@ export function crearTrazoLogo(canvas, {
     ctx.clearRect(0, 0, w, h);
     const t = ahora - inicio;
 
+    // Puntos sueltos de fondo, en los colores del logo.
+    for (const s of sueltos) {
+      ctx.globalAlpha = s.alfa * alfaBorde(s.x, s.y);
+      ctx.fillStyle = `rgb(${colores[s.color % colores.length]})`;
+      punto(s.x, s.y, s.r);
+    }
+
     // El logo del lienzo se apaga cuando aparece la marca real en su lugar.
     const cede = deshaciendo ? 1 : 1 - Math.min(1, Math.max(0, (t - T_MARCA) / D_CRUCE));
-    if (cede <= 0) return;
+    if (cede <= 0) {
+      ctx.globalAlpha = 1;
+      return;
+    }
     // Al encogerse, los puntos se achican con el logo.
     const escalaPuntos = caja.tam / grande.tam;
     const escala = caja.tam / ANCHO_LOGO;
@@ -275,17 +315,12 @@ export function crearTrazoLogo(canvas, {
     ctx.globalAlpha = 1;
   };
 
-  // El bucle corre mientras haya algo animándose; con la marca ya quieta se detiene.
   const bucle = (ahora) => {
     if (w > 0 && h > 0) {
       actualizar(ahora);
       pintar(ahora);
     }
-    const quieto = marcaVisible && !deshaciendo && ahora - inicio > T_MARCA + D_CRUCE + 50;
-    raf = quieto ? 0 : requestAnimationFrame(bucle);
-  };
-  const animar = () => {
-    if (!raf && !destruido) raf = requestAnimationFrame(bucle);
+    raf = requestAnimationFrame(bucle);
   };
 
   const alMover = (e) => {
@@ -297,45 +332,35 @@ export function crearTrazoLogo(canvas, {
   };
   // Clic: si la marca ya está formada, se deshace y se vuelve a formar.
   const alClic = () => {
-    if (!marcaVisible || reducido) return;
-    deshacer();
-    animar();
+    if (marcaVisible && !reducido) deshacer();
   };
 
-  // Recalcula tamaños y posiciones (cambio de tamaño o fuentes ya cargadas).
+  // Recalcula tamaños y posiciones (fuentes ya cargadas o panel que se corre).
+  // No reinicia la formación: los destinos están en unidades del logo.
   const reubicar = () => {
     if (destruido) return;
     medir();
-    if (reducido || marcaVisible) return;
-    formar(true);
-    animar();
+    // Al cambiar de tamaño el lienzo queda en blanco: se repinta enseguida para
+    // que no parpadee mientras el panel se corre.
+    if (w > 0 && h > 0) pintar(performance.now());
   };
 
-  let tiempoResize = 0;
-  const observador =
-    typeof ResizeObserver !== 'undefined'
-      ? new ResizeObserver(() => {
-          clearTimeout(tiempoResize);
-          tiempoResize = setTimeout(() => {
-            const antes = `${w}x${h}`;
-            medir();
-            if (`${w}x${h}` !== antes) reubicar();
-          }, 150);
-        })
-      : null;
+  const observador = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(reubicar) : null;
 
   medir();
   leerColores();
+  crearSueltos();
   observador?.observe(canvas);
   if (reducido) {
-    // Sin movimiento: directamente la marca real.
+    // Sin movimiento: directamente la marca real y los puntos de fondo quietos.
     mostrarMarca(true);
+    pintar(performance.now());
   } else {
     formar();
     zona.addEventListener('pointermove', alMover);
     zona.addEventListener('pointerleave', alSalir);
     zona.addEventListener('click', alClic);
-    animar();
+    raf = requestAnimationFrame(bucle);
   }
 
   return {
@@ -343,7 +368,6 @@ export function crearTrazoLogo(canvas, {
     destruir() {
       destruido = true;
       cancelAnimationFrame(raf);
-      clearTimeout(tiempoResize);
       observador?.disconnect();
       zona.removeEventListener('pointermove', alMover);
       zona.removeEventListener('pointerleave', alSalir);

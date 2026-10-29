@@ -55,7 +55,7 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
+    <div className={`auth-container ${introLista ? '' : 'intro'}`}>
       {/* Panel Izquierdo - Gráficos */}
       <AuthGraphics alTerminar={terminarIntro} />
 

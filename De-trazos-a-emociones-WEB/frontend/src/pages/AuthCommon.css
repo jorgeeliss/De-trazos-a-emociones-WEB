@@ -26,24 +26,49 @@
   margin: auto;
 }
 
-/* Mientras se forma el logo del panel, el formulario espera oculto (y fuera
-   del alcance del teclado); aparece al terminar (ver useIntroAuth). */
+/* Mientras se forma el logo, su panel ocupa toda la pantalla y el del
+   formulario mide cero; al terminar (ver useIntroAuth) el panel del logo se
+   corre a la izquierda y entra el formulario. Así no queda un espacio vacío. */
+.auth-container .left-panel,
+.auth-container .right-panel {
+  transition:
+    flex-grow 0.9s cubic-bezier(0.65, 0, 0.35, 1),
+    padding 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.auth-container .right-panel {
+  min-width: 0;
+}
+
+.auth-container.intro .right-panel {
+  flex-grow: 0;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;
+}
+
+.auth-container.intro .left-panel {
+  border-right-color: transparent;
+}
+
+/* El formulario espera oculto (y fuera del alcance del teclado). */
 .auth-container .right-panel.esperando .form-container {
   visibility: hidden;
 }
 
-/* Entrada escalonada al aparecer: marca, encabezado, formulario y pie en orden. */
+/* Entrada escalonada al aparecer, cuando el panel ya se está abriendo:
+   marca, encabezado, formulario y pie en orden. */
 .auth-container .right-panel.listo .form-container > *,
 .auth-container .right-panel.listo .form-container form > * {
-  animation: authEntrada 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: authEntrada 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
 }
-.auth-container .right-panel.listo .form-container > *:nth-child(2) { animation-delay: 0.06s; }
-.auth-container .right-panel.listo .form-container > *:nth-child(3) { animation-delay: 0.12s; }
-.auth-container .right-panel.listo .form-container > *:nth-child(n + 4) { animation-delay: 0.18s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(1) { animation-delay: 0.16s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(2) { animation-delay: 0.22s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(3) { animation-delay: 0.28s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(n + 4) { animation-delay: 0.34s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(2) { animation-delay: 0.41s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(3) { animation-delay: 0.47s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(n + 4) { animation-delay: 0.53s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(1) { animation-delay: 0.51s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(2) { animation-delay: 0.57s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(3) { animation-delay: 0.63s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(n + 4) { animation-delay: 0.69s; }
 
 .auth-container .brand {
   display: flex;
@@ -233,6 +258,10 @@
   .auth-container .right-panel.listo .form-container > *,
   .auth-container .right-panel.listo .form-container form > * {
     animation: none;
+  }
+  .auth-container .left-panel,
+  .auth-container .right-panel {
+    transition: none;
   }
 }
 
