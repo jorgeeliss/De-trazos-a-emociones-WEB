@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon, KeyRound, Eye, EyeOff, HelpCircle, Camera, Repeat, Trash2 } from 'lucide-react';
+import {
+  Sun, Moon, KeyRound, Eye, EyeOff, HelpCircle, Camera, Repeat, Trash2,
+  User, Palette, ShieldCheck,
+} from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
 import Sidebar from '../components/layout/Sidebar';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -25,10 +28,21 @@ const ROL_LABEL = {
   profesor: 'Profesor(a)',
 };
 
+// Pestañas de Configuración. "Eliminar cuenta" va de última (zona de peligro).
+const TABS = [
+  { id: 'cuenta', label: 'Cuenta', icon: User },
+  { id: 'apariencia', label: 'Apariencia', icon: Palette },
+  { id: 'seguridad', label: 'Seguridad', icon: ShieldCheck },
+  { id: 'ayuda', label: 'Ayuda', icon: HelpCircle },
+  { id: 'eliminar', label: 'Eliminar cuenta', icon: Trash2, peligro: true },
+];
+
 const Configuracion = () => {
   const { tema, setTema } = useTheme();
   const navigate = useNavigate();
   const { start: iniciarRecorrido } = useTour();
+
+  const [tab, setTab] = useState('cuenta');
 
   const [pwd, setPwd] = useState({ actual: '', nueva: '', confirmar: '' });
   const [pwdMsg, setPwdMsg] = useState(null);
@@ -147,69 +161,97 @@ const Configuracion = () => {
 
         <h1 className="config-title" data-tour="config">Configuración</h1>
 
-        <section className="config-section">
-          <div className="cuenta-top">
+        <div className="config-tabs" role="tablist" aria-label="Secciones de configuración">
+          {TABS.map((t) => {
+            const Icono = t.icon;
+            return (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.id}
+                className={`config-tab${tab === t.id ? ' activa' : ''}${t.peligro ? ' peligro' : ''}`}
+                onClick={() => setTab(t.id)}
+              >
+                <Icono size={16} /> {t.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {tab === 'cuenta' && (
+          <section className="config-section">
             <h2>Cuenta</h2>
-            <label className="tema-switch" title="Cambiar entre tema claro y oscuro">
-              <span className="tema-switch-label">
-                {esOscuro ? <Moon size={16} /> : <Sun size={16} />}
-                {esOscuro ? 'Oscuro' : 'Claro'}
+            <div className="cuenta-foto">
+              <span className="cuenta-avatar">
+                {fotoUrl ? <img src={fotoUrl} alt="Foto de perfil" /> : iniciales}
               </span>
-              <span className="switch">
-                <input
-                  type="checkbox"
-                  checked={esOscuro}
-                  onChange={(e) => setTema(e.target.checked ? 'dark' : 'light')}
-                  aria-label="Tema oscuro"
-                />
-                <span className="switch-slider"></span>
-              </span>
-            </label>
-          </div>
-
-          <div className="cuenta-foto">
-            <span className="cuenta-avatar">
-              {fotoUrl ? <img src={fotoUrl} alt="Foto de perfil" /> : iniciales}
-            </span>
-            <div className="cuenta-foto-info">
-              <div className="cuenta-nombre">{perfil.nombre} {perfil.apellido || ''}</div>
-              <div className="cuenta-email">{perfil.email}</div>
-              <div className="cuenta-chips">
-                <span className="cuenta-chip">{ROL_LABEL[perfil.rol] || perfil.rol || 'Sin rol'}</span>
-                {perfil.esAdmin ? (
-                  <span className="cuenta-chip admin">Administrador</span>
-                ) : (
-                  <>
-                    {perfil.permisos?.conContexto && <span className="cuenta-chip">Análisis con contexto</span>}
-                    {perfil.permisos?.descargarPdf && <span className="cuenta-chip">Descargar PDF</span>}
-                    {!perfil.permisos?.conContexto && <span className="cuenta-chip">Solo dibujos sueltos</span>}
-                  </>
-                )}
+              <div className="cuenta-foto-info">
+                <div className="cuenta-nombre">{perfil.nombre} {perfil.apellido || ''}</div>
+                <div className="cuenta-email">{perfil.email}</div>
+                <div className="cuenta-chips">
+                  <span className="cuenta-chip">{ROL_LABEL[perfil.rol] || perfil.rol || 'Sin rol'}</span>
+                  {perfil.esAdmin ? (
+                    <span className="cuenta-chip admin">Administrador</span>
+                  ) : (
+                    <>
+                      {perfil.permisos?.conContexto && <span className="cuenta-chip">Análisis con contexto</span>}
+                      {perfil.permisos?.descargarPdf && <span className="cuenta-chip">Descargar PDF</span>}
+                      {!perfil.permisos?.conContexto && <span className="cuenta-chip">Solo dibujos sueltos</span>}
+                    </>
+                  )}
+                </div>
               </div>
+              <input
+                type="file"
+                ref={fileRef}
+                accept="image/jpeg,image/png,image/webp"
+                style={{ display: 'none' }}
+                onChange={onFileChange}
+              />
+              <button type="button" className="pwd-btn" onClick={() => fileRef.current?.click()} disabled={subiendo}>
+                <Camera size={16} /> {subiendo ? 'Subiendo…' : fotoUrl ? 'Cambiar foto' : 'Agregar foto'}
+              </button>
             </div>
-            <input
-              type="file"
-              ref={fileRef}
-              accept="image/jpeg,image/png,image/webp"
-              style={{ display: 'none' }}
-              onChange={onFileChange}
-            />
-            <button type="button" className="pwd-btn" onClick={() => fileRef.current?.click()} disabled={subiendo}>
-              <Camera size={16} /> {subiendo ? 'Subiendo…' : fotoUrl ? 'Cambiar foto' : 'Agregar foto'}
-            </button>
-          </div>
 
-          <div className="cuenta-acciones">
-            <button type="button" className="pwd-btn" onClick={cambiarDeCuenta}>
-              <Repeat size={16} /> Cambiar de cuenta
-            </button>
-            <button type="button" className="cuenta-eliminar" onClick={() => setConfirmarPaso(1)}>
-              <Trash2 size={16} /> Eliminar cuenta
-            </button>
-          </div>
+            <div className="cuenta-acciones">
+              <button type="button" className="pwd-btn" onClick={cambiarDeCuenta}>
+                <Repeat size={16} /> Cambiar de cuenta
+              </button>
+            </div>
+          </section>
+        )}
 
-          <div className="cuenta-seguridad">
-            <h3>Seguridad · cambiar contraseña</h3>
+        {tab === 'apariencia' && (
+          <section className="config-section">
+            <h2>Apariencia</h2>
+            <div className="config-row">
+              <div className="config-row-info">
+                <div className="config-row-titulo">Tema de la aplicación</div>
+                <div className="config-row-desc">Cambia entre claro y oscuro. Se conserva al cerrar sesión.</div>
+              </div>
+              <label className="tema-switch" title="Cambiar entre tema claro y oscuro">
+                <span className="tema-switch-label">
+                  {esOscuro ? <Moon size={16} /> : <Sun size={16} />}
+                  {esOscuro ? 'Oscuro' : 'Claro'}
+                </span>
+                <span className="switch">
+                  <input
+                    type="checkbox"
+                    checked={esOscuro}
+                    onChange={(e) => setTema(e.target.checked ? 'dark' : 'light')}
+                    aria-label="Tema oscuro"
+                  />
+                  <span className="switch-slider"></span>
+                </span>
+              </label>
+            </div>
+          </section>
+        )}
+
+        {tab === 'seguridad' && (
+          <section className="config-section">
+            <h2>Seguridad · cambiar contraseña</h2>
             <form className="pwd-form" onSubmit={cambiarPassword}>
               <div className="pwd-field">
                 <input
@@ -267,19 +309,30 @@ const Configuracion = () => {
                 <KeyRound size={16} /> {guardandoPwd ? 'Guardando…' : 'Actualizar contraseña'}
               </button>
             </form>
-          </div>
-        </section>
+          </section>
+        )}
 
-        <section className="config-section">
-          <h2>Ayuda</h2>
-          <button type="button" className="pwd-btn" onClick={iniciarRecorrido}>
-            <HelpCircle size={16} /> Ver recorrido guiado
-          </button>
-        </section>
+        {tab === 'ayuda' && (
+          <section className="config-section">
+            <h2>Ayuda</h2>
+            <button type="button" className="pwd-btn" onClick={iniciarRecorrido}>
+              <HelpCircle size={16} /> Ver recorrido guiado
+            </button>
+          </section>
+        )}
 
-        <p className="config-nota">
-          El tema se guarda en este dispositivo y se conserva al cerrar sesión.
-        </p>
+        {tab === 'eliminar' && (
+          <section className="config-section">
+            <h2>Eliminar cuenta</h2>
+            <p className="cuenta-peligro-nota">
+              Se borrarán tu cuenta y todos tus análisis e imágenes de forma permanente.
+              Esta acción no se puede deshacer.
+            </p>
+            <button type="button" className="cuenta-eliminar" onClick={() => setConfirmarPaso(1)}>
+              <Trash2 size={16} /> Eliminar cuenta
+            </button>
+          </section>
+        )}
       </div>
 
       <ConfirmDialog

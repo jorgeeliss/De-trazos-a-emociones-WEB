@@ -61,84 +61,82 @@
   margin: 0 0 1.25rem;
 }
 
-/* Tema claro / oscuro */
-.tema-opciones {
+/* Pestañas de configuración */
+.config-tabs {
   display: flex;
-  gap: 12px;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
 }
 
-.tema-opt {
-  flex: 1;
-  display: flex;
+.config-tab {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 1rem;
-  border-radius: 12px;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
   background: var(--card2);
-  border: 2px solid var(--border);
+  border: 1px solid var(--border);
   color: var(--muted);
-  font-size: 0.98rem;
+  font-size: 0.9rem;
   font-weight: 600;
+  font-family: var(--sans);
   cursor: pointer;
   transition: all 0.2s ease;
-  font-family: var(--sans);
 }
 
-.tema-opt:hover {
+.config-tab:hover {
   color: var(--text);
-}
-
-.tema-opt.active {
-  border-color: var(--accent);
-  color: var(--text);
-  background: var(--accent-dim);
-}
-
-/* Paletas */
-.paleta-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 12px;
-}
-
-.paleta-opt {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0.9rem 1rem;
-  border-radius: 12px;
-  background: var(--card2);
-  border: 2px solid var(--border);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: var(--sans);
-  color: var(--text);
-}
-
-.paleta-opt:hover {
   border-color: var(--border2);
 }
 
-.paleta-opt.active {
+.config-tab.activa {
+  background: var(--accent-dim);
   border-color: var(--accent);
+  color: var(--accent);
 }
 
-.paleta-swatch {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+.config-tab.peligro {
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.config-tab.peligro:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.config-tab.peligro.activa {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+}
+
+/* Fila con texto a la izquierda y control a la derecha (Apariencia) */
+.config-row {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #fff;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.paleta-nombre {
+.config-row-titulo {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.config-row-desc {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Zona de peligro: eliminar cuenta (última pestaña) */
+.cuenta-peligro-nota {
+  color: var(--muted);
   font-size: 0.92rem;
-  font-weight: 600;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
 }
 
 /* Cambiar contraseña */
