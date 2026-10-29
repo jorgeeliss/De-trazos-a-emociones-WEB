@@ -1,6 +1,6 @@
-/* Moléculas de la emoción predominante: cubren todo el banner de bienvenida
-   (.welcome) por detrás del texto. --animo-color (por style) da el color del
-   halo; las moléculas usan los colores del logo. */
+/* Trazos de la emoción predominante: cubren todo el banner de bienvenida
+   (.welcome) por detrás del texto. --animo-color (por style) es el color de
+   la emoción, para los trazos y el halo. */
 .animo-lienzo {
   position: absolute;
   inset: 0;

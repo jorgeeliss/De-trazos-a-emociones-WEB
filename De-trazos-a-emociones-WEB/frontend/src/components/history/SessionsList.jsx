@@ -6,6 +6,7 @@ import AuthImage from '../common/AuthImage';
 import ConfirmDialog from '../common/ConfirmDialog';
 import { exportarAnalisis } from '../../utils/exportarPdf';
 import { puedePdf } from '../../utils/permisos';
+import { emotionVisual } from '../../utils/emociones';
 
 const slug = (s) =>
   String(s || 'nino').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
@@ -32,15 +33,10 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
   };
 
 
+  // Un color por emoción (utils/emociones.js), como variable CSS del tema.
   const getEmotionColor = (emotionStr = '') => {
-    const lower = emotionStr.toLowerCase();
-    // Variables CSS (index.css) para que los colores sigan el tema claro/oscuro.
-    const emo = (n) => ({ bg: `var(--emo-${n}-bg)`, color: `var(--emo-${n})`, stroke: `var(--emo-${n})` });
-    if (lower.includes('ansiedad') || lower.includes('enojo') || lower.includes('ira')) return emo('enojo');
-    if (lower.includes('tristeza') || lower.includes('melancolía') || lower.includes('miedo')) return emo('tristeza');
-    if (lower.includes('alegr') || lower.includes('felicidad')) return emo('alegria');
-    if (lower.includes('calma') || lower.includes('tranquilidad')) return emo('calma');
-    return emo('neutra');
+    const { color, bg } = emotionVisual(emotionStr);
+    return { bg, color, stroke: color };
   };
 
   const getIntensityProps = (intStr = '') => {

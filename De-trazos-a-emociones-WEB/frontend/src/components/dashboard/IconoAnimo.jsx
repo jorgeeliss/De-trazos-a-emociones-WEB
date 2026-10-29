@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { crearSimulacion } from './moleculasCara';
+import { crearSimulacion } from './trazosCara';
 import './IconoAnimo.css';
 
 const prefiereMenosMovimiento = () =>
@@ -16,10 +16,10 @@ const ubicarCara = (w, h) => {
 // Más tenues sobre el saludo (mitad izquierda) para no restarle legibilidad.
 const atenuar = (x, y, w) => 0.3 + 0.7 * Math.min(1, Math.max(0, (x / w - 0.3) / 0.25));
 
-// Emoción predominante del niño hecha de moléculas. Ocupa todo el banner de
-// bienvenida (se monta dentro de .welcome): al entrar las moléculas están
-// dispersas y se juntan hasta dibujar la cara; el puntero las aparta, y al
-// hacer clic sobre la cara estalla y se vuelve a dibujar.
+// Emoción predominante del niño dibujada con trazos de crayón. Ocupa todo el
+// banner de bienvenida (se monta dentro de .welcome): al entrar los trazos están
+// dispersos y se acomodan hasta dibujar la cara; el puntero los aparta, y al
+// hacer clic sobre la cara se deshace y se vuelve a dibujar.
 const IconoAnimo = ({ visual, emocion }) => {
   const canvasRef = useRef(null);
   const simRef = useRef(null);
@@ -33,18 +33,17 @@ const IconoAnimo = ({ visual, emocion }) => {
       zona: canvas.parentElement,
       ubicarCara,
       atenuar,
-      densidadSueltas: 1 / 9000,
+      densidadSueltas: 1 / 12000,
     });
     simRef.current = sim;
     return () => sim.destruir();
   }, []);
 
-  // Al cambiar de niño (o de emoción), las moléculas pasan a la nueva cara.
+  // Al cambiar de niño (o de emoción), los trazos pasan a la nueva cara y color.
   useEffect(() => {
-    if (caraRef.current === visual.cara) return;
     caraRef.current = visual.cara;
     simRef.current?.cambiarCara(visual.cara);
-  }, [visual.cara]);
+  }, [visual.cara, visual.color]);
 
   const etiqueta = emocion ? `Emoción predominante: ${emocion}` : 'Sin emoción registrada todavía';
 

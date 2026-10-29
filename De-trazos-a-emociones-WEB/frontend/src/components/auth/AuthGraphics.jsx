@@ -1,17 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { PenLine, Users, FileText } from 'lucide-react';
-import { crearSimulacion } from '../dashboard/moleculasCara';
+import { crearTrazoSimbolos } from './trazoSimbolos';
 import './AuthGraphics.css';
-
-// Emociones que las moléculas dibujan una tras otra.
-const CICLO = [
-  { cara: 'risa', nombre: 'Alegría' },
-  { cara: 'triste', nombre: 'Tristeza' },
-  { cara: 'sonrisa', nombre: 'Calma' },
-  { cara: 'molesta', nombre: 'Enojo' },
-  { cara: 'neutra', nombre: 'Neutral' },
-];
-const INTERVALO_MS = 5200;
 
 const PUNTOS = [
   { Icono: PenLine, texto: 'Lectura orientativa de cada dibujo' },
@@ -23,50 +13,30 @@ const prefiereMenosMovimiento = () =>
   typeof window !== 'undefined' &&
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-// Espacio reservado bajo la cara para el nombre de la emoción.
-const ESPACIO_ETIQUETA = 56;
+// Espacio reservado bajo el símbolo para el nombre de la emoción.
+const ESPACIO_ETIQUETA = 60;
 
-// Panel izquierdo del login y el registro: moléculas que dibujan una emoción,
-// se dispersan y forman la siguiente, con su nombre debajo.
+// Panel izquierdo del login y el registro: un trazo dibujado a mano que forma
+// el símbolo de una emoción y se transforma en el siguiente (trazoSimbolos.js).
 const AuthGraphics = ({ title, highlight, subtitle }) => {
   const canvasRef = useRef(null);
   const textoRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const reducido = prefiereMenosMovimiento();
-    // Dónde empieza el bloque de texto: la cara usa el espacio libre de arriba.
-    const inicioTexto = (h) => textoRef.current?.offsetTop ?? h * 0.55;
-    const ubicarCara = (w, h) => {
-      const alto = Math.max(140, inicioTexto(h) - ESPACIO_ETIQUETA - 24);
-      const tam = Math.max(110, Math.min(w * 0.46, alto * 0.82, 270));
+    // El símbolo usa el espacio libre sobre el bloque de texto.
+    const ubicar = (w, h) => {
+      const inicioTexto = textoRef.current?.offsetTop ?? h * 0.55;
+      const alto = Math.max(140, inicioTexto - ESPACIO_ETIQUETA - 24);
+      const tam = Math.max(110, Math.min(w * 0.42, alto * 0.8, 250));
       return { cx: w / 2, cy: 24 + alto / 2, tam };
     };
-    // Moléculas más tenues sobre el texto.
-    const atenuar = (x, y, w, h) => {
-      const borde = inicioTexto(h) - 30;
-      return 1 - 0.75 * Math.min(1, Math.max(0, (y - borde) / 50));
-    };
-    const sim = crearSimulacion(canvas, {
-      cara: CICLO[0].cara,
-      reducido,
+    const sim = crearTrazoSimbolos(canvas, {
       zona: canvas.parentElement,
-      ubicarCara,
-      atenuar,
-      densidadSueltas: 1 / 14000,
-      etiquetas: Object.fromEntries(CICLO.map((c) => [c.cara, c.nombre])),
+      ubicar,
+      reducido: prefiereMenosMovimiento(),
     });
-    let i = 0;
-    const timer = reducido
-      ? null
-      : setInterval(() => {
-          i = (i + 1) % CICLO.length;
-          sim.transformar(CICLO[i].cara);
-        }, INTERVALO_MS);
-    return () => {
-      clearInterval(timer);
-      sim.destruir();
-    };
+    return () => sim.destruir();
   }, []);
 
   const [antes, despues] = title.split(highlight);

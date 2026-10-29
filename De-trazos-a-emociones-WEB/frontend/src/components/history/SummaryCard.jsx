@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './SummaryCard.css';
+import { emotionVisual } from '../../utils/emociones';
 
 const SummaryCard = ({ sessions = [], dotsHeight = ['0px', '0px', '0px', '0px', '0px', '0px', '0px'] }) => {
   const [animatedWidths, setAnimatedWidths] = useState({});
@@ -17,13 +18,8 @@ const SummaryCard = ({ sessions = [], dotsHeight = ['0px', '0px', '0px', '0px', 
     summaryData = Object.keys(emotionCounts).map(e => {
       const count = emotionCounts[e];
       const pctValue = Math.round((count / total) * 100);
-      // Colores como variables CSS para que sigan el tema claro/oscuro.
-      let color = 'var(--emo-neutra)';
-
-      if (e.includes('ansiedad') || e.includes('enojo') || e.includes('ira')) color = 'var(--emo-enojo)';
-      else if (e.includes('tristeza') || e.includes('miedo')) color = 'var(--emo-tristeza)';
-      else if (e.includes('alegr') || e.includes('felicidad')) color = 'var(--emo-alegria)';
-      else if (e.includes('calma') || e.includes('tranquilidad')) color = 'var(--emo-calma)';
+      // Un color por emoción (utils/emociones.js), como variable CSS del tema.
+      const { color } = emotionVisual(e);
       const bg = `color-mix(in srgb, ${color} 50%, transparent)`;
 
       return {

@@ -66,7 +66,7 @@
   overflow: hidden;
 }
 
-/* El título queda por encima de la onda del clic de la decoración. */
+/* Logo y título quedan por encima de los trazos de la decoración. */
 .analyzer-wrapper .hero-text {
   position: relative;
   z-index: 10;
@@ -74,6 +74,8 @@
 }
 
 .analyzer-wrapper .hero-logo {
+  position: relative;
+  z-index: 10;
   flex-shrink: 0;
   display: flex;
   align-items: center;

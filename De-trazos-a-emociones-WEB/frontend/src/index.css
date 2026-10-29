@@ -57,17 +57,23 @@
   --rueda-4: #cf949d;
   --rueda-op: 0.85;
 
-  /* Emociones e intensidades (los usa utils/emociones.js y el historial) */
-  --emo-alegria: #2dd4bf;
-  --emo-alegria-bg: rgba(45, 212, 191, 0.15);
+  /* Emociones: un color propio por emoción (utils/emociones.js, historial y
+     animaciones de trazos). */
+  --emo-alegria: #fbbf24;
+  --emo-alegria-bg: rgba(251, 191, 36, 0.16);
   --emo-tristeza: #60a5fa;
   --emo-tristeza-bg: rgba(96, 165, 250, 0.15);
+  --emo-calma: #34d399;
+  --emo-calma-bg: rgba(52, 211, 153, 0.15);
   --emo-enojo: #f87171;
   --emo-enojo-bg: rgba(248, 113, 113, 0.15);
-  --emo-calma: #a89ee0;
-  --emo-calma-bg: rgba(168, 158, 224, 0.15);
+  --emo-miedo: #c084fc;
+  --emo-miedo-bg: rgba(192, 132, 252, 0.15);
+  --emo-ansiedad: #fb923c;
+  --emo-ansiedad-bg: rgba(251, 146, 60, 0.15);
   --emo-neutra: #94a3b8;
   --emo-neutra-bg: rgba(148, 163, 184, 0.15);
+  /* Intensidades */
   --int-alta: #f87171;
   --int-media: #fb923c;
   --int-baja: #4ade80;
@@ -128,14 +134,18 @@
   --rueda-4: #e0697f;
   --rueda-op: 0.9;
 
-  --emo-alegria: #0d9488;
-  --emo-alegria-bg: rgba(13, 148, 136, 0.12);
+  --emo-alegria: #d97706;
+  --emo-alegria-bg: rgba(245, 158, 11, 0.14);
   --emo-tristeza: #2563eb;
   --emo-tristeza-bg: rgba(37, 99, 235, 0.1);
+  --emo-calma: #059669;
+  --emo-calma-bg: rgba(5, 150, 105, 0.11);
   --emo-enojo: #dc2626;
   --emo-enojo-bg: rgba(220, 38, 38, 0.1);
-  --emo-calma: #6d5ce0;
-  --emo-calma-bg: rgba(109, 92, 224, 0.12);
+  --emo-miedo: #9333ea;
+  --emo-miedo-bg: rgba(147, 51, 234, 0.1);
+  --emo-ansiedad: #ea580c;
+  --emo-ansiedad-bg: rgba(234, 88, 12, 0.1);
   --emo-neutra: #64748b;
   --emo-neutra-bg: rgba(100, 116, 139, 0.12);
   --int-alta: #dc2626;

@@ -89,7 +89,8 @@ const WeeklySummary = ({ child }) => {
                 <div key={a._id || i} className="day-col">
                   <div className="day-bar-wrap">
                     <div className="day-dot"><v.Icono size={16} style={{ color: v.color }} /></div>
-                    <div className="day-bar" style={{ background: v.bg, height: alturaPorIntensidad[inten.valor] }}></div>
+                    {/* Color sólido de la emoción: un tinte translúcido de ámbar se ve marrón en oscuro. */}
+                    <div className="day-bar" style={{ background: v.color, height: alturaPorIntensidad[inten.valor] }}></div>
                   </div>
                   <div className={`day-name ${esUltimo ? 'today' : ''}`}>{formatFechaCorta(a.fecha)}</div>
                 </div>

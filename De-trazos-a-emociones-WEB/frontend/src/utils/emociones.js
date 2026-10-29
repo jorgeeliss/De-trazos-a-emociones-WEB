@@ -3,21 +3,34 @@
 // Los colores son variables CSS (index.css) para que cambien con el tema claro/oscuro.
 // "Icono" es un componente de lucide-react: se pinta con <visual.Icono /> y toma
 // el color con style={{ color }} (el atributo stroke no acepta var()).
-// "cara" es la misma expresión para las moléculas del Dashboard (moleculasCara.js).
-import { Laugh, Smile, Frown, Annoyed, Meh } from 'lucide-react';
+// "cara" es la misma expresión dibujada con trazos en el Dashboard (trazosCara.js).
+// Un color propio por emoción (variables --emo-* de index.css).
+import { Laugh, Smile, Frown, Annoyed, Angry, Meh } from 'lucide-react';
+
+const visual = (clave, Icono, cara) => ({
+  clave,
+  Icono,
+  cara,
+  color: `var(--emo-${clave})`,
+  bg: `var(--emo-${clave}-bg)`,
+});
 
 export function emotionVisual(emocion = '') {
   const e = String(emocion).toLowerCase();
-  if (e.includes('ansiedad') || e.includes('enojo') || e.includes('ira') || e.includes('frustración') || e.includes('estrés') || e.includes('angustia'))
-    return { Icono: Annoyed, cara: 'molesta', color: 'var(--emo-enojo)', bg: 'var(--emo-enojo-bg)' };
-  if (e.includes('tristeza') || e.includes('miedo') || e.includes('melancolía') || e.includes('soledad'))
-    return { Icono: Frown, cara: 'triste', color: 'var(--emo-tristeza)', bg: 'var(--emo-tristeza-bg)' };
+  if (e.includes('ansiedad') || e.includes('estrés') || e.includes('angustia') || e.includes('nervios'))
+    return visual('ansiedad', Annoyed, 'molesta');
+  if (e.includes('enojo') || e.includes('ira') || e.includes('frustración') || e.includes('rabia'))
+    return visual('enojo', Angry, 'enojo');
+  if (e.includes('miedo') || e.includes('temor') || e.includes('susto'))
+    return visual('miedo', Frown, 'triste');
+  if (e.includes('tristeza') || e.includes('melancolía') || e.includes('soledad'))
+    return visual('tristeza', Frown, 'triste');
   if (e.includes('alegr') || e.includes('felic') || e.includes('feliz') || e.includes('content') || e.includes('euforia') || e.includes('entusiasmo') || e.includes('amor'))
-    return { Icono: Laugh, cara: 'risa', color: 'var(--emo-alegria)', bg: 'var(--emo-alegria-bg)' };
+    return visual('alegria', Laugh, 'risa');
   if (e.includes('calma') || e.includes('tranquilidad') || e.includes('paz'))
-    return { Icono: Smile, cara: 'sonrisa', color: 'var(--emo-calma)', bg: 'var(--emo-calma-bg)' };
+    return visual('calma', Smile, 'sonrisa');
   // Respaldo neutro (gris azulado), para no caer en un ámbar que se ve marrón.
-  return { Icono: Meh, cara: 'neutra', color: 'var(--emo-neutra)', bg: 'var(--emo-neutra-bg)' };
+  return visual('neutra', Meh, 'neutra');
 }
 
 export function intensityInfo(intensidad = '') {

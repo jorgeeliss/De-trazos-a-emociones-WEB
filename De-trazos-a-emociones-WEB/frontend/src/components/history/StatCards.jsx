@@ -1,10 +1,11 @@
 import './StatCards.css';
+import { emotionVisual } from '../../utils/emociones';
 
 const StatCards = ({ sessions = [] }) => {
   const totalSessions = sessions.length;
 
   let dominanteName = 'N/A';
-  let dominanteColor = 'var(--emo-calma)';
+  let dominanteColor = 'var(--emo-neutra)';
   let dominanteIntensidad = 'N/A';
   let intensitySubText = 'Esperando datos';
 
@@ -28,12 +29,8 @@ const StatCards = ({ sessions = [] }) => {
       dominanteIntensidad = lastDominanteSession.resultado_ia?.intensidad || 'Media';
     }
 
-    if (dominanteName.includes('ansiedad') || dominanteName.includes('enojo') || dominanteName.includes('ira')) dominanteColor = 'var(--emo-enojo)';
-    else if (dominanteName.includes('tristeza') || dominanteName.includes('miedo')) dominanteColor = 'var(--emo-tristeza)';
-    else if (dominanteName.includes('alegr') || dominanteName.includes('felicidad')) dominanteColor = 'var(--emo-alegria)';
-    else if (dominanteName.includes('calma') || dominanteName.includes('tranquilidad')) dominanteColor = 'var(--emo-calma)';
-    else dominanteColor = 'var(--emo-neutra)';
-    
+    dominanteColor = emotionVisual(dominanteName).color;
+
     dominanteName = dominanteName.charAt(0).toUpperCase() + dominanteName.slice(1);
     intensitySubText = `Intensidad ${dominanteIntensidad.toLowerCase()}`;
   }
