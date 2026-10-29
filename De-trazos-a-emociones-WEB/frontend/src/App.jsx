@@ -12,6 +12,7 @@ import Reportes from './pages/Reportes';
 import Ninos from './pages/Ninos';
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
+import SinSesionRoute from './SinSesionRoute';
 import { ThemeProvider } from './context/ThemeContext';
 import { TourProvider } from './context/TourContext';
 import { AnalisisSesionProvider } from './context/AnalisisSesionContext';
@@ -24,8 +25,8 @@ function App() {
     <AnalisisSesionProvider>
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<SinSesionRoute><Login /></SinSesionRoute>} />
+      <Route path="/register" element={<SinSesionRoute><Register /></SinSesionRoute>} />
       <Route path="/terminos" element={<Terminos />} />
       <Route path="/privacidad" element={<Privacidad />} />
       <Route

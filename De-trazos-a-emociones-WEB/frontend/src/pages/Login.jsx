@@ -137,10 +137,6 @@ const Login = () => {
                 <p>Ingresa el código de 6 dígitos para continuar</p>
               </div>
 
-              <div className="auth-aviso" role="status">
-                Demo: por ahora cualquier código de 6 dígitos funciona. El envío real del código por correo queda como mejora futura.
-              </div>
-
               <form onSubmit={verificarCodigo}>
                 <div className="form-group">
                   <label htmlFor="codigo">Código de verificación</label>
