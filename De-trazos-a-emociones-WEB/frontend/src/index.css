@@ -48,30 +48,50 @@
   --blue: #60a5fa;
 }
 
-/* ===== TEMA CLARO ===== */
+/* ===== TEMA CLARO (paleta estándar: fondos neutros + acento violeta sobrio) ===== */
 /* Mayor especificidad (:root[...] = 0,2,0) para ganarle a cualquier :root. */
 :root[data-theme="light"] {
-  --bg-dark: #e9e7f3;
+  /* Neutros: blanco y grises estándar, sin tinte lila. */
+  --bg-dark: #f4f5f7;
   --bg-panel: #ffffff;
   --surface: #ffffff;
-  --card: #fbfaff;
-  --card2: #f1eff8;
-  --sunken: #eceafa;
-  --border: rgba(26, 22, 48, 0.12);
-  --border2: rgba(26, 22, 48, 0.16);
-  --border-solid: #e2def0;
-  --text: #1a1626;
-  --text-white: #1a1626;
-  --muted: #5c5870;
-  --muted2: #6b6880;
-  --text-gray: #5c5870;
-  --input-bg: #f1eff9;
-  --input-border: #d9d5ea;
+  --card: #ffffff;
+  --card2: #f5f6f8;
+  --sunken: #eef0f3;
+  --border: rgba(17, 24, 39, 0.1);
+  --border2: rgba(17, 24, 39, 0.14);
+  --border-solid: #e3e5ea;
+  --text: #1f2430;
+  --text-white: #1f2430;
+  --muted: #5b6170;
+  --muted2: #6b7280;
+  --text-gray: #5b6170;
+  --input-bg: #f2f3f5;
+  --input-border: #d7dae1;
   --btn-bg: var(--accent);
   --btn-border: var(--accent-strong);
-  --overlay: rgba(40, 35, 70, 0.4);
-  --purple-dim: rgba(139, 121, 242, 0.14);
-  --accent-dim: rgba(139, 121, 242, 0.14);
+  --overlay: rgba(31, 36, 48, 0.4);
+
+  /* Acento violeta sobrio, legible sobre blanco. */
+  --accent: #6d5ce0;
+  --accent-strong: #5b49cf;
+  --accent-soft: #a99ff0;
+  --accent-dim: rgba(109, 92, 224, 0.12);
+  --accent-glow: rgba(109, 92, 224, 0.32);
+  --purple: #6d5ce0;
+  --purple-light: #a99ff0;
+  --purple-dim: rgba(109, 92, 224, 0.12);
+  --purple-glow: rgba(109, 92, 224, 0.32);
+  --accent-purple: #6d5ce0;
+  --accent-purple-glow: rgba(109, 92, 224, 0.32);
+
+  /* Semánticos en tonos profesionales (no fosforescentes sobre blanco). */
+  --teal: #0d9488;
+  --amber: #d97706;
+  --coral: #dc2626;
+  --warm: #ea7a4e;
+  --green: #16a34a;
+  --blue: #2563eb;
 }
 
 /* ===== PALETAS DE ACENTO (en claro y oscuro) ===== */
