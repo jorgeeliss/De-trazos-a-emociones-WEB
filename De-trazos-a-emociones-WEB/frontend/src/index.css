@@ -50,6 +50,13 @@
   /* Barra lateral */
   --sidebar-bg: rgba(19, 19, 31, 0.8);
 
+  /* "Rueda emocional" del logo y de la animación del encabezado */
+  --rueda-1: #d7a24c;
+  --rueda-2: #6e9a86;
+  --rueda-3: #7595bf;
+  --rueda-4: #cf949d;
+  --rueda-op: 0.85;
+
   /* Emociones e intensidades (los usa utils/emociones.js y el historial) */
   --emo-alegria: #2dd4bf;
   --emo-alegria-bg: rgba(45, 212, 191, 0.15);
@@ -113,6 +120,13 @@
   --blue: #2563eb;
 
   --sidebar-bg: rgba(255, 255, 255, 0.94);
+
+  /* Rueda del logo más viva: sobre blanco los tonos apagados se ven insípidos. */
+  --rueda-1: #eaa22a;
+  --rueda-2: #2f9e7d;
+  --rueda-3: #4a7fd1;
+  --rueda-4: #e0697f;
+  --rueda-op: 0.9;
 
   --emo-alegria: #0d9488;
   --emo-alegria-bg: rgba(13, 148, 136, 0.12);

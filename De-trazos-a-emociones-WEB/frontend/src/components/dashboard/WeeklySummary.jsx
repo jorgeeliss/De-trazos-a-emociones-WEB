@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, History, FileDown } from 'lucide-react';
+import { Sparkles, History, FileDown, Lightbulb, Bell, Sprout } from 'lucide-react';
 import './WeeklySummary.css';
 import { emotionVisual, intensityInfo, emocionPredominante, esEmocionNegativa, formatFechaCorta } from '../../utils/emociones';
 import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
@@ -70,7 +70,7 @@ const WeeklySummary = ({ child }) => {
           <div className="state-main">
             <div className="state-emoji-wrap">
               <div className="state-pulse"></div>
-              {visual.emoji}
+              <visual.Icono size={38} strokeWidth={1.75} style={{ color: visual.color }} />
             </div>
             <div className="state-info">
               <div className="state-label">Emoción predominante</div>
@@ -88,7 +88,7 @@ const WeeklySummary = ({ child }) => {
               return (
                 <div key={a._id || i} className="day-col">
                   <div className="day-bar-wrap">
-                    <div className="day-dot">{v.emoji}</div>
+                    <div className="day-dot"><v.Icono size={16} style={{ color: v.color }} /></div>
                     <div className="day-bar" style={{ background: v.bg, height: alturaPorIntensidad[inten.valor] }}></div>
                   </div>
                   <div className={`day-name ${esUltimo ? 'today' : ''}`}>{formatFechaCorta(a.fecha)}</div>
@@ -98,7 +98,7 @@ const WeeklySummary = ({ child }) => {
           </div>
 
           <div className="message-box">
-            <div className="message-label">💡 Lo que esto significa</div>
+            <div className="message-label"><Lightbulb size={12} /> Lo que esto significa</div>
             <div className="message-text">{mensaje}</div>
           </div>
         </div>
@@ -108,14 +108,14 @@ const WeeklySummary = ({ child }) => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {alerta ? (
           <div className="alert-card">
-            <div style={{ fontSize: '32px', marginBottom: '12px', animation: 'float 4s infinite ease-in-out' }}>🔔</div>
+            <div className="alert-icono" style={{ animation: 'float 4s infinite ease-in-out' }}><Bell size={22} /></div>
             <div className="alert-title">Señal para acompañar</div>
             <div className="alert-sub">Los últimos 3 análisis de {nombre} muestran emociones que suelen asociarse a malestar. Podría ser útil conversar con calma o, si lo consideras, con un profesional.</div>
             <button className="alert-action" disabled title="Próximamente" style={{ opacity: 0.6, cursor: 'not-allowed' }}>Contactar especialista →</button>
           </div>
         ) : (
           <div className="alert-card ok">
-            <div style={{ fontSize: '32px', marginBottom: '12px' }}>🌱</div>
+            <div className="alert-icono"><Sprout size={22} /></div>
             <div className="alert-title">Todo en seguimiento</div>
             <div className="alert-sub">No hay señales de alerta en los análisis recientes de {nombre}. Sigue acompañando y registrando sus dibujos.</div>
           </div>

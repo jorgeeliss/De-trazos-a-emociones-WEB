@@ -32,7 +32,7 @@ const TimelineSection = ({ child, onSelect }) => {
             return (
               <div className="tl-item tl-item-click" key={a._id || i} onClick={() => onSelect && onSelect(a)} title="Ver el dibujo y el análisis completo">
                 <div className="tl-left">
-                  <div className="tl-dot" style={{ background: visual.bg }}>{visual.emoji}</div>
+                  <div className="tl-dot" style={{ background: visual.bg }}><visual.Icono size={20} style={{ color: visual.color }} /></div>
                   {!esUltimo && <div className="tl-line"></div>}
                 </div>
                 <div className="tl-right">

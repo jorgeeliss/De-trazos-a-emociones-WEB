@@ -1,19 +1,22 @@
 // Helpers compartidos para representar emociones e intensidades en la UI.
-// Centraliza el mapeo emoción -> emoji/color para no repetirlo en cada componente.
+// Centraliza el mapeo emoción -> icono/color para no repetirlo en cada componente.
 // Los colores son variables CSS (index.css) para que cambien con el tema claro/oscuro.
+// "Icono" es un componente de lucide-react: se pinta con <visual.Icono /> y toma
+// el color con style={{ color }} (el atributo stroke no acepta var()).
+import { Laugh, Smile, Frown, Annoyed, Meh } from 'lucide-react';
 
 export function emotionVisual(emocion = '') {
   const e = String(emocion).toLowerCase();
   if (e.includes('ansiedad') || e.includes('enojo') || e.includes('ira') || e.includes('frustración') || e.includes('estrés') || e.includes('angustia'))
-    return { emoji: '😟', color: 'var(--emo-enojo)', bg: 'var(--emo-enojo-bg)' };
+    return { Icono: Annoyed, color: 'var(--emo-enojo)', bg: 'var(--emo-enojo-bg)' };
   if (e.includes('tristeza') || e.includes('miedo') || e.includes('melancolía') || e.includes('soledad'))
-    return { emoji: '😔', color: 'var(--emo-tristeza)', bg: 'var(--emo-tristeza-bg)' };
+    return { Icono: Frown, color: 'var(--emo-tristeza)', bg: 'var(--emo-tristeza-bg)' };
   if (e.includes('alegr') || e.includes('felic') || e.includes('feliz') || e.includes('content') || e.includes('euforia') || e.includes('entusiasmo') || e.includes('amor'))
-    return { emoji: '😊', color: 'var(--emo-alegria)', bg: 'var(--emo-alegria-bg)' };
+    return { Icono: Laugh, color: 'var(--emo-alegria)', bg: 'var(--emo-alegria-bg)' };
   if (e.includes('calma') || e.includes('tranquilidad') || e.includes('paz'))
-    return { emoji: '😌', color: 'var(--emo-calma)', bg: 'var(--emo-calma-bg)' };
+    return { Icono: Smile, color: 'var(--emo-calma)', bg: 'var(--emo-calma-bg)' };
   // Respaldo neutro (gris azulado), para no caer en un ámbar que se ve marrón.
-  return { emoji: '🙂', color: 'var(--emo-neutra)', bg: 'var(--emo-neutra-bg)' };
+  return { Icono: Meh, color: 'var(--emo-neutra)', bg: 'var(--emo-neutra-bg)' };
 }
 
 export function intensityInfo(intensidad = '') {

@@ -58,7 +58,7 @@ const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) =
               <div className="child-cname">{nino.nombre}</div>
               <div className="child-cage">{textoEdad(nino) || `${nino.analisis.length} análisis`}</div>
             </div>
-            <span className="child-mood">{visual.emoji}</span>
+            <span className="child-mood"><visual.Icono size={18} style={{ color: visual.color }} /></span>
             <button className="child-delete" title="Eliminar niño" onClick={(e) => pedirBorrar(e, nino)}>
               <Trash2 size={16} />
             </button>

@@ -25,7 +25,7 @@ const ActivitiesSection = ({ child }) => {
       <div className="act-body">
         {actividades.map((act, i) => (
           <div className="act-card" key={i} onClick={() => setDetalle(act)}>
-            <div className="act-icon" style={{ background: act.bg }}>{act.icon}</div>
+            <div className="act-icon" style={{ background: act.bg }}><act.icon size={22} style={{ color: act.color }} /></div>
             <div className="act-info">
               <div className="act-name">{act.nombre}</div>
               <div className="act-desc">{act.desc}</div>
@@ -40,7 +40,7 @@ const ActivitiesSection = ({ child }) => {
           <div className="act-modal" onClick={(e) => e.stopPropagation()}>
             <button className="act-modal-close" onClick={() => setDetalle(null)} title="Cerrar"><X size={18} /></button>
             <div className="act-modal-head">
-              <div className="act-icon" style={{ background: detalle.bg }}>{detalle.icon}</div>
+              <div className="act-icon" style={{ background: detalle.bg }}><detalle.icon size={22} style={{ color: detalle.color }} /></div>
               <div className="act-modal-title">{detalle.nombre}</div>
             </div>
             <p className="act-modal-desc">{detalle.desc}</p>

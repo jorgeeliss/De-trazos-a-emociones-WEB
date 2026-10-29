@@ -10,7 +10,7 @@ const Miniatura = ({ analisis, onClick }) => {
   if (analisis?.ruta_imagen) {
     return <AuthImage analisisId={analisis._id} className="compare-thumb" alt="Dibujo" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }} />;
   }
-  return <div className="compare-thumb" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>{visual.emoji}</div>;
+  return <div className="compare-thumb" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}><visual.Icono size={30} style={{ color: visual.color }} /></div>;
 };
 
 const opcionLabel = (a) => {

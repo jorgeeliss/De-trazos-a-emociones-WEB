@@ -93,7 +93,7 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
         <div className="adm-head">
           <div className="adm-date">{formatFechaHora(analisis.fecha)}</div>
           <div className="adm-emotion-row">
-            <span className="adm-chip" style={{ background: visual.bg, color: visual.color }}>{visual.emoji} {r.emocion_predominante || 'Sin emoción'}</span>
+            <span className="adm-chip" style={{ background: visual.bg, color: visual.color }}><visual.Icono size={15} /> {r.emocion_predominante || 'Sin emoción'}</span>
             <span className="adm-intensity" style={{ color: inten.color }}>Intensidad {inten.label}</span>
           </div>
           {puedePdf() && (

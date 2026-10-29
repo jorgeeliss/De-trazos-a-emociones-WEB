@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Image as ImageIcon } from 'lucide-react';
 import './IndependientesGrid.css';
 import { api } from '../../api';
 import AuthImage from '../common/AuthImage';
@@ -57,13 +57,13 @@ const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
     <>
     <div className="ind-card" onClick={() => onSelect(analisis)} title="Ver el dibujo y el análisis">
       <div className="ind-thumb">
-        {analisis.ruta_imagen ? <AuthImage analisisId={analisis._id} alt="Dibujo" /> : <span>🖼️</span>}
+        {analisis.ruta_imagen ? <AuthImage analisisId={analisis._id} alt="Dibujo" /> : <ImageIcon size={30} style={{ color: 'var(--muted)' }} />}
         <button className="ind-delete" title="Eliminar" onClick={pedirBorrar}><Trash2 size={16} /></button>
       </div>
       <div className="ind-body">
         <div className="ind-meta">
           <span className="ind-chip" style={{ background: visual.bg, color: visual.color }}>
-            {visual.emoji} {r.emocion_predominante || 'Sin emoción'}
+            <visual.Icono size={13} /> {r.emocion_predominante || 'Sin emoción'}
           </span>
           <span className="ind-inten" style={{ color: inten.color }}>Int. {inten.label}</span>
         </div>

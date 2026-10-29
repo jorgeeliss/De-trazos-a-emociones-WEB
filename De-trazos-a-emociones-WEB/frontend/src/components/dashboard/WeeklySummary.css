@@ -158,6 +158,9 @@
 }
 
 .message-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 10px;
   color: var(--purple-light);
   text-transform: uppercase;
@@ -200,6 +203,24 @@
   font-weight: 700;
   color: #f87171;
   margin-bottom: 6px;
+}
+
+/* Icono de la tarjeta (campana / brote), en un círculo del color del estado. */
+.alert-icono {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  background: rgba(248, 113, 113, 0.14);
+  color: #f87171;
+}
+
+.alert-card.ok .alert-icono {
+  background: rgba(45, 212, 191, 0.14);
+  color: var(--teal);
 }
 
 /* Variante positiva ("Todo en seguimiento"): verde azulado, no rojo de alerta. */

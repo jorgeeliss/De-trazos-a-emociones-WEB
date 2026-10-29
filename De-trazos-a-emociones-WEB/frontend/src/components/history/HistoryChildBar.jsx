@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Image as ImageIcon } from 'lucide-react';
 import './HistoryChildBar.css';
 import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
 
@@ -40,7 +41,7 @@ const HistoryChildBar = ({ childrenList, activeChild, setActiveChild, hayIndepen
           onClick={() => setActiveChild(independientesKey)}
           title="Dibujos analizados sin asociar a un niño"
         >
-          <div className="child-avatar" style={{background: 'var(--emo-calma-bg)', color: 'var(--emo-calma)'}}>🖼️</div>
+          <div className="child-avatar" style={{background: 'var(--emo-calma-bg)', color: 'var(--emo-calma)'}}><ImageIcon size={15} /></div>
           <span className="child-name">Dibujos independientes</span>
         </div>
       )}

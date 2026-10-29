@@ -1,3 +1,4 @@
+import { Cake } from 'lucide-react';
 import './BirthdayBanner.css';
 import { emocionPredominante } from '../../utils/emociones';
 import { actividadesPara } from '../../data/actividades';
@@ -13,7 +14,7 @@ const BirthdayBanner = ({ cumples = [] }) => {
         const cuando = cumple.cuando === 'hoy' ? 'hoy' : 'mañana';
         return (
           <div className="bday-card" key={nino.nombre}>
-            <div className="bday-emoji">🎂</div>
+            <div className="bday-emoji"><Cake size={24} /></div>
             <div className="bday-text">
               <div className="bday-title">
                 {nino.nombre} cumple {cumple.edad} años {cuando}

@@ -12,6 +12,7 @@ import ActivitiesSection from '../components/dashboard/ActivitiesSection';
 import ComparisonSection from '../components/dashboard/ComparisonSection';
 import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
 import BrandHeader from '../components/common/BrandHeader';
+import IconoAnimo from '../components/dashboard/IconoAnimo';
 import BirthdayBanner from '../components/dashboard/BirthdayBanner';
 
 const Dashboard = () => {
@@ -64,7 +65,7 @@ const Dashboard = () => {
   const selected = children.find((c) => c.nombre === activeChild) || children[0] || null;
   const nombreUsuario = JSON.parse(localStorage.getItem('user') || '{}').nombre || 'Usuario';
   const emocionSel = selected ? emocionPredominante(selected.analisis) : null;
-  const emojiSel = emotionVisual(emocionSel || '').emoji;
+  const visualSel = emotionVisual(children.length > 0 ? emocionSel || '' : '');
 
   // Cumpleaños hoy o mañana entre los niños registrados.
   const cumples = children
@@ -99,7 +100,7 @@ const Dashboard = () => {
                 : 'Aún no tienes niños registrados. Realiza un análisis con contexto para comenzar el seguimiento.'}
             </div>
           </div>
-          <div className="welcome-emoji">{children.length > 0 ? emojiSel : '🙂'}</div>
+          <IconoAnimo visual={visualSel} emocion={children.length > 0 ? emocionSel : null} />
         </div>
 
         {children.length === 0 ? (

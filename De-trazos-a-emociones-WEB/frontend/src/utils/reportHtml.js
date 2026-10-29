@@ -4,7 +4,6 @@
 // orientativo, nunca clínico.
 
 import {
-  emotionVisual,
   intensityInfo,
   formatFechaHora,
   textoEdad,
@@ -29,12 +28,10 @@ const esc = (s) =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 
-const chipEmocion = (emocion) => {
-  const v = emotionVisual(emocion || '');
-  return `<span style="display:inline-block;background:${CHIP_BG};color:${CHIP_TEXT};
+const chipEmocion = (emocion) =>
+  `<span style="display:inline-block;background:${CHIP_BG};color:${CHIP_TEXT};
     border:1px solid ${BORDER};padding:5px 14px;border-radius:999px;font-size:14px;font-weight:700;">
-    ${esc(v.emoji)} ${esc(emocion || 'Sin dato')}</span>`;
-};
+    ${esc(emocion || 'Sin dato')}</span>`;
 
 const tituloSeccion = (texto) =>
   `<div style="font-size:16px;font-weight:800;color:${ACCENT};margin:0 0 12px;">${esc(texto)}</div>`;
@@ -55,11 +52,10 @@ const graficoDistribucion = (lista) => {
 
   const filas = entradas
     .map(([emo, n]) => {
-      const v = emotionVisual(emo);
       const ancho = Math.round((n / max) * 100);
       return `<div style="display:flex;align-items:center;gap:10px;margin:0 0 9px;">
         <div style="width:120px;font-size:12px;color:${TEXT};text-transform:capitalize;
-          white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(v.emoji)} ${esc(emo)}</div>
+          white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(emo)}</div>
         <div style="flex:1;background:${BAR_TRACK};border-radius:8px;height:18px;position:relative;">
           <div style="width:${ancho}%;background:${BAR_FILL};height:18px;border-radius:8px;"></div>
         </div>

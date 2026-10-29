@@ -119,15 +119,6 @@
   line-height: 1.6;
 }
 
-.welcome-emoji {
-  font-size: 72px;
-  line-height: 1;
-  opacity: 0.9;
-  position: relative;
-  z-index: 1;
-  animation: float 6s infinite ease-in-out;
-}
-
 /* CHILD SWITCHER */
 /* MAIN GRID */
 .grid-main {

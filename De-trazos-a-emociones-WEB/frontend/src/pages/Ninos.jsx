@@ -44,6 +44,7 @@ const Ninos = () => {
   }, []);
 
   const emoDetalle = detalle ? emocionPredominante(detalle.analisis) : null;
+  const visualDetalle = emotionVisual(emoDetalle || '');
 
   return (
     <div className="ninos-page">
@@ -67,7 +68,7 @@ const Ninos = () => {
               const edad = textoEdad(n.contexto);
               return (
                 <div className="nino-card" key={n.nombre} onClick={() => setDetalle(n)}>
-                  <div className="nino-avatar" style={{ background: v.bg }}>{v.emoji}</div>
+                  <div className="nino-avatar" style={{ background: v.bg }}><v.Icono size={26} style={{ color: v.color }} /></div>
                   <div className="nino-name">{n.nombre}</div>
                   <div className="nino-meta">{[edad, n.contexto?.genero].filter(Boolean).join(' · ') || '—'}</div>
                   <div className="nino-sit">
@@ -87,8 +88,8 @@ const Ninos = () => {
             <button className="nino-modal-close" onClick={() => setDetalle(null)} title="Cerrar"><X size={18} /></button>
 
             <div className="nino-modal-head">
-              <div className="nino-avatar" style={{ background: emotionVisual(emoDetalle || '').bg }}>
-                {emotionVisual(emoDetalle || '').emoji}
+              <div className="nino-avatar" style={{ background: visualDetalle.bg }}>
+                <visualDetalle.Icono size={26} style={{ color: visualDetalle.color }} />
               </div>
               <div>
                 <div className="nino-modal-name">{detalle.nombre}</div>

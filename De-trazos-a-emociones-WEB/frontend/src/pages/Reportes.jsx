@@ -76,7 +76,7 @@ const Reportes = () => {
                 return (
                   <div className="rep-card" key={n.nombre}>
                     <div className="rep-card-emoji" style={{ background: v.bg }}>
-                      {v.emoji}
+                      <v.Icono size={22} style={{ color: v.color }} />
                     </div>
                     <div className="rep-card-info">
                       <div className="rep-card-name">{n.nombre}</div>

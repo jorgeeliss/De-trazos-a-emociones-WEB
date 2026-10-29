@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Image as ImageIcon } from 'lucide-react';
 import './SessionsList.css';
 import { api } from '../../api';
 import AuthImage from '../common/AuthImage';
@@ -118,10 +118,10 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
                 onClick={() => onSelect && onSelect(session)}
                 title="Ver el dibujo y el análisis completo"
               >
-                <div className="session-thumb" style={{padding: 0, overflow: 'hidden', background: '#f0f0f0'}}>
+                <div className="session-thumb" style={{padding: 0, overflow: 'hidden', background: 'var(--card2)'}}>
                   {session.ruta_imagen ? (
                     <AuthImage analisisId={session._id} alt="Dibujo" style={{width: '100%', height: '100%', objectFit: 'cover'}} />
-                  ) : '🖼️'}
+                  ) : <ImageIcon size={22} style={{ color: 'var(--muted)' }} />}
                 </div>
                 <div className="session-info">
                   <div className="session-date">{datePrefix}{formatDate(session.fecha)}</div>

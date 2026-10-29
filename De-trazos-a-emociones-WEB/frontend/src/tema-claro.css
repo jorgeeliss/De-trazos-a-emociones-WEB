@@ -25,6 +25,60 @@
   --t-shadow-lg: 0 18px 44px rgba(17, 24, 39, 0.14);
 }
 
+/* ---------- Botones principales ----------
+   Degradado sutil del violeta de la marca, brillo interior y sombra del mismo
+   tono; al pasar el mouse se intensifican. */
+:root[data-theme="light"] {
+  --t-btn: linear-gradient(180deg, #7a69ee 0%, #5b49d2 100%);
+  --t-btn-hover: linear-gradient(180deg, #6d5be6 0%, #4c3bc2 100%);
+  --t-btn-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(17, 24, 39, 0.12),
+    0 6px 16px -6px rgba(91, 73, 210, 0.55);
+  --t-btn-shadow-hover: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 4px rgba(17, 24, 39, 0.12),
+    0 10px 22px -6px rgba(91, 73, 210, 0.6);
+}
+:root[data-theme="light"] :is(
+  .pwd-btn,
+  .sp-btn.primary,
+  .adm-reanalizar,
+  .confirm-ok:not(.danger),
+  .exp-go,
+  .gt-btn,
+  .ind-assign-btn,
+  .admin-tab.active,
+  .rep-download,
+  .nino-ver-dashboard,
+  .history-wrapper .btn-new,
+  .analyzer-wrapper .btn-next,
+  .analyzer-wrapper .btn-analyze,
+  .analyzer-wrapper .nino-activo-btn,
+  .analyzer-wrapper .modo-opt.active,
+  .auth-container .btn-submit
+) {
+  background: var(--t-btn);
+  border-color: #5b49d2;
+  color: #fff;
+  box-shadow: var(--t-btn-shadow);
+}
+:root[data-theme="light"] :is(
+  .pwd-btn,
+  .sp-btn.primary,
+  .adm-reanalizar,
+  .confirm-ok:not(.danger),
+  .exp-go,
+  .gt-btn,
+  .ind-assign-btn,
+  .rep-download,
+  .nino-ver-dashboard,
+  .history-wrapper .btn-new,
+  .analyzer-wrapper .btn-next,
+  .analyzer-wrapper .btn-analyze,
+  .analyzer-wrapper .nino-activo-btn,
+  .auth-container .btn-submit
+):hover:not(:disabled) {
+  background: var(--t-btn-hover);
+  box-shadow: var(--t-btn-shadow-hover);
+}
+
 /* ---------- Barra lateral y menú de perfil ---------- */
 :root[data-theme="light"] .sidebar {
   box-shadow: 1px 0 0 var(--border), 4px 0 18px rgba(17, 24, 39, 0.04);
@@ -70,6 +124,15 @@
 }
 
 /* ---------- Analizador ---------- */
+/* Orbes del encabezado más presentes (sobre fondo claro se veían lavados). */
+:root[data-theme="light"] .hero-orb-dot {
+  opacity: 0.78;
+  box-shadow: 0 0 12px currentColor;
+}
+:root[data-theme="light"] .analyzer-wrapper .hero:hover .hero-orb-dot {
+  opacity: 1;
+  box-shadow: 0 0 22px currentColor, 0 0 8px currentColor;
+}
 :root[data-theme="light"] .analyzer-wrapper .hero,
 :root[data-theme="light"] .analyzer-wrapper .card {
   box-shadow: var(--t-shadow);
@@ -108,13 +171,6 @@
 :root[data-theme="light"] .analyzer-wrapper .btn-back,
 :root[data-theme="light"] .analyzer-wrapper .btn-new {
   border-color: var(--border2);
-}
-:root[data-theme="light"] .analyzer-wrapper .btn-next:hover,
-:root[data-theme="light"] .analyzer-wrapper .btn-analyze:hover:not(:disabled),
-:root[data-theme="light"] .sp-btn.primary:hover:not(:disabled),
-:root[data-theme="light"] .adm-reanalizar:hover:not(:disabled),
-:root[data-theme="light"] .history-wrapper .btn-new:hover {
-  background: var(--accent-strong);
 }
 
 /* Subida del dibujo */
@@ -265,6 +321,14 @@
   border-color: var(--t-ok-border);
 }
 :root[data-theme="light"] .alert-card.ok .alert-title {
+  color: var(--t-ok);
+}
+:root[data-theme="light"] .alert-icono {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--t-danger);
+}
+:root[data-theme="light"] .alert-card.ok .alert-icono {
+  background: rgba(13, 148, 136, 0.12);
   color: var(--t-ok);
 }
 :root[data-theme="light"] .history-wrapper .alert-banner {
