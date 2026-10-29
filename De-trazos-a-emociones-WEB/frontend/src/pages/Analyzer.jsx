@@ -59,11 +59,12 @@ const Analyzer = () => {
       <div className="container">
 
         <header className="hero">
-          <div className="hero-left">
-            <h1 className="hero-title">De trazos a <span>emociones</span></h1>
-          </div>
           <div className="hero-logo" aria-hidden="true">
-            <Logo size={82} />
+            <Logo size={60} />
+          </div>
+          <div className="hero-text">
+            <div className="hero-name">De trazos a emociones</div>
+            <div className="hero-tag">Psicología infantil · IA</div>
           </div>
         </header>
 
