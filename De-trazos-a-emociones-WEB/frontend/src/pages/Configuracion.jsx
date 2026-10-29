@@ -1,7 +1,9 @@
-import { useState } from 'react';
-import { Sun, Moon, Check, KeyRound, Eye, EyeOff, HelpCircle } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Sun, Moon, Check, KeyRound, Eye, EyeOff, HelpCircle, Camera, Repeat, Trash2 } from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
 import Sidebar from '../components/layout/Sidebar';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import { useTheme } from '../context/ThemeContext';
 import { useTour } from '../context/TourContext';
 import { api } from '../api';
@@ -16,8 +18,18 @@ const PALETAS = [
   { key: 'oceano', nombre: 'Océano', color: '#60a5fa' },
 ];
 
+const leerUsuarioLocal = () => {
+  try {
+    return JSON.parse(localStorage.getItem('user') || '{}');
+  } catch {
+    return {};
+  }
+};
+
 const Configuracion = () => {
   const { tema, paleta, setTema, setPaleta } = useTheme();
+  const navigate = useNavigate();
+  const { start: iniciarRecorrido } = useTour();
 
   const [pwd, setPwd] = useState({ actual: '', nueva: '', confirmar: '' });
   const [pwdMsg, setPwdMsg] = useState(null);
@@ -25,7 +37,67 @@ const Configuracion = () => {
   const [verPwd, setVerPwd] = useState(false);
   const tipoPwd = verPwd ? 'text' : 'password';
 
-  const { start: iniciarRecorrido } = useTour();
+  // Cuenta: foto de perfil, cambiar de cuenta y eliminar cuenta.
+  const fileRef = useRef(null);
+  const [perfil] = useState(leerUsuarioLocal);
+  const [fotoUrl, setFotoUrl] = useState(null);
+  const [recargaFoto, setRecargaFoto] = useState(0);
+  const [subiendo, setSubiendo] = useState(false);
+  const [confirmarPaso, setConfirmarPaso] = useState(0); // 0 nada · 1 aviso · 2 confirmación final
+  const [eliminando, setEliminando] = useState(false);
+
+  useEffect(() => {
+    let activo = true;
+    let objetoUrl;
+    api
+      .fetchFotoPerfil()
+      .then((blob) => {
+        if (!activo || !blob) return;
+        objetoUrl = URL.createObjectURL(blob);
+        setFotoUrl(objetoUrl);
+      })
+      .catch(() => {});
+    return () => {
+      activo = false;
+      if (objetoUrl) URL.revokeObjectURL(objetoUrl);
+    };
+  }, [recargaFoto]);
+
+  const iniciales =
+    ((perfil.nombre?.[0] || '') + (perfil.apellido?.[0] || '')).toUpperCase() || 'U';
+
+  const onFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSubiendo(true);
+    try {
+      await api.subirFotoPerfil(file);
+      setRecargaFoto((n) => n + 1);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSubiendo(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  const cambiarDeCuenta = () => {
+    api.logout();
+    navigate('/login');
+  };
+
+  const eliminarCuenta = async () => {
+    setEliminando(true);
+    try {
+      await api.eliminarCuenta();
+      api.logout();
+      navigate('/login');
+    } catch (err) {
+      alert(err.message);
+      setEliminando(false);
+      setConfirmarPaso(0);
+    }
+  };
 
   const onPwd = (e) => setPwd((p) => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -158,6 +230,38 @@ const Configuracion = () => {
         </section>
 
         <section className="config-section">
+          <h2>Cuenta</h2>
+          <div className="cuenta-foto">
+            <span className="cuenta-avatar">
+              {fotoUrl ? <img src={fotoUrl} alt="Foto de perfil" /> : iniciales}
+            </span>
+            <div className="cuenta-foto-info">
+              <div className="cuenta-nombre">{perfil.nombre} {perfil.apellido || ''}</div>
+              <div className="cuenta-email">{perfil.email}</div>
+            </div>
+            <input
+              type="file"
+              ref={fileRef}
+              accept="image/jpeg,image/png,image/webp"
+              style={{ display: 'none' }}
+              onChange={onFileChange}
+            />
+            <button type="button" className="pwd-btn" onClick={() => fileRef.current?.click()} disabled={subiendo}>
+              <Camera size={16} /> {subiendo ? 'Subiendo…' : fotoUrl ? 'Cambiar foto' : 'Agregar foto'}
+            </button>
+          </div>
+
+          <div className="cuenta-acciones">
+            <button type="button" className="pwd-btn" onClick={cambiarDeCuenta}>
+              <Repeat size={16} /> Cambiar de cuenta
+            </button>
+            <button type="button" className="cuenta-eliminar" onClick={() => setConfirmarPaso(1)}>
+              <Trash2 size={16} /> Eliminar cuenta
+            </button>
+          </div>
+        </section>
+
+        <section className="config-section">
           <h2>Ayuda</h2>
           <button type="button" className="pwd-btn" onClick={iniciarRecorrido}>
             <HelpCircle size={16} /> Ver recorrido guiado
@@ -168,6 +272,28 @@ const Configuracion = () => {
           Tu tema y paleta se guardan en este dispositivo.
         </p>
       </div>
+
+      <ConfirmDialog
+        abierto={confirmarPaso === 1}
+        peligro
+        titulo="Eliminar cuenta"
+        mensaje="Se borrarán tu cuenta y todos tus análisis e imágenes."
+        detalle="Es permanente y no se puede deshacer."
+        textoConfirmar="Continuar"
+        onConfirmar={() => setConfirmarPaso(2)}
+        onCancelar={() => setConfirmarPaso(0)}
+      />
+      <ConfirmDialog
+        abierto={confirmarPaso === 2}
+        peligro
+        titulo="Confirmar eliminación"
+        mensaje="¿Seguro que quieres eliminar tu cuenta definitivamente?"
+        detalle="Esta acción no se puede deshacer."
+        textoConfirmar="Eliminar definitivamente"
+        cargando={eliminando}
+        onConfirmar={eliminarCuenta}
+        onCancelar={() => setConfirmarPaso(0)}
+      />
     </div>
   );
 };

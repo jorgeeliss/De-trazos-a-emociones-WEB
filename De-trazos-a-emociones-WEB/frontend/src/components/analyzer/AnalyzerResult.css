@@ -206,7 +206,6 @@ details summary::-webkit-details-marker {
 
 .sa-section:hover {
   background: rgba(255, 255, 255, 0.05);
-  transform: translateX(4px);
 }
 
 .sa-section.highlight {

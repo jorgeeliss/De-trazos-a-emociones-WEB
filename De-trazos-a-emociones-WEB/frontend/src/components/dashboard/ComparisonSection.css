@@ -68,7 +68,7 @@ img.compare-thumb {
 }
 
 .compare-card:hover .compare-result {
-  transform: translateX(4px);
+  background: var(--card2);
 }
 
 .compare-result strong {

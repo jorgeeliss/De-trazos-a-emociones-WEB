@@ -151,7 +151,7 @@
 }
 
 .message-box:hover {
-  transform: translateX(4px);
+  background: var(--card2);
 }
 
 .message-label {

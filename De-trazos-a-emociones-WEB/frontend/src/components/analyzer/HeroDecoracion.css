@@ -11,8 +11,8 @@
   cursor: pointer;
   /* Difumina los bordes para que NO se vea el rectángulo que encierra la animación.
      El overflow sigue conteniendo la onda del clic, pero el recorte deja de notarse. */
-  -webkit-mask: radial-gradient(ellipse 115% 112% at 50% 50%, #000 45%, transparent 86%);
-          mask: radial-gradient(ellipse 115% 112% at 50% 50%, #000 45%, transparent 86%);
+  -webkit-mask: radial-gradient(ellipse 108% 106% at 50% 50%, #000 28%, transparent 64%);
+          mask: radial-gradient(ellipse 108% 106% at 50% 50%, #000 28%, transparent 64%);
 }
 
 /* El contenedor del orbe hace el flotado (translate). */
@@ -32,8 +32,8 @@
   height: 100%;
   border-radius: 50%;
   background: currentColor;
-  box-shadow: 0 0 16px currentColor;
-  opacity: 0.5;
+  box-shadow: 0 0 9px currentColor;
+  opacity: 0.45;
   transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.4),
     opacity 0.45s ease, box-shadow 0.45s ease;
 }
