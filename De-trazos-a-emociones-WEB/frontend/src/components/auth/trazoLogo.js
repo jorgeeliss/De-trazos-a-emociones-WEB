@@ -1,12 +1,9 @@
-// Panel del login y el registro: rayitas de crayón de los cuatro colores del
-// logo llegan dispersas y dibujan sus cuatro círculos; luego se rellenan y se
-// traza la onda blanca: se forma el logo "De trazos a emociones". Después de un
-// rato se deshace en rayitas y se vuelve a formar (o con un clic).
+// Panel del login y el registro: puntos de los cuatro colores del logo llegan
+// dispersos y dibujan sus cuatro círculos; luego se rellenan, se traza la onda
+// blanca y aparece debajo el nombre "De trazos a emociones". Después de un rato
+// se deshace en puntos y se vuelve a formar (o con un clic).
 // Geometría igual a components/common/Logo.jsx (viewBox 48 x 48).
-import {
-  TAU, azar, suave, girarHacia, aRgb, pintarMarca, crearGarabato, pintarGarabato,
-  derivar, rebotar, apartarDe, ajustarLienzo,
-} from '../common/crayon';
+import { TAU, azar, suave, aRgb, derivar, rebotar, apartarDe, ajustarLienzo } from '../common/crayon';
 
 const CIRCULOS = [
   { x: 19, y: 19 },
@@ -20,6 +17,8 @@ const ORDEN_RELLENO = [0, 1, 3, 2];
 const RADIO = 11.5;
 const CENTRO = 24;
 const ANCHO_LOGO = 33; // de 7.5 a 40.5 en el viewBox
+
+const NOMBRE = 'De trazos a emociones';
 
 // Onda del logo: "M11 26 C16 20.5 20 30 24 26 C28 22 32 31.5 37 26".
 const bezier = (p0, p1, p2, p3) => (t) => {
@@ -39,8 +38,12 @@ const T_TRAZO = 800; // cuánto tarda en salir cada círculo completo
 const T_RELLENO = 2300;
 const T_ONDA = 3100;
 const D_ONDA = 900;
-const T_QUIETO = 9500; // a partir de aquí se deshace solo
+const T_NOMBRE = T_ONDA + D_ONDA - 150;
+const T_QUIETO = 10500; // a partir de aquí se deshace solo
 const D_DESHACER = 750;
+
+// Espacio bajo el logo para el nombre (lo usa quien ubica el logo).
+export const espacioNombre = (tam) => tam * 0.13 + 36;
 
 export function crearTrazoLogo(canvas, { zona = canvas, ubicar, atenuar = null, reducido = false }) {
   const ctx = canvas.getContext('2d');
@@ -50,8 +53,9 @@ export function crearTrazoLogo(canvas, { zona = canvas, ubicar, atenuar = null, 
   let caja = { cx: 0, cy: 0, tam: 0 };
   let colores = ['139, 121, 242'];
   let opacidad = 0.85;
-  let marcas = [];
-  let sueltos = [];
+  let colorNombre = '#1f2430';
+  let puntos = []; // los que dibujan el logo
+  let sueltos = []; // puntos que flotan alrededor
   let cursor = null;
   let raf = 0;
   let marco = 0;
@@ -68,6 +72,7 @@ export function crearTrazoLogo(canvas, { zona = canvas, ubicar, atenuar = null, 
     const raiz = getComputedStyle(document.documentElement);
     colores = [1, 2, 3, 4].map((n) => aRgb(raiz.getPropertyValue(`--rueda-${n}`)));
     opacidad = parseFloat(raiz.getPropertyValue('--rueda-op')) || 0.85;
+    colorNombre = raiz.getPropertyValue('--text').trim() || colorNombre;
   };
 
   // Paso de unidades del logo a píxeles del lienzo.
@@ -83,106 +88,105 @@ export function crearTrazoLogo(canvas, { zona = canvas, ubicar, atenuar = null, 
     return p;
   };
 
-  // Programa un ciclo: cada círculo se dibuja con sus rayitas, uno tras otro.
+  // Programa un ciclo: cada círculo se dibuja con sus puntos, uno tras otro.
   const formar = (desdeActual = false) => {
     inicio = performance.now();
     deshaciendo = null;
     const escala = caja.tam / ANCHO_LOGO;
-    const espaciado = 4.6 * k;
-    const anteriores = marcas;
-    const nuevas = [];
+    const espaciado = 4.4 * k;
+    const anteriores = puntos;
+    const nuevos = [];
     CIRCULOS.forEach((c, ci) => {
       const n = Math.round((TAU * RADIO * escala) / espaciado);
       for (let i = 0; i < n; i++) {
         const a = -Math.PI / 2 + (i / n) * TAU;
-        const corr = azar(-0.7, 0.7) * k;
+        const corr = azar(-0.5, 0.5) * k;
         const [x, y] = aPx([c.x + RADIO * Math.cos(a), c.y + RADIO * Math.sin(a)]);
-        nuevas.push({
+        nuevos.push({
           tx: x + Math.cos(a) * corr,
           ty: y + Math.sin(a) * corr,
-          tang: a + Math.PI / 2 + azar(-0.15, 0.15),
-          largo: espaciado * azar(1.35, 1.7),
+          // Cada tanto un punto más grande, para que no se vea mecánico.
+          r: (i % 6 === 0 ? 2.6 : azar(1.4, 2)) * k,
           color: COLOR_DE[ci] - 1,
-          alfa: azar(0.75, 1),
+          alfa: azar(0.8, 1),
           sale: inicio + ci * T_CIRCULO + (i / n) * T_TRAZO,
           fase: Math.random() * TAU,
         });
       }
     });
-    marcas = nuevas.map((m, i) => {
-      const previa = desdeActual && anteriores.length ? anteriores[i % anteriores.length] : null;
-      const p = previa || posicionLibre();
+    puntos = nuevos.map((p, i) => {
+      const previo = desdeActual && anteriores.length ? anteriores[i % anteriores.length] : null;
+      const pos = previo || posicionLibre();
       return {
-        ...m,
-        x: p.x,
-        y: p.y,
-        ang: previa ? previa.ang : Math.random() * TAU,
-        vx: previa ? previa.vx : azar(-0.3, 0.3),
-        vy: previa ? previa.vy : azar(-0.3, 0.3),
-        va: previa ? previa.va : azar(-0.04, 0.04),
+        ...p,
+        x: pos.x,
+        y: pos.y,
+        vx: previo ? previo.vx : azar(-0.3, 0.3),
+        vy: previo ? previo.vy : azar(-0.3, 0.3),
       };
     });
     if (reducido) {
-      marcas.forEach((m) => Object.assign(m, { x: m.tx, y: m.ty, ang: m.tang, sale: 0 }));
-      inicio = performance.now() - T_ONDA - D_ONDA;
+      puntos.forEach((p) => Object.assign(p, { x: p.tx, y: p.ty, sale: 0 }));
+      inicio = performance.now() - T_QUIETO + 1;
     }
   };
 
   const crearSueltos = () => {
-    const cantidad = Math.max(6, Math.min(36, Math.round((w * h) / 16000)));
-    sueltos = Array.from({ length: cantidad }, () =>
-      crearGarabato(posicionAlAzar(), k * 0.8, { color: Math.floor(Math.random() * 4) }),
-    );
+    const cantidad = Math.max(10, Math.min(60, Math.round((w * h) / 9000)));
+    sueltos = Array.from({ length: cantidad }, () => ({
+      ...posicionAlAzar(),
+      vx: azar(-0.18, 0.18),
+      vy: azar(-0.18, 0.18),
+      r: azar(1, 2.2) * k,
+      color: Math.floor(Math.random() * 4),
+      alfa: azar(0.3, 0.55),
+    }));
   };
 
-  // Se deshace: rayitas hacia afuera y luego vuelve a formarse.
+  // Se deshace: puntos hacia afuera y luego vuelve a formarse.
   const deshacer = () => {
     if (deshaciendo) return;
     deshaciendo = performance.now();
-    for (const m of marcas) {
-      const dx = m.x - caja.cx;
-      const dy = m.y - caja.cy;
+    for (const p of puntos) {
+      const dx = p.x - caja.cx;
+      const dy = p.y - caja.cy;
       const d = Math.hypot(dx, dy) || 1;
       const f = azar(2.5, 5.5) * Math.sqrt(k);
-      m.vx += (dx / d) * f + azar(-0.8, 0.8);
-      m.vy += (dy / d) * f + azar(-0.8, 0.8);
-      m.va = azar(-0.15, 0.15);
-      m.sale = Infinity;
+      p.vx += (dx / d) * f + azar(-0.8, 0.8);
+      p.vy += (dy / d) * f + azar(-0.8, 0.8);
+      p.sale = Infinity;
     }
   };
 
   const actualizar = (ahora) => {
     const t = ahora - inicio;
-    if (!deshaciendo && t > T_QUIETO) deshacer();
+    if (!deshaciendo && t > T_QUIETO && !reducido) deshacer();
     if (deshaciendo && ahora - deshaciendo > D_DESHACER) formar(true);
 
     const flota = Math.sin(ahora / 1600) * 3; // el logo flota apenas
-    for (const m of marcas) {
-      if (ahora >= m.sale) {
-        const tx = m.tx + Math.sin(ahora / 900 + m.fase) * 0.5 * k;
-        const ty = m.ty + Math.cos(ahora / 1100 + m.fase) * 0.5 * k + flota;
-        m.vx = (m.vx + (tx - m.x) * 0.045) * 0.84;
-        m.vy = (m.vy + (ty - m.y) * 0.045) * 0.84;
-        m.ang = girarHacia(m.ang, m.tang, 0.12);
+    for (const p of puntos) {
+      if (ahora >= p.sale) {
+        const tx = p.tx + Math.sin(ahora / 900 + p.fase) * 0.5 * k;
+        const ty = p.ty + Math.cos(ahora / 1100 + p.fase) * 0.5 * k + flota;
+        p.vx = (p.vx + (tx - p.x) * 0.045) * 0.84;
+        p.vy = (p.vy + (ty - p.y) * 0.045) * 0.84;
       } else {
-        m.vx = (m.vx + azar(-0.025, 0.025)) * 0.98;
-        m.vy = (m.vy + azar(-0.025, 0.025)) * 0.98;
-        m.ang += m.va;
-        rebotar(m, w, h);
+        p.vx = (p.vx + azar(-0.025, 0.025)) * 0.98;
+        p.vy = (p.vy + azar(-0.025, 0.025)) * 0.98;
+        rebotar(p, w, h);
       }
-      apartarDe(m, cursor, 32 * k);
-      m.x += m.vx;
-      m.y += m.vy;
+      apartarDe(p, cursor, 32 * k);
+      p.x += p.vx;
+      p.y += p.vy;
     }
-    for (const g of sueltos) {
-      derivar(g);
-      rebotar(g, w, h, 16 * k);
-      apartarDe(g, cursor, 32 * k);
-      g.vx *= 0.99;
-      g.vy *= 0.99;
-      g.x += g.vx;
-      g.y += g.vy;
-      g.ang += g.va;
+    for (const s of sueltos) {
+      derivar(s);
+      rebotar(s, w, h, 12 * k);
+      apartarDe(s, cursor, 32 * k);
+      s.vx *= 0.99;
+      s.vy *= 0.99;
+      s.x += s.vx;
+      s.y += s.vy;
     }
     return flota;
   };
@@ -190,6 +194,12 @@ export function crearTrazoLogo(canvas, { zona = canvas, ubicar, atenuar = null, 
   const alfaBorde = (x, y) =>
     Math.max(0, Math.min(1, (Math.min(x, y, w - x, h - y) - 2) / (16 * k))) *
     (atenuar ? atenuar(x, y, w, h) : 1);
+
+  const punto = (x, y, r) => {
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, TAU);
+    ctx.fill();
+  };
 
   const pintar = (ahora, flota = 0) => {
     ctx.clearRect(0, 0, w, h);
@@ -199,11 +209,11 @@ export function crearTrazoLogo(canvas, { zona = canvas, ubicar, atenuar = null, 
     const salida = deshaciendo ? Math.max(0, 1 - (ahora - deshaciendo) / 400) : 1;
     const escala = caja.tam / ANCHO_LOGO;
 
-    // Garabatos sueltos en los colores del logo.
-    ctx.lineWidth = 1.5 * Math.min(k, 1.6);
-    for (const g of sueltos) {
-      ctx.strokeStyle = `rgb(${colores[g.color % colores.length]})`;
-      pintarGarabato(ctx, g, g.alfa * alfaBorde(g.x, g.y));
+    // Puntos sueltos en los colores del logo.
+    for (const s of sueltos) {
+      ctx.globalAlpha = s.alfa * alfaBorde(s.x, s.y);
+      ctx.fillStyle = `rgb(${colores[s.color % colores.length]})`;
+      punto(s.x, s.y, s.r);
     }
 
     // Relleno de los círculos, uno tras otro, superpuestos en el mismo orden
@@ -220,12 +230,12 @@ export function crearTrazoLogo(canvas, { zona = canvas, ubicar, atenuar = null, 
       ctx.fill();
     });
 
-    // Rayitas de crayón (el contorno dibujado a mano).
+    // Puntos que dibujan el contorno (se atenúan un poco al rellenarse).
     const relleno = Math.min(1, Math.max(0, (t - T_RELLENO) / 900));
-    for (const m of marcas) {
-      ctx.strokeStyle = `rgb(${colores[m.color]})`;
-      const alfa = m.alfa * alfaBorde(m.x, m.y) * (1 - 0.65 * relleno * salida);
-      pintarMarca(ctx, m, 2.2 * k, alfa, 0.7 * k);
+    for (const p of puntos) {
+      ctx.globalAlpha = p.alfa * alfaBorde(p.x, p.y) * (1 - 0.55 * relleno * salida);
+      ctx.fillStyle = `rgb(${colores[p.color]})`;
+      punto(p.x, p.y, p.r);
     }
 
     // Onda blanca del logo.
@@ -243,6 +253,20 @@ export function crearTrazoLogo(canvas, { zona = canvas, ubicar, atenuar = null, 
         else ctx.lineTo(x, y + flota);
       });
       ctx.stroke();
+    }
+
+    // Nombre de la app bajo el logo, cuando termina de formarse.
+    const pn = suave(Math.min(1, Math.max(0, (t - T_NOMBRE) / 700)));
+    if (pn > 0) {
+      const tamLetra = Math.round(Math.max(18, caja.tam * 0.13));
+      ctx.globalAlpha = pn * salida;
+      ctx.fillStyle = colorNombre;
+      ctx.font = `800 ${tamLetra}px 'Inter', system-ui, sans-serif`;
+      ctx.letterSpacing = '-0.5px';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(NOMBRE, caja.cx, caja.cy + caja.tam / 2 + 22 + (1 - pn) * 10 + flota);
+      ctx.letterSpacing = '0px';
     }
     ctx.globalAlpha = 1;
   };

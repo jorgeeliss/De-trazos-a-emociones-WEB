@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { PenLine, Users, FileText } from 'lucide-react';
-import { crearTrazoLogo } from './trazoLogo';
+import { crearTrazoLogo, espacioNombre } from './trazoLogo';
 import './AuthGraphics.css';
 
+// Solo iconos; el texto queda como descripción (al pasar el mouse y para
+// lectores de pantalla).
 const PUNTOS = [
   { Icono: PenLine, texto: 'Lectura orientativa de cada dibujo' },
   { Icono: Users, texto: 'Historial y evolución por niño' },
@@ -13,22 +15,25 @@ const prefiereMenosMovimiento = () =>
   typeof window !== 'undefined' &&
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-// Panel izquierdo del login y el registro: trazos de crayón que forman el logo
-// (trazoLogo.js), y abajo el mensaje con los puntos principales.
+// Panel izquierdo del login y el registro: puntos que forman el logo con el
+// nombre de la app debajo (trazoLogo.js), y abajo el título y los iconos.
 const AuthGraphics = ({ title, highlight, subtitle }) => {
   const canvasRef = useRef(null);
   const textoRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const inicioTexto = (h) => textoRef.current?.offsetTop ?? h * 0.55;
-    // El logo usa el espacio libre sobre el bloque de texto.
+    const inicioTexto = (h) => textoRef.current?.offsetTop ?? h * 0.6;
+    // El logo (y su nombre debajo) usa el espacio libre sobre el texto.
     const ubicar = (w, h) => {
-      const alto = Math.max(160, inicioTexto(h) - 40);
-      const tam = Math.max(120, Math.min(w * 0.44, alto * 0.78, 280));
-      return { cx: w / 2, cy: 20 + alto / 2, tam };
+      const libre = Math.max(200, inicioTexto(h) - 30);
+      let tam = Math.min(w * 0.44, 280);
+      // Que logo + nombre quepan en el espacio libre.
+      while (tam > 110 && tam + espacioNombre(tam) > libre * 0.92) tam -= 4;
+      const bloque = tam + espacioNombre(tam);
+      return { cx: w / 2, cy: (libre - bloque) / 2 + tam / 2 + 10, tam };
     };
-    // Garabatos más tenues sobre el texto.
+    // Puntos sueltos más tenues sobre el texto.
     const atenuar = (x, y, w, h) => {
       const borde = inicioTexto(h) - 30;
       return 1 - 0.75 * Math.min(1, Math.max(0, (y - borde) / 50));
@@ -56,9 +61,9 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
         {subtitle && <p className="hero-subtitle">{subtitle}</p>}
         <ul className="auth-puntos">
           {PUNTOS.map(({ Icono, texto }) => (
-            <li key={texto}>
-              <span className="auth-punto-icono"><Icono size={15} /></span>
-              {texto}
+            <li key={texto} title={texto}>
+              <Icono size={19} aria-hidden="true" />
+              <span className="auth-oculto">{texto}</span>
             </li>
           ))}
         </ul>

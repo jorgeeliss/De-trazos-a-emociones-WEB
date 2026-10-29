@@ -230,6 +230,14 @@
   }
 }
 
+/* En pantallas grandes la marca ya aparece en el panel izquierdo (el logo se
+   forma con su nombre); en móvil, sin ese panel, se muestra arriba del formulario. */
+@media (min-width: 901px) {
+  .auth-container .brand {
+    display: none;
+  }
+}
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
   .auth-container {
