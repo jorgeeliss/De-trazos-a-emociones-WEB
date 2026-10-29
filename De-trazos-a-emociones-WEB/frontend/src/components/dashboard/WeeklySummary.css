@@ -202,6 +202,20 @@
   margin-bottom: 6px;
 }
 
+/* Variante positiva ("Todo en seguimiento"): verde azulado, no rojo de alerta. */
+.alert-card.ok {
+  background: rgba(45, 212, 191, 0.06);
+  border-color: rgba(45, 212, 191, 0.25);
+}
+
+.alert-card.ok:hover {
+  box-shadow: 0 10px 25px rgba(45, 212, 191, 0.12);
+}
+
+.alert-card.ok .alert-title {
+  color: var(--teal);
+}
+
 .alert-sub {
   font-size: 13px;
   color: var(--muted);

@@ -114,7 +114,7 @@ const WeeklySummary = ({ child }) => {
             <button className="alert-action" disabled title="Próximamente" style={{ opacity: 0.6, cursor: 'not-allowed' }}>Contactar especialista →</button>
           </div>
         ) : (
-          <div className="alert-card" style={{ background: 'rgba(45,212,191,0.06)', borderColor: 'rgba(45,212,191,0.25)' }}>
+          <div className="alert-card ok">
             <div style={{ fontSize: '32px', marginBottom: '12px' }}>🌱</div>
             <div className="alert-title">Todo en seguimiento</div>
             <div className="alert-sub">No hay señales de alerta en los análisis recientes de {nombre}. Sigue acompañando y registrando sus dibujos.</div>

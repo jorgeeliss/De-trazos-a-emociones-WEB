@@ -17,13 +17,14 @@ const SummaryCard = ({ sessions = [], dotsHeight = ['0px', '0px', '0px', '0px', 
     summaryData = Object.keys(emotionCounts).map(e => {
       const count = emotionCounts[e];
       const pctValue = Math.round((count / total) * 100);
-      let color = '#fbbf24';
-      let bg = 'rgba(251,191,36,0.5)';
-      
-      if (e.includes('ansiedad') || e.includes('enojo') || e.includes('ira')) { color = '#f87171'; bg = 'rgba(248,113,113,0.5)'; }
-      else if (e.includes('tristeza') || e.includes('miedo')) { color = '#60a5fa'; bg = 'rgba(96,165,250,0.5)'; }
-      else if (e.includes('alegría') || e.includes('felicidad')) { color = '#2dd4bf'; bg = 'rgba(45,212,191,0.5)'; }
-      else if (e.includes('calma') || e.includes('tranquilidad')) { color = '#a89ee0'; bg = 'rgba(168,158,224,0.5)'; }
+      // Colores como variables CSS para que sigan el tema claro/oscuro.
+      let color = 'var(--emo-neutra)';
+
+      if (e.includes('ansiedad') || e.includes('enojo') || e.includes('ira')) color = 'var(--emo-enojo)';
+      else if (e.includes('tristeza') || e.includes('miedo')) color = 'var(--emo-tristeza)';
+      else if (e.includes('alegr') || e.includes('felicidad')) color = 'var(--emo-alegria)';
+      else if (e.includes('calma') || e.includes('tranquilidad')) color = 'var(--emo-calma)';
+      const bg = `color-mix(in srgb, ${color} 50%, transparent)`;
 
       return {
         name: e.charAt(0).toUpperCase() + e.slice(1),
@@ -39,7 +40,7 @@ const SummaryCard = ({ sessions = [], dotsHeight = ['0px', '0px', '0px', '0px', 
     summaryData.sort((a, b) => b.pctValue - a.pctValue);
   } else {
     summaryData = [
-       { name: 'Esperando datos', color: '#6b7280', bg: 'rgba(107,114,128,0.5)', trend: 'stable', trendTxt: '-', pct: '0%', pctValue: 0 }
+       { name: 'Esperando datos', color: 'var(--emo-neutra)', bg: 'var(--emo-neutra-bg)', trend: 'stable', trendTxt: '-', pct: '0%', pctValue: 0 }
     ];
   }
 

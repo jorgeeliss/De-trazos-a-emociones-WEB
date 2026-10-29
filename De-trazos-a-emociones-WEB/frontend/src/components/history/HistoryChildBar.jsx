@@ -9,11 +9,12 @@ const HistoryChildBar = ({ childrenList, activeChild, setActiveChild, hayIndepen
     <div className="child-bar">
       {childrenList && childrenList.map((child, i) => {
         // Generar un color semi-aleatorio basado en el nombre para mantener consistencia
+        // Variables CSS para que los colores sigan el tema claro/oscuro.
         const colors = [
-          { bg: 'rgba(139, 121, 242, 0.25)', color: 'var(--purple-light)' },
-          { bg: 'rgba(45,212,191,0.2)', color: '#2dd4bf' },
-          { bg: 'rgba(251,191,36,0.2)', color: '#fbbf24' },
-          { bg: 'rgba(244,114,182,0.2)', color: '#f472b6' }
+          { bg: 'var(--accent-dim)', color: 'var(--purple-light)' },
+          { bg: 'color-mix(in srgb, var(--teal) 20%, transparent)', color: 'var(--teal)' },
+          { bg: 'color-mix(in srgb, var(--amber) 20%, transparent)', color: 'var(--amber)' },
+          { bg: 'rgba(244,114,182,0.2)', color: '#ec4899' }
         ];
         const style = colors[i % colors.length];
         const initials = child.nombre ? child.nombre.substring(0, 2).toUpperCase() : '?';
@@ -39,13 +40,13 @@ const HistoryChildBar = ({ childrenList, activeChild, setActiveChild, hayIndepen
           onClick={() => setActiveChild(independientesKey)}
           title="Dibujos analizados sin asociar a un niño"
         >
-          <div className="child-avatar" style={{background: 'rgba(168,158,224,0.2)', color: '#a89ee0'}}>🖼️</div>
+          <div className="child-avatar" style={{background: 'var(--emo-calma-bg)', color: 'var(--emo-calma)'}}>🖼️</div>
           <span className="child-name">Dibujos independientes</span>
         </div>
       )}
 
       <div className="child-pill" style={{borderStyle: 'dashed', cursor: 'pointer'}} title="Registrar un niño nuevo con su contexto" onClick={() => { nuevaSesion(); navigate('/app'); }}>
-        <div className="child-avatar" style={{background: 'rgba(255,255,255,0.05)', color: 'var(--muted)'}}>+</div>
+        <div className="child-avatar" style={{background: 'var(--card2)', color: 'var(--muted)'}}>+</div>
         <span className="child-name" style={{color: 'var(--muted)'}}>Agregar niño</span>
       </div>
     </div>

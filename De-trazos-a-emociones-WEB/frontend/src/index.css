@@ -39,13 +39,31 @@
   --accent-purple: #8b79f2;
   --accent-purple-glow: rgba(139, 121, 242, 0.4);
 
-  /* Semánticos (iguales en claro y oscuro) */
+  /* Semánticos */
   --teal: #2dd4bf;
   --amber: #fbbf24;
   --coral: #f87171;
   --warm: #ff9f6b;
   --green: #4ade80;
   --blue: #60a5fa;
+
+  /* Barra lateral */
+  --sidebar-bg: rgba(19, 19, 31, 0.8);
+
+  /* Emociones e intensidades (los usa utils/emociones.js y el historial) */
+  --emo-alegria: #2dd4bf;
+  --emo-alegria-bg: rgba(45, 212, 191, 0.15);
+  --emo-tristeza: #60a5fa;
+  --emo-tristeza-bg: rgba(96, 165, 250, 0.15);
+  --emo-enojo: #f87171;
+  --emo-enojo-bg: rgba(248, 113, 113, 0.15);
+  --emo-calma: #a89ee0;
+  --emo-calma-bg: rgba(168, 158, 224, 0.15);
+  --emo-neutra: #94a3b8;
+  --emo-neutra-bg: rgba(148, 163, 184, 0.15);
+  --int-alta: #f87171;
+  --int-media: #fb923c;
+  --int-baja: #4ade80;
 }
 
 /* ===== TEMA CLARO (paleta estándar: fondos neutros + acento violeta sobrio) ===== */
@@ -72,14 +90,15 @@
   --btn-border: var(--accent-strong);
   --overlay: rgba(31, 36, 48, 0.4);
 
-  /* Acento violeta sobrio, legible sobre blanco. */
+  /* Acento violeta sobrio, legible sobre blanco. "soft"/"light" se usan como
+     color de texto y borde, por eso en claro van oscuros (no pastel). */
   --accent: #6d5ce0;
   --accent-strong: #5b49cf;
-  --accent-soft: #a99ff0;
+  --accent-soft: #5b49cf;
   --accent-dim: rgba(109, 92, 224, 0.12);
   --accent-glow: rgba(109, 92, 224, 0.32);
   --purple: #6d5ce0;
-  --purple-light: #a99ff0;
+  --purple-light: #5b49cf;
   --purple-dim: rgba(109, 92, 224, 0.12);
   --purple-glow: rgba(109, 92, 224, 0.32);
   --accent-purple: #6d5ce0;
@@ -92,6 +111,22 @@
   --warm: #ea7a4e;
   --green: #16a34a;
   --blue: #2563eb;
+
+  --sidebar-bg: rgba(255, 255, 255, 0.94);
+
+  --emo-alegria: #0d9488;
+  --emo-alegria-bg: rgba(13, 148, 136, 0.12);
+  --emo-tristeza: #2563eb;
+  --emo-tristeza-bg: rgba(37, 99, 235, 0.1);
+  --emo-enojo: #dc2626;
+  --emo-enojo-bg: rgba(220, 38, 38, 0.1);
+  --emo-calma: #6d5ce0;
+  --emo-calma-bg: rgba(109, 92, 224, 0.12);
+  --emo-neutra: #64748b;
+  --emo-neutra-bg: rgba(100, 116, 139, 0.12);
+  --int-alta: #dc2626;
+  --int-media: #ea580c;
+  --int-baja: #16a34a;
 }
 
 /* ===== PALETAS DE ACENTO (en claro y oscuro) ===== */

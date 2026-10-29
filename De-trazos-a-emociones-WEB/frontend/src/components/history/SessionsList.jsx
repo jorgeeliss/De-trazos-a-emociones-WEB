@@ -34,18 +34,21 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
 
   const getEmotionColor = (emotionStr = '') => {
     const lower = emotionStr.toLowerCase();
-    if (lower.includes('ansiedad') || lower.includes('enojo') || lower.includes('ira')) return { bg: 'rgba(248,113,113,0.15)', color: '#f87171', stroke: '#f87171' };
-    if (lower.includes('tristeza') || lower.includes('melancolía') || lower.includes('miedo')) return { bg: 'rgba(96,165,250,0.15)', color: '#60a5fa', stroke: '#60a5fa' };
-    if (lower.includes('alegría') || lower.includes('felicidad')) return { bg: 'rgba(45,212,191,0.15)', color: '#2dd4bf', stroke: '#2dd4bf' };
-    if (lower.includes('calma') || lower.includes('tranquilidad')) return { bg: 'rgba(168,158,224,0.15)', color: '#a89ee0', stroke: '#a89ee0' };
-    return { bg: 'rgba(251,191,36,0.15)', color: '#fbbf24', stroke: '#fbbf24' };
+    // Variables CSS (index.css) para que los colores sigan el tema claro/oscuro.
+    const emo = (n) => ({ bg: `var(--emo-${n}-bg)`, color: `var(--emo-${n})`, stroke: `var(--emo-${n})` });
+    if (lower.includes('ansiedad') || lower.includes('enojo') || lower.includes('ira')) return emo('enojo');
+    if (lower.includes('tristeza') || lower.includes('melancolía') || lower.includes('miedo')) return emo('tristeza');
+    if (lower.includes('alegr') || lower.includes('felicidad')) return emo('alegria');
+    if (lower.includes('calma') || lower.includes('tranquilidad')) return emo('calma');
+    return emo('neutra');
   };
 
   const getIntensityProps = (intStr = '') => {
     const lower = String(intStr).toLowerCase();
-    if (lower.includes('alta') || lower.includes('alto')) return { label: 'Alta', bg: 'rgba(248,113,113,0.15)', color: '#f87171' };
-    if (lower.includes('baja') || lower.includes('bajo')) return { label: 'Baja', bg: 'rgba(74,222,128,0.15)', color: '#4ade80' };
-    return { label: 'Media', bg: 'rgba(251,146,60,0.16)', color: '#fb923c' };
+    const int = (label, n) => ({ label, bg: `color-mix(in srgb, var(--int-${n}) 15%, transparent)`, color: `var(--int-${n})` });
+    if (lower.includes('alta') || lower.includes('alto')) return int('Alta', 'alta');
+    if (lower.includes('baja') || lower.includes('bajo')) return int('Baja', 'baja');
+    return int('Media', 'media');
   };
 
   const formatDate = (dateString) => {

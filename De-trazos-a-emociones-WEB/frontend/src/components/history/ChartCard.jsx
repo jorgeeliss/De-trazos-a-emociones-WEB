@@ -49,22 +49,24 @@ const ChartCard = ({ sessions = [], activeChildName = '' }) => {
       ) : (
         <div className="chart-wrap">
           <svg viewBox="0 0 560 180" className="chart-svg-wrap" xmlns="http://www.w3.org/2000/svg">
-            <line x1="40" y1="40" x2="540" y2="40" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-            <line x1="40" y1="90" x2="540" y2="90" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-            <line x1="40" y1="140" x2="540" y2="140" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+            {/* Colores por style (variables CSS) para que sigan el tema claro/oscuro;
+                los atributos SVG no aceptan var(). */}
+            <line x1="40" y1="40" x2="540" y2="40" style={{ stroke: 'var(--border)' }} strokeWidth="1" />
+            <line x1="40" y1="90" x2="540" y2="90" style={{ stroke: 'var(--border)' }} strokeWidth="1" />
+            <line x1="40" y1="140" x2="540" y2="140" style={{ stroke: 'var(--border)' }} strokeWidth="1" />
 
-            <text x="28" y="44" fill="#a1a1aa" fontSize="10" textAnchor="end">Alta</text>
-            <text x="28" y="94" fill="#a1a1aa" fontSize="10" textAnchor="end">Media</text>
-            <text x="28" y="144" fill="#a1a1aa" fontSize="10" textAnchor="end">Baja</text>
+            <text x="28" y="44" style={{ fill: 'var(--muted)' }} fontSize="10" textAnchor="end">Alta</text>
+            <text x="28" y="94" style={{ fill: 'var(--muted)' }} fontSize="10" textAnchor="end">Media</text>
+            <text x="28" y="144" style={{ fill: 'var(--muted)' }} fontSize="10" textAnchor="end">Baja</text>
 
             {coords.map((c, i) => (
-              <text key={`x-${i}`} x={c.x} y="165" fill="#a1a1aa" fontSize="9" textAnchor="middle">{formatFechaCorta(c.fecha)}</text>
+              <text key={`x-${i}`} x={c.x} y="165" style={{ fill: 'var(--muted)' }} fontSize="9" textAnchor="middle">{formatFechaCorta(c.fecha)}</text>
             ))}
 
-            <polyline points={polyPoints} fill="none" stroke="#a89ee0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            <polyline points={polyPoints} fill="none" style={{ stroke: 'var(--purple-light)' }} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
 
             {coords.map((c, i) => (
-              <circle key={`p-${i}`} cx={c.x} cy={c.y} r="5" fill={c.visual.color} stroke="#1e1e30" strokeWidth="2" />
+              <circle key={`p-${i}`} cx={c.x} cy={c.y} r="5" style={{ fill: c.visual.color, stroke: 'var(--card2)' }} strokeWidth="2" />
             ))}
           </svg>
         </div>
