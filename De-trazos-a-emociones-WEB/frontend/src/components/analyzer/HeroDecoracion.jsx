@@ -1,10 +1,7 @@
 import { useState, useRef } from 'react';
 import './HeroDecoracion.css';
 
-// Colores de la "rueda emocional" del logo.
-const COLORES = ['#d7a24c', '#6e9a86', '#7595bf', '#cf949d'];
-
-// Orbes flotantes que rellenan el espacio vacío del encabezado.
+// Orbes flotantes con los colores de la "rueda emocional" del logo.
 const ORBES = [
   { c: '#d7a24c', size: 26, top: '20%', left: '10%', dur: 7, delay: 0 },
   { c: '#6e9a86', size: 18, top: '60%', left: '26%', dur: 9, delay: 0.6 },
@@ -15,24 +12,20 @@ const ORBES = [
 ];
 
 const HeroDecoracion = () => {
-  const [ondas, setOndas] = useState([]);
-  const idRef = useRef(0);
+  // Al hacer clic los orbes dan un "pop" suave. No hay onda que se recorte en un
+  // rectángulo, así que ya no se ve el límite de la animación.
+  const [pulso, setPulso] = useState(false);
+  const tRef = useRef(null);
 
-  // Al hacer clic: lanza una onda desde el punto tocado, con un color de la marca.
-  const alHacerClic = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const id = idRef.current;
-    idRef.current += 1;
-    const color = COLORES[id % COLORES.length];
-    setOndas((prev) => [...prev, { id, x, y, color }]);
+  const alHacerClic = () => {
+    clearTimeout(tRef.current);
+    setPulso(false);
+    requestAnimationFrame(() => setPulso(true));
+    tRef.current = setTimeout(() => setPulso(false), 650);
   };
 
-  const quitarOnda = (id) => setOndas((prev) => prev.filter((o) => o.id !== id));
-
   return (
-    <div className="hero-deco" onClick={alHacerClic}>
+    <div className={`hero-deco ${pulso ? 'pulso' : ''}`} onClick={alHacerClic}>
       {ORBES.map((o, i) => (
         <span
           key={i}
@@ -49,14 +42,6 @@ const HeroDecoracion = () => {
         >
           <span className="hero-orb-dot" />
         </span>
-      ))}
-      {ondas.map((o) => (
-        <span
-          key={o.id}
-          className="hero-onda"
-          style={{ left: `${o.x}px`, top: `${o.y}px`, color: o.color }}
-          onAnimationEnd={() => quitarOnda(o.id)}
-        />
       ))}
     </div>
   );

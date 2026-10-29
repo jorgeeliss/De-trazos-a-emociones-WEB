@@ -1,6 +1,6 @@
 /* Decoración animada del encabezado del Analyzer:
    orbes flotantes con los colores de la rueda emocional del logo,
-   reacción al pasar el mouse y onda al hacer clic. */
+   con un "pop" suave al hacer clic (sin ondas que se recorten). */
 .hero-deco {
   flex: 1;
   align-self: stretch;
@@ -9,8 +9,7 @@
   margin-left: 10px;
   overflow: hidden;
   cursor: pointer;
-  /* Difumina los bordes para que NO se vea el rectángulo que encierra la animación.
-     El overflow sigue conteniendo la onda del clic, pero el recorte deja de notarse. */
+  /* Difumina los bordes para que NO se vea el rectángulo que encierra la animación. */
   -webkit-mask: radial-gradient(ellipse 108% 106% at 50% 50%, #000 28%, transparent 64%);
           mask: radial-gradient(ellipse 108% 106% at 50% 50%, #000 28%, transparent 64%);
 }
@@ -50,25 +49,21 @@
   }
 }
 
-/* Onda que se expande desde el punto del clic. */
-.hero-onda {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  margin: -7px 0 0 -7px;
-  border-radius: 50%;
-  border: 2.5px solid currentColor;
-  color: var(--accent);
-  transform: scale(0);
-  opacity: 0.85;
-  pointer-events: none;
-  animation: heroOnda 0.7s ease-out forwards;
+/* "Pop" de los orbes al hacer clic (sin ondas recortadas, sin recuadro). */
+.hero-deco.pulso .hero-orb-dot {
+  animation: heroPop 0.6s ease;
 }
 
-@keyframes heroOnda {
-  to {
-    transform: scale(11);
-    opacity: 0;
+@keyframes heroPop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.6);
+    opacity: 0.95;
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -80,8 +75,8 @@
   .hero-orb-dot {
     transition: none;
   }
-  .hero-onda {
-    animation-duration: 0.01s;
+  .hero-deco.pulso .hero-orb-dot {
+    animation: none;
   }
 }
 
