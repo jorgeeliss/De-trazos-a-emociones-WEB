@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Check, X, ArrowLeft, Inbox, RefreshCw, Ban, Trash2 } from 'lucide-react';
+import { ShieldCheck, Check, X, Inbox, RefreshCw, Ban, Trash2 } from 'lucide-react';
 import { api } from '../api';
+import Sidebar from '../components/layout/Sidebar';
 import './Admin.css';
 
 const FILTROS = [
@@ -17,7 +17,6 @@ const ROL_LABEL = {
 };
 
 const Admin = () => {
-  const navigate = useNavigate();
   const [filtro, setFiltro] = useState('pendiente');
   const [recargas, setRecargas] = useState(0);
   const [usuarios, setUsuarios] = useState([]);
@@ -93,6 +92,7 @@ const Admin = () => {
 
   return (
     <div className="admin-page">
+      <Sidebar />
       <div className="admin-container">
         <div className="admin-header">
           <div className="admin-title">
@@ -104,9 +104,6 @@ const Admin = () => {
               <p>Aprueba o rechaza las cuentas nuevas</p>
             </div>
           </div>
-          <button className="admin-back" onClick={() => navigate('/dashboard')}>
-            <ArrowLeft size={16} /> Volver
-          </button>
         </div>
 
         <div className="admin-tabs">

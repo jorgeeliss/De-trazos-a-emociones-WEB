@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, LayoutDashboard, ArrowLeft } from 'lucide-react';
+import { X, LayoutDashboard } from 'lucide-react';
 import { api } from '../api';
 import { emotionVisual, emocionPredominante, textoEdad, formatFecha } from '../utils/emociones';
 import BrandHeader from '../components/common/BrandHeader';
+import Sidebar from '../components/layout/Sidebar';
 import './Ninos.css';
 
 const Ninos = () => {
@@ -44,12 +45,9 @@ const Ninos = () => {
 
   return (
     <div className="ninos-page">
+      <Sidebar active="ninos" />
       <div className="ninos-container">
         <BrandHeader />
-
-        <button className="ninos-back" onClick={() => navigate('/dashboard')}>
-          <ArrowLeft size={16} /> Volver
-        </button>
 
         <h1 className="ninos-title" data-tour="ninos">Mis niños</h1>
         <p className="ninos-sub">Niños registrados a partir de tus análisis con contexto. Toca uno para ver su información.</p>

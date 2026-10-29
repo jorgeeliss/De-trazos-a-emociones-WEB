@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Sun, Moon, Check, KeyRound, Eye, EyeOff, HelpCircle } from 'lucide-react';
+import { Sun, Moon, Check, KeyRound, Eye, EyeOff, HelpCircle } from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
+import Sidebar from '../components/layout/Sidebar';
 import { useTheme } from '../context/ThemeContext';
 import { useTour } from '../context/TourContext';
 import { api } from '../api';
@@ -17,7 +17,6 @@ const PALETAS = [
 ];
 
 const Configuracion = () => {
-  const navigate = useNavigate();
   const { tema, paleta, setTema, setPaleta } = useTheme();
 
   const [pwd, setPwd] = useState({ actual: '', nueva: '', confirmar: '' });
@@ -55,12 +54,9 @@ const Configuracion = () => {
 
   return (
     <div className="config-page">
+      <Sidebar />
       <div className="config-container">
         <BrandHeader />
-
-        <button className="config-back" onClick={() => navigate(-1)}>
-          <ArrowLeft size={16} /> Volver
-        </button>
 
         <h1 className="config-title" data-tour="config">Configuración</h1>
         <p className="config-sub">Personaliza la apariencia de la aplicación.</p>

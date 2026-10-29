@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FileDown, ArrowLeft } from 'lucide-react';
+import { FileDown } from 'lucide-react';
 import { api } from '../api';
 import { exportarReporte } from '../utils/exportarPdf';
 import { emocionPredominante, emotionVisual } from '../utils/emociones';
 import BrandHeader from '../components/common/BrandHeader';
+import Sidebar from '../components/layout/Sidebar';
 import './Reportes.css';
 
 const Reportes = () => {
-  const navigate = useNavigate();
   const [ninos, setNinos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [generando, setGenerando] = useState(false);
@@ -55,12 +54,9 @@ const Reportes = () => {
 
   return (
     <div className="rep-page">
+      <Sidebar active="reportes" />
       <div className="rep-container">
         <BrandHeader />
-
-        <button className="rep-back" onClick={() => navigate('/dashboard')}>
-          <ArrowLeft size={16} /> Volver
-        </button>
 
         <h1 className="rep-title">Reportes</h1>
         <p className="rep-sub">
