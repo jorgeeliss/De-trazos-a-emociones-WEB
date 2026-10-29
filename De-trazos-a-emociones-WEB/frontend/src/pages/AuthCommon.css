@@ -97,10 +97,12 @@
 }
 
 .auth-container .brand-text h2 {
+  font-family: var(--display);
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.2;
   margin: 0;
+  font-variation-settings: 'SOFT' 100;
 }
 .auth-container .brand-text p {
   font-size: 0.72rem;
@@ -114,12 +116,13 @@
   margin-bottom: 2rem;
 }
 .auth-container .form-header h1 {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--display);
   font-size: 2.3rem;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0 0 0.5rem;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
   line-height: 1.1;
+  font-variation-settings: 'SOFT' 100;
 }
 .auth-container .form-header p {
   color: var(--text-gray);

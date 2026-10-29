@@ -38,10 +38,11 @@
 }
 
 .admin-title h1 {
-  font-family: var(--heading);
+  font-family: var(--display);
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 700;
   margin: 0;
+  font-variation-settings: 'SOFT' 100;
 }
 
 .admin-title p {

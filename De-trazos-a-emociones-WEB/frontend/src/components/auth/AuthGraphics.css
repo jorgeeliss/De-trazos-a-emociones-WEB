@@ -72,11 +72,12 @@
 
 /* Mismo estilo que el encabezado de las páginas (Analizar dibujo). */
 .left-panel .auth-marca-nombre {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--display);
   font-size: calc(var(--marca-s) * 0.6);
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--text);
+  font-variation-settings: 'SOFT' 100;
 }
 
 .left-panel .auth-marca-sub {

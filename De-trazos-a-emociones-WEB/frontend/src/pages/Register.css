@@ -124,10 +124,11 @@
 }
 
 .auth-container .register-success h1 {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--display);
   font-size: 1.9rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-bottom: 1rem;
+  font-variation-settings: 'SOFT' 100;
 }
 
 .auth-container .register-success .success-msg {

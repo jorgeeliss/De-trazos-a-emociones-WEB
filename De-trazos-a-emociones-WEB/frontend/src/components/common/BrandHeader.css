@@ -29,11 +29,12 @@
 }
 
 .brand-header-name {
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--display);
   font-size: 16px;
   font-weight: 700;
   color: var(--text, #ffffff);
-  letter-spacing: -0.01em;
+  letter-spacing: 0; /* a 16 px, Fraunces respira mejor sin apretar */
+  font-variation-settings: 'SOFT' 100;
 }
 
 .brand-header-sub {

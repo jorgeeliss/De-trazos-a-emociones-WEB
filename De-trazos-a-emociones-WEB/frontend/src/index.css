@@ -1,6 +1,8 @@
 :root {
   --sans: 'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  /* Marca y títulos principales: serif suave y expresiva. */
+  --display: 'Fraunces', Georgia, 'Times New Roman', serif;
   --mono: ui-monospace, Consolas, monospace;
 
   /* ===== TEMA OSCURO (por defecto) ===== */

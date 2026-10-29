@@ -116,17 +116,19 @@
 }
 
 .welcome-title {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--display);
   font-size: 28px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text);
   margin-bottom: 8px;
   line-height: 1.2;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  font-variation-settings: 'SOFT' 100;
 }
 
 .welcome-title span {
   color: var(--purple-light);
+  font-style: italic;
 }
 
 .welcome-sub {

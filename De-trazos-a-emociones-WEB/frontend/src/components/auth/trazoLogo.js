@@ -32,21 +32,26 @@ const ONDA = [
   ...Array.from({ length: 41 }, (_, i) => bezier([24, 26], [28, 22], [32, 31.5], [37, 26])(i / 40)),
 ];
 
-// Tiempos del ciclo (ms desde que empieza a formarse). Cada etapa empieza
-// cuando la anterior terminó; la marca aparece a los ~2,4 s.
+// Tiempos del ciclo (ms desde que empieza a formarse). Las etapas se solapan
+// para que se vea fluido: el logo empieza a ir a la marca mientras se dibuja
+// el último círculo, y el relleno y la onda se completan en el camino. La
+// marca aparece a los ~2,1 s.
 const T_EMPIEZA = 100; // un instante de puntos dispersos antes de dibujar
-const T_CIRCULO = 160; // desfase entre círculos
-const T_TRAZO = 380; // cuánto tarda en salir cada círculo completo
-const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 80; // con los 4 círculos ya trazados
-const D_RELLENO = 320;
-const PASO_RELLENO = 50;
-const T_ONDA = T_RELLENO + 3 * PASO_RELLENO + D_RELLENO - 80; // logo relleno: se traza la onda
-const D_ONDA = 380;
-const T_ACOMODO = T_ONDA + D_ONDA + 60; // logo grande completo un instante
-const D_ACOMODO = 550;
+const T_CIRCULO = 150; // desfase entre círculos
+const T_TRAZO = 450; // cuánto tarda en salir cada círculo completo
+const T_ACOMODO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO - 50; // empieza a viajar a la marca
+const D_ACOMODO = 1150;
 const T_MARCA = T_ACOMODO + D_ACOMODO;
+const T_RELLENO = T_ACOMODO + 150; // se rellena mientras viaja
+const D_RELLENO = 450;
+const PASO_RELLENO = 70;
+const T_ONDA = T_MARCA - 550; // la onda se traza al final del viaje
+const D_ONDA = 500;
 const D_CRUCE = 300; // el lienzo cede el lugar a la marca real
 const D_DESHACER = 600;
+
+// Curva del viaje: arranca y frena con suavidad (seno), menos mecánica.
+const deslizar = (x) => -(Math.cos(Math.PI * x) - 1) / 2;
 
 const mezclar = (a, b, p) => ({
   cx: a.cx + (b.cx - a.cx) * p,
@@ -200,7 +205,7 @@ export function crearTrazoLogo(canvas, {
   const cajaEn = (t) => {
     if (deshaciendo) return marca;
     if (t < T_ACOMODO) return grande;
-    return mezclar(grande, marca, suave(Math.min(1, (t - T_ACOMODO) / D_ACOMODO)));
+    return mezclar(grande, marca, deslizar(Math.min(1, (t - T_ACOMODO) / D_ACOMODO)));
   };
 
   const actualizar = (ahora) => {
@@ -215,19 +220,16 @@ export function crearTrazoLogo(canvas, {
     for (const p of puntos) {
       const [tx, ty] = aPx(p.ux, p.uy);
       if (ahora >= p.sale) {
-        if (acomodando) {
-          // Mientras el logo viaja a la marca, los puntos lo siguen sin retraso.
-          p.x = tx;
-          p.y = ty;
-          p.vx = 0;
-          p.vy = 0;
-        } else {
-          const rx = tx + Math.sin(ahora / 900 + p.fase) * 0.5 * k;
-          const ry = ty + Math.cos(ahora / 1100 + p.fase) * 0.5 * k;
-          // Resorte firme: los puntos llegan rápido, al ritmo de la formación.
-          p.vx = (p.vx + (rx - p.x) * 0.09) * 0.78;
-          p.vy = (p.vy + (ry - p.y) * 0.09) * 0.78;
-        }
+        // Resorte hacia su lugar: mientras el logo viaja, los puntos lo siguen
+        // con un poco de inercia (se ve orgánico, no un bloque rígido); los que
+        // aún llegaban terminan de formarlo en el camino.
+        const vaje = acomodando ? 0 : 0.5 * k;
+        const rx = tx + Math.sin(ahora / 900 + p.fase) * vaje;
+        const ry = ty + Math.cos(ahora / 1100 + p.fase) * vaje;
+        const rigidez = acomodando ? 0.14 : 0.09;
+        const freno = acomodando ? 0.72 : 0.78;
+        p.vx = (p.vx + (rx - p.x) * rigidez) * freno;
+        p.vy = (p.vy + (ry - p.y) * rigidez) * freno;
       } else {
         p.vx = (p.vx + azar(-0.025, 0.025)) * 0.98;
         p.vy = (p.vy + azar(-0.025, 0.025)) * 0.98;
