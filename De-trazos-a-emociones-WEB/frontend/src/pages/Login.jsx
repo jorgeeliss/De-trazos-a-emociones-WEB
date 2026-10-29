@@ -57,7 +57,6 @@ const Login = () => {
       <AuthGraphics
         title="Cada dibujo guarda una emoción"
         highlight="emoción"
-        subtitle="Una lectura orientativa de los dibujos infantiles, interpretada con el contexto de cada niño. Acompaña tu criterio, no lo reemplaza."
       />
 
       {/* Panel Derecho - Formulario */}

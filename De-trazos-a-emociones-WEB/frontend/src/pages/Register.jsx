@@ -53,7 +53,6 @@ const Register = () => {
       <AuthGraphics 
         title="Acompaña el mundo emocional de cada niño"
         highlight="emocional"
-        subtitle="Crea tu cuenta para analizar dibujos y recibir una lectura orientativa, siempre como apoyo a tu criterio."
       />
 
       {/* Panel Derecho - Formulario */}

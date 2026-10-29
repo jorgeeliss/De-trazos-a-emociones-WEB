@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { PenLine, Users, FileText } from 'lucide-react';
-import { crearTrazoSimbolos } from './trazoSimbolos';
+import { crearTrazoLogo } from './trazoLogo';
 import './AuthGraphics.css';
 
 const PUNTOS = [
@@ -13,27 +13,30 @@ const prefiereMenosMovimiento = () =>
   typeof window !== 'undefined' &&
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-// Espacio reservado bajo el símbolo para el nombre de la emoción.
-const ESPACIO_ETIQUETA = 60;
-
-// Panel izquierdo del login y el registro: un trazo dibujado a mano que forma
-// el símbolo de una emoción y se transforma en el siguiente (trazoSimbolos.js).
+// Panel izquierdo del login y el registro: trazos de crayón que forman el logo
+// (trazoLogo.js), y abajo el mensaje con los puntos principales.
 const AuthGraphics = ({ title, highlight, subtitle }) => {
   const canvasRef = useRef(null);
   const textoRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    // El símbolo usa el espacio libre sobre el bloque de texto.
+    const inicioTexto = (h) => textoRef.current?.offsetTop ?? h * 0.55;
+    // El logo usa el espacio libre sobre el bloque de texto.
     const ubicar = (w, h) => {
-      const inicioTexto = textoRef.current?.offsetTop ?? h * 0.55;
-      const alto = Math.max(140, inicioTexto - ESPACIO_ETIQUETA - 24);
-      const tam = Math.max(110, Math.min(w * 0.42, alto * 0.8, 250));
-      return { cx: w / 2, cy: 24 + alto / 2, tam };
+      const alto = Math.max(160, inicioTexto(h) - 40);
+      const tam = Math.max(120, Math.min(w * 0.44, alto * 0.78, 280));
+      return { cx: w / 2, cy: 20 + alto / 2, tam };
     };
-    const sim = crearTrazoSimbolos(canvas, {
+    // Garabatos más tenues sobre el texto.
+    const atenuar = (x, y, w, h) => {
+      const borde = inicioTexto(h) - 30;
+      return 1 - 0.75 * Math.min(1, Math.max(0, (y - borde) / 50));
+    };
+    const sim = crearTrazoLogo(canvas, {
       zona: canvas.parentElement,
       ubicar,
+      atenuar,
       reducido: prefiereMenosMovimiento(),
     });
     return () => sim.destruir();
@@ -50,7 +53,7 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
           <span className="highlight">{highlight}</span>
           {despues}
         </h1>
-        <p className="hero-subtitle">{subtitle}</p>
+        {subtitle && <p className="hero-subtitle">{subtitle}</p>}
         <ul className="auth-puntos">
           {PUNTOS.map(({ Icono, texto }) => (
             <li key={texto}>

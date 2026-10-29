@@ -40,6 +40,11 @@
   margin: 0 0 1rem;
 }
 
+/* Sin descripción, los puntos van justo debajo del título. */
+.left-panel .hero-title + .auth-puntos {
+  margin-top: 1.6rem;
+}
+
 .left-panel .hero-title .highlight {
   color: var(--accent-soft);
 }

@@ -2,8 +2,10 @@
 // dispersos y se acomodan, en el orden del dibujo, hasta formar la cara de la
 // emoción. Alrededor flotan garabatos sueltos. Todo en el color de la emoción
 // (color CSS del lienzo). La geometría replica los iconos de lucide (caja 24x24).
-
-const TAU = Math.PI * 2;
+import {
+  TAU, azar, girarHacia, aRgb, pintarMarca, crearGarabato, pintarGarabato,
+  derivar, rebotar, apartarDe, ajustarLienzo,
+} from '../common/crayon';
 
 // --- Geometría de las caras (unidades de la caja 24 x 24) -------------------
 const arco = (cx, cy, rx, ry, a0, a1) => (t) => {
@@ -48,8 +50,6 @@ const largoDe = (f) => {
   return largo;
 };
 
-const azar = (a, b) => a + Math.random() * (b - a);
-
 // Destinos de los trazos (posición, ángulo y largo) en el orden del dibujo.
 // "k" escala tamaños para que se vea igual en cualquier lienzo.
 const trazosDeCara = (cara, { cx, cy, tam }, k) => {
@@ -86,21 +86,6 @@ const trazosDeCara = (cara, { cx, cy, tam }, k) => {
   return marcas;
 };
 
-// Garabatos sueltos: puntos de un trazo corto, centrados en (0, 0).
-const GARABATOS = [
-  (s) => Array.from({ length: 14 }, (_, i) => [(i / 13 - 0.5) * 22 * s, Math.sin((i / 13) * TAU * 1.2) * 3.5 * s]),
-  (s) => Array.from({ length: 18 }, (_, i) => {
-    const a = (i / 17) * TAU * 1.3;
-    const r = (2 + i * 0.45) * s;
-    return [Math.cos(a) * r, Math.sin(a) * r];
-  }),
-  (s) => Array.from({ length: 6 }, (_, i) => [(i / 5 - 0.5) * 20 * s, (i % 2 ? 4 : -4) * s]),
-  (s) => Array.from({ length: 10 }, (_, i) => {
-    const a = Math.PI * (0.15 + 0.7 * (i / 9));
-    return [Math.cos(a) * 9 * s, -Math.sin(a) * 6 * s];
-  }),
-];
-
 const DURACION_DIBUJO_MS = 1500;
 
 export function crearSimulacion(canvas, {
@@ -130,12 +115,7 @@ export function crearSimulacion(canvas, {
   let caraActual = cara;
 
   const medir = () => {
-    const dpr = window.devicePixelRatio || 1;
-    w = canvas.clientWidth;
-    h = canvas.clientHeight;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    [w, h] = ajustarLienzo(canvas, ctx);
     ubicacion = ubicarCara(w, h);
     k = Math.max(0.8, Math.min(2.6, ubicacion.tam / 96));
   };
@@ -143,8 +123,7 @@ export function crearSimulacion(canvas, {
   // El color sale del CSS del lienzo (color: var(--animo-color)): sigue al tema.
   const leerColor = () => {
     color = getComputedStyle(canvas).color || color;
-    const m = color.match(/\d+(\.\d+)?/g);
-    rgb = m ? `${m[0]}, ${m[1]}, ${m[2]}` : null;
+    rgb = aRgb(color, null);
   };
 
   const posicionAlAzar = () => ({ x: 12 + Math.random() * (w - 24), y: 12 + Math.random() * (h - 24) });
@@ -186,43 +165,7 @@ export function crearSimulacion(canvas, {
 
   const crearSueltos = () => {
     const cantidad = Math.max(5, Math.min(40, Math.round(w * h * densidadSueltas)));
-    sueltos = Array.from({ length: cantidad }, () => ({
-      ...posicionAlAzar(),
-      vx: azar(-0.18, 0.18),
-      vy: azar(-0.18, 0.18),
-      ang: Math.random() * TAU,
-      va: azar(-0.005, 0.005),
-      puntos: GARABATOS[Math.floor(Math.random() * GARABATOS.length)](azar(0.6, 1) * k * 0.8),
-      alfa: azar(0.25, 0.45),
-    }));
-  };
-
-  const rebotar = (p, margen = 8) => {
-    if (p.x < margen) p.vx = Math.abs(p.vx);
-    if (p.x > w - margen) p.vx = -Math.abs(p.vx);
-    if (p.y < margen) p.vy = Math.abs(p.vy);
-    if (p.y > h - margen) p.vy = -Math.abs(p.vy);
-  };
-
-  const apartarDelCursor = (p) => {
-    if (!cursor) return;
-    const radio = 30 * k;
-    const dx = p.x - cursor.x;
-    const dy = p.y - cursor.y;
-    const d = Math.hypot(dx, dy) || 1;
-    if (d < radio) {
-      const fuerza = (1 - d / radio) * 1.4;
-      p.vx += (dx / d) * fuerza;
-      p.vy += (dy / d) * fuerza;
-    }
-  };
-
-  // Gira el ángulo hacia el destino por el camino más corto.
-  const girarHacia = (a, destino, factor) => {
-    let d = (destino - a) % TAU;
-    if (d > Math.PI) d -= TAU;
-    if (d < -Math.PI) d += TAU;
-    return a + d * factor;
+    sueltos = Array.from({ length: cantidad }, () => crearGarabato(posicionAlAzar(), k * 0.8));
   };
 
   const actualizar = (ahora) => {
@@ -240,22 +183,16 @@ export function crearSimulacion(canvas, {
         p.vx = (p.vx + azar(-0.025, 0.025)) * 0.98;
         p.vy = (p.vy + azar(-0.025, 0.025)) * 0.98;
         p.ang += p.va;
-        rebotar(p);
+        rebotar(p, w, h);
       }
-      apartarDelCursor(p);
+      apartarDe(p, cursor, 30 * k);
       p.x += p.vx;
       p.y += p.vy;
     }
     for (const g of sueltos) {
-      g.vx += azar(-0.015, 0.015);
-      g.vy += azar(-0.015, 0.015);
-      const v = Math.hypot(g.vx, g.vy);
-      if (v > 0.35) {
-        g.vx *= 0.35 / v;
-        g.vy *= 0.35 / v;
-      }
-      rebotar(g, 16 * k);
-      apartarDelCursor(g);
+      derivar(g);
+      rebotar(g, w, h, 16 * k);
+      apartarDe(g, cursor, 30 * k);
       g.vx *= 0.99;
       g.vy *= 0.99;
       g.x += g.vx;
@@ -287,44 +224,11 @@ export function crearSimulacion(canvas, {
     }
 
     ctx.strokeStyle = color;
-
-    // Garabatos sueltos.
     ctx.lineWidth = 1.5 * Math.min(k, 1.6);
-    for (const g of sueltos) {
-      const cos = Math.cos(g.ang);
-      const sin = Math.sin(g.ang);
-      ctx.globalAlpha = g.alfa * alfaBorde(g.x, g.y);
-      ctx.beginPath();
-      g.puntos.forEach(([px, py], i) => {
-        const x = g.x + px * cos - py * sin;
-        const y = g.y + px * sin + py * cos;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-    }
+    for (const g of sueltos) pintarGarabato(ctx, g, g.alfa * alfaBorde(g.x, g.y));
 
     // Trazos de la cara, con una segunda pasada fina que imita el crayón.
-    const grosor = 2.1 * k;
-    for (const p of trazos) {
-      const fa = alfaBorde(p.x, p.y) * p.alfa;
-      const dx = (Math.cos(p.ang) * p.largo) / 2;
-      const dy = (Math.sin(p.ang) * p.largo) / 2;
-      ctx.globalAlpha = 0.9 * fa;
-      ctx.lineWidth = grosor;
-      ctx.beginPath();
-      ctx.moveTo(p.x - dx, p.y - dy);
-      ctx.lineTo(p.x + dx, p.y + dy);
-      ctx.stroke();
-      const ox = -Math.sin(p.ang) * 0.7 * k;
-      const oy = Math.cos(p.ang) * 0.7 * k;
-      ctx.globalAlpha = 0.35 * fa;
-      ctx.lineWidth = grosor * 0.45;
-      ctx.beginPath();
-      ctx.moveTo(p.x - dx * 0.8 + ox, p.y - dy * 0.8 + oy);
-      ctx.lineTo(p.x + dx * 0.9 + ox, p.y + dy * 0.9 + oy);
-      ctx.stroke();
-    }
+    for (const p of trazos) pintarMarca(ctx, p, 2.1 * k, alfaBorde(p.x, p.y) * p.alfa, 0.7 * k);
     ctx.globalAlpha = 1;
   };
 

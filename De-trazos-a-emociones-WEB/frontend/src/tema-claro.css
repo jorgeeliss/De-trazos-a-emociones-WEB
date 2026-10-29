@@ -126,6 +126,15 @@
 }
 
 /* ---------- Analizador ---------- */
+/* Orbes del encabezado más presentes (sobre fondo claro se veían lavados). */
+:root[data-theme="light"] .hero-orb-dot {
+  opacity: 0.78;
+  box-shadow: 0 0 12px currentColor;
+}
+:root[data-theme="light"] .analyzer-wrapper .hero:hover .hero-orb-dot {
+  opacity: 1;
+  box-shadow: 0 0 22px currentColor, 0 0 8px currentColor;
+}
 :root[data-theme="light"] .analyzer-wrapper .hero,
 :root[data-theme="light"] .analyzer-wrapper .card {
   box-shadow: var(--t-shadow);

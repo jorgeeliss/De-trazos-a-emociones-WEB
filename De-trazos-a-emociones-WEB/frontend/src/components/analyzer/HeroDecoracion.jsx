@@ -1,48 +1,65 @@
-import { useEffect, useRef } from 'react';
-import { crearTrazosEncabezado } from './trazosEncabezado';
+import { useState, useRef } from 'react';
 import './HeroDecoracion.css';
 
-const prefiereMenosMovimiento = () =>
-  typeof window !== 'undefined' &&
-  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+// Colores de la "rueda emocional" del logo (variables de index.css, cambian con el tema).
+const COLORES = ['var(--rueda-1)', 'var(--rueda-2)', 'var(--rueda-3)', 'var(--rueda-4)'];
 
-// Decoración del encabezado del Analyzer: trazos ondulados en los colores de
-// las emociones que se dibujan y se borran solos (trazosEncabezado.js). El
-// lienzo cubre todo el encabezado (.hero recorta con su borde redondeado);
-// este bloque ocupa el espacio libre a la derecha y recibe el clic.
+// Orbes flotantes que rellenan el espacio vacío del encabezado.
+const ORBES = [
+  { c: COLORES[0], size: 26, top: '20%', left: '10%', dur: 7, delay: 0 },
+  { c: COLORES[1], size: 18, top: '60%', left: '26%', dur: 9, delay: 0.6 },
+  { c: COLORES[2], size: 34, top: '32%', left: '46%', dur: 8, delay: 1.1 },
+  { c: COLORES[3], size: 20, top: '68%', left: '64%', dur: 10, delay: 0.3 },
+  { c: COLORES[0], size: 14, top: '24%', left: '80%', dur: 6.5, delay: 0.9 },
+  { c: COLORES[2], size: 16, top: '72%', left: '90%', dur: 8.5, delay: 1.6 },
+];
+
 const HeroDecoracion = () => {
-  const canvasRef = useRef(null);
-  const zonaRef = useRef(null);
-  const simRef = useRef(null);
+  // Al hacer clic se lanza una onda desde el punto tocado. La recorta el propio
+  // encabezado (.hero), así que el único límite visible es su borde redondeado.
+  const [ondas, setOndas] = useState([]);
+  const idRef = useRef(0);
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const encabezado = canvas.parentElement;
-    // Los trazos empiezan después del bloque de título.
-    const finTexto = () => {
-      const texto = encabezado.querySelector('.hero-text');
-      return texto ? texto.offsetLeft + texto.offsetWidth : 0;
-    };
-    const sim = crearTrazosEncabezado(canvas, {
-      zona: encabezado,
-      finTexto,
-      cantidad: 4,
-      reducido: prefiereMenosMovimiento(),
-    });
-    simRef.current = sim;
-    return () => sim.destruir();
-  }, []);
+  const alHacerClic = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const id = idRef.current;
+    idRef.current += 1;
+    const color = COLORES[id % COLORES.length];
+    setOndas((prev) => [...prev, { id, x, y, color }]);
+  };
+
+  const quitarOnda = (id) => setOndas((prev) => prev.filter((o) => o.id !== id));
 
   return (
-    <>
-      <canvas ref={canvasRef} className="hero-trazos" aria-hidden="true" />
-      <div
-        ref={zonaRef}
-        className="hero-deco"
-        aria-hidden="true"
-        onClick={(e) => simRef.current?.nacerEn(e.clientX, e.clientY)}
-      />
-    </>
+    <div className="hero-deco" onClick={alHacerClic}>
+      {ORBES.map((o, i) => (
+        <span
+          key={i}
+          className="hero-orb"
+          style={{
+            color: o.c,
+            width: `${o.size}px`,
+            height: `${o.size}px`,
+            top: o.top,
+            left: o.left,
+            animationDuration: `${o.dur}s`,
+            animationDelay: `${o.delay}s`,
+          }}
+        >
+          <span className="hero-orb-dot" />
+        </span>
+      ))}
+      {ondas.map((o) => (
+        <span
+          key={o.id}
+          className="hero-onda"
+          style={{ left: `${o.x}px`, top: `${o.y}px`, color: o.color }}
+          onAnimationEnd={() => quitarOnda(o.id)}
+        />
+      ))}
+    </div>
   );
 };
 
