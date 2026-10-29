@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Mail, Lock, KeyRound } from 'lucide-react';
+import { Mail, Lock, KeyRound, Loader2 } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
 import { useIntroAuth } from '../components/auth/useIntroAuth';
+import AuthAviso from '../components/auth/AuthAviso';
+import { avisoDeError, correoValido } from '../components/auth/avisos';
 import Logo from '../components/common/Logo';
 import './AuthCommon.css';
 import { api } from '../api';
@@ -17,6 +19,12 @@ const Login = () => {
   const [introLista, terminarIntro] = useIntroAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [cargando, setCargando] = useState(false);
+  // Aviso con diseño propio (en vez de alert). El id vuelve a animarlo en cada intento.
+  const [aviso, setAviso] = useState(null);
+  const [verExpirada, setVerExpirada] = useState(sesionExpirada);
+  const mostrarAviso = (a) => setAviso({ ...a, id: Date.now() });
+  const invalido = (campo) => aviso?.campos?.includes(campo);
 
   // Paso de verificación (DEMO): tras la contraseña se pide un código de 6 dígitos.
   // Por ahora CUALQUIER código de 6 dígitos es válido; el envío real por correo
@@ -24,25 +32,45 @@ const Login = () => {
   const [paso, setPaso] = useState(1);
   const [datosLogin, setDatosLogin] = useState(null);
   const [codigo, setCodigo] = useState('');
-  const [errorCodigo, setErrorCodigo] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (cargando) return;
+    if (!email.trim()) {
+      mostrarAviso({ titulo: 'Escribe tu correo', texto: 'Lo necesitamos para encontrar tu cuenta.', campos: ['email'] });
+      return;
+    }
+    if (!correoValido(email)) {
+      mostrarAviso({ titulo: 'Revisa el correo', texto: 'Parece incompleto. Ejemplo: nombre@correo.com', campos: ['email'] });
+      return;
+    }
+    if (!password) {
+      mostrarAviso({ titulo: 'Escribe tu contraseña', campos: ['password'] });
+      return;
+    }
+    setCargando(true);
     try {
-      const data = await api.login({ email, password });
+      const data = await api.login({ email: email.trim(), password });
       setDatosLogin(data);
       setCodigo('');
-      setErrorCodigo('');
+      setAviso(null);
+      setVerExpirada(false);
       setPaso(2);
     } catch (error) {
-      alert(error.message);
+      mostrarAviso(avisoDeError(error));
+    } finally {
+      setCargando(false);
     }
   };
 
   const verificarCodigo = (e) => {
     e.preventDefault();
     if (!/^\d{6}$/.test(codigo)) {
-      setErrorCodigo('Ingresa el código de 6 dígitos.');
+      mostrarAviso({
+        titulo: codigo ? 'Código incompleto' : 'Escribe el código',
+        texto: 'El código tiene 6 dígitos.',
+        campos: ['codigo'],
+      });
       return;
     }
     // DEMO: no se valida contra un código real; cualquier código de 6 dígitos entra.
@@ -80,16 +108,18 @@ const Login = () => {
                 <p>Ingresa con tu correo y contraseña para continuar.</p>
               </div>
 
-              {sesionExpirada && (
-                <div className="auth-aviso" role="alert">
-                  Tu sesión expiró por seguridad. Vuelve a iniciar sesión.
-                </div>
+              {/* Se monta al aparecer el formulario para que su animación se vea. */}
+              {introLista && verExpirada && (
+                <AuthAviso
+                  aviso={{ tipo: 'info', icono: 'espera', titulo: 'Tu sesión expiró', texto: 'Por seguridad, vuelve a iniciar sesión.' }}
+                  onCerrar={() => setVerExpirada(false)}
+                />
               )}
 
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} noValidate>
                 <div className="form-group">
                   <label htmlFor="email">Correo electrónico</label>
-                  <div className="input-wrapper">
+                  <div className={`input-wrapper ${invalido('email') ? 'invalido' : ''}`}>
                     <div className="input-icon">
                       <Mail size={20} />
                     </div>
@@ -97,16 +127,18 @@ const Login = () => {
                       type="email"
                       id="email"
                       placeholder="nombre@correo.com"
+                      autoComplete="email"
                       required
+                      aria-invalid={invalido('email') || undefined}
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); setAviso(null); }}
                     />
                   </div>
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="password">Contraseña</label>
-                  <div className="input-wrapper">
+                  <div className={`input-wrapper ${invalido('password') ? 'invalido' : ''}`}>
                     <div className="input-icon">
                       <Lock size={20} />
                     </div>
@@ -114,15 +146,19 @@ const Login = () => {
                       type="password"
                       id="password"
                       placeholder="••••••"
+                      autoComplete="current-password"
                       required
+                      aria-invalid={invalido('password') || undefined}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => { setPassword(e.target.value); setAviso(null); }}
                     />
                   </div>
                 </div>
 
-                <button type="submit" className="btn-submit">
-                  Continuar
+                <AuthAviso aviso={aviso} onCerrar={() => setAviso(null)} />
+
+                <button type="submit" className="btn-submit" disabled={cargando}>
+                  {cargando ? <><Loader2 size={18} className="girando" /> Ingresando…</> : 'Continuar'}
                 </button>
               </form>
 
@@ -137,10 +173,10 @@ const Login = () => {
                 <p>Ingresa el código de 6 dígitos para continuar</p>
               </div>
 
-              <form onSubmit={verificarCodigo}>
+              <form onSubmit={verificarCodigo} noValidate>
                 <div className="form-group">
                   <label htmlFor="codigo">Código de verificación</label>
-                  <div className="input-wrapper">
+                  <div className={`input-wrapper ${invalido('codigo') ? 'invalido' : ''}`}>
                     <div className="input-icon">
                       <KeyRound size={20} />
                     </div>
@@ -152,17 +188,17 @@ const Login = () => {
                       maxLength={6}
                       placeholder="— — — — — —"
                       required
+                      aria-invalid={invalido('codigo') || undefined}
                       value={codigo}
                       onChange={(e) => {
                         setCodigo(e.target.value.replace(/\D/g, '').slice(0, 6));
-                        setErrorCodigo('');
+                        setAviso(null);
                       }}
                     />
                   </div>
-                  {errorCodigo && (
-                    <p className="input-hint" style={{ color: '#fca5a5' }}>{errorCodigo}</p>
-                  )}
                 </div>
+
+                <AuthAviso aviso={aviso} onCerrar={() => setAviso(null)} />
 
                 <button type="submit" className="btn-submit">
                   Verificar y entrar
@@ -172,7 +208,7 @@ const Login = () => {
               <div className="form-footer">
                 <button
                   type="button"
-                  onClick={() => { setPaso(1); setDatosLogin(null); }}
+                  onClick={() => { setPaso(1); setDatosLogin(null); setAviso(null); }}
                   style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
                 >
                   ← Volver

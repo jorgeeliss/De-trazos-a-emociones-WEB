@@ -520,9 +520,16 @@
   color: #9aa0ab;
 }
 :root[data-theme="light"] .auth-container .auth-aviso {
-  background: var(--t-warn-bg);
-  border-color: var(--t-warn-border);
-  color: var(--t-warn);
+  /* Sobre el vidrio blanco, un poco más de color para que no se pierda. */
+  background: color-mix(in srgb, var(--aviso) 9%, rgba(255, 255, 255, 0.7));
+  border-color: color-mix(in srgb, var(--aviso) 32%, transparent);
+}
+:root[data-theme="light"] .auth-container .auth-aviso-cuerpo a {
+  color: var(--accent-strong);
+}
+:root[data-theme="light"] .auth-container .form-container .input-wrapper.invalido input,
+:root[data-theme="light"] .auth-container .form-container .input-wrapper.invalido .role-select {
+  border-color: color-mix(in srgb, var(--emo-enojo) 70%, transparent);
 }
 :root[data-theme="light"] .auth-container .register-success .success-icon.ok {
   background: var(--t-ok-bg);
