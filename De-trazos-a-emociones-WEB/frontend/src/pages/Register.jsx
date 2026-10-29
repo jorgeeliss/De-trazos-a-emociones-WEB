@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, CheckCircle, Clock } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
+import { useIntroAuth } from '../components/auth/useIntroAuth';
 import Logo from '../components/common/Logo';
 import './AuthCommon.css';
 import './Register.css';
@@ -11,6 +12,8 @@ import { passwordValida } from '../utils/password';
 
 const Register = () => {
   const navigate = useNavigate();
+  // El formulario aparece cuando el logo termina de formarse (o al primer clic/tecla).
+  const [introLista, terminarIntro] = useIntroAuth();
   const [resultado, setResultado] = useState(null);
   const [verPassword, setVerPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -50,13 +53,10 @@ const Register = () => {
   return (
     <div className="auth-container">
       {/* Panel Izquierdo - Gráficos */}
-      <AuthGraphics 
-        title="Acompaña el mundo emocional de cada niño"
-        highlight="emocional"
-      />
+      <AuthGraphics alTerminar={terminarIntro} />
 
       {/* Panel Derecho - Formulario */}
-      <div className="right-panel">
+      <div className={`right-panel ${introLista ? 'listo' : 'esperando'}`}>
         <div className="form-container">
           
           <div className="brand">

@@ -26,18 +26,24 @@
   margin: auto;
 }
 
-/* Entrada escalonada: marca, encabezado, formulario y pie aparecen en orden. */
-.auth-container .form-container > *,
-.auth-container .form-container form > * {
+/* Mientras se forma el logo del panel, el formulario espera oculto (y fuera
+   del alcance del teclado); aparece al terminar (ver useIntroAuth). */
+.auth-container .right-panel.esperando .form-container {
+  visibility: hidden;
+}
+
+/* Entrada escalonada al aparecer: marca, encabezado, formulario y pie en orden. */
+.auth-container .right-panel.listo .form-container > *,
+.auth-container .right-panel.listo .form-container form > * {
   animation: authEntrada 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.auth-container .form-container > *:nth-child(2) { animation-delay: 0.06s; }
-.auth-container .form-container > *:nth-child(3) { animation-delay: 0.12s; }
-.auth-container .form-container > *:nth-child(n + 4) { animation-delay: 0.18s; }
-.auth-container .form-container form > *:nth-child(1) { animation-delay: 0.16s; }
-.auth-container .form-container form > *:nth-child(2) { animation-delay: 0.22s; }
-.auth-container .form-container form > *:nth-child(3) { animation-delay: 0.28s; }
-.auth-container .form-container form > *:nth-child(n + 4) { animation-delay: 0.34s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(2) { animation-delay: 0.06s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(3) { animation-delay: 0.12s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(n + 4) { animation-delay: 0.18s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(1) { animation-delay: 0.16s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(2) { animation-delay: 0.22s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(3) { animation-delay: 0.28s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(n + 4) { animation-delay: 0.34s; }
 
 .auth-container .brand {
   display: flex;
@@ -224,8 +230,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .auth-container .form-container > *,
-  .auth-container .form-container form > * {
+  .auth-container .right-panel.listo .form-container > *,
+  .auth-container .right-panel.listo .form-container form > * {
     animation: none;
   }
 }

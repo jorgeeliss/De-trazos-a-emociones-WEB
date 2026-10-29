@@ -2,10 +2,10 @@
 // dispersos y dibujan sus círculos en grande; se rellenan, se traza la onda y,
 // con el logo ya completo, se encoge y se desplaza hasta su lugar en la marca
 // (logo + nombre, como en las páginas). Ahí se muestra la marca real
-// (componente Logo) y el lienzo se desvanece.
-// Pasado un rato la marca se deshace en puntos y se vuelve a formar (o con clic).
+// (componente Logo) y el lienzo se desvanece. Se forma una vez; un clic sobre
+// el panel la deshace en puntos y la vuelve a formar.
 // Geometría igual a components/common/Logo.jsx (viewBox 48 x 48).
-import { TAU, azar, suave, aRgb, derivar, rebotar, apartarDe, ajustarLienzo } from '../common/crayon';
+import { TAU, azar, suave, aRgb, rebotar, apartarDe, ajustarLienzo } from '../common/crayon';
 
 const CIRCULOS = [
   { x: 19, y: 19 },
@@ -32,21 +32,21 @@ const ONDA = [
   ...Array.from({ length: 41 }, (_, i) => bezier([24, 26], [28, 22], [32, 31.5], [37, 26])(i / 40)),
 ];
 
-// Tiempos del ciclo (ms desde que empieza a formarse). Ritmo tranquilo: cada
-// etapa empieza cuando la anterior terminó, para no distraer del formulario.
-const T_EMPIEZA = 600; // un momento de puntos dispersos antes de dibujar
-const T_CIRCULO = 900; // desfase entre círculos
-const T_TRAZO = 1400; // cuánto tarda en salir cada círculo completo
-const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 900; // con los 4 círculos ya trazados
-const D_RELLENO = 1200;
-const PASO_RELLENO = 250;
-const T_ONDA = T_RELLENO + 3 * PASO_RELLENO + D_RELLENO; // logo relleno: se traza la onda
-const D_ONDA = 1300;
-const T_ACOMODO = T_ONDA + D_ONDA + 900; // logo grande completo y quieto un momento
-const D_ACOMODO = 1600;
-const D_CRUCE = 600; // el lienzo cede el lugar a la marca real
-const T_QUIETO = T_ACOMODO + D_ACOMODO + 12000; // a partir de aquí se deshace solo
-const D_DESHACER = 1100;
+// Tiempos del ciclo (ms desde que empieza a formarse). Cada etapa empieza
+// cuando la anterior terminó; la marca aparece a los ~6,5 s.
+const T_EMPIEZA = 300; // un momento de puntos dispersos antes de dibujar
+const T_CIRCULO = 550; // desfase entre círculos
+const T_TRAZO = 900; // cuánto tarda en salir cada círculo completo
+const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 400; // con los 4 círculos ya trazados
+const D_RELLENO = 750;
+const PASO_RELLENO = 130;
+const T_ONDA = T_RELLENO + 3 * PASO_RELLENO + D_RELLENO - 100; // logo relleno: se traza la onda
+const D_ONDA = 850;
+const T_ACOMODO = T_ONDA + D_ONDA + 300; // logo grande completo y quieto un momento
+const D_ACOMODO = 1000;
+const T_MARCA = T_ACOMODO + D_ACOMODO;
+const D_CRUCE = 450; // el lienzo cede el lugar a la marca real
+const D_DESHACER = 800;
 
 const mezclar = (a, b, p) => ({
   cx: a.cx + (b.cx - a.cx) * p,
@@ -62,7 +62,6 @@ export function crearTrazoLogo(canvas, {
   ubicarMarca,
   // Se llama con true cuando la marca real debe verse y con false al deshacerse.
   alMostrarMarca = () => {},
-  atenuar = null,
   reducido = false,
 }) {
   const ctx = canvas.getContext('2d');
@@ -74,14 +73,13 @@ export function crearTrazoLogo(canvas, {
   let caja = grande;
   let colores = ['139, 121, 242'];
   let opacidad = 0.85;
-  let puntos = []; // los que dibujan el logo
-  let sueltos = []; // puntos que flotan alrededor
+  let puntos = [];
   let cursor = null;
   let raf = 0;
-  let marco = 0;
   let inicio = performance.now();
   let deshaciendo = null; // momento en que empezó a deshacerse
   let marcaVisible = false;
+  let destruido = false; // tras destruir() no vuelve a animarse
 
   const medir = () => {
     [w, h] = ajustarLienzo(canvas, ctx);
@@ -102,20 +100,15 @@ export function crearTrazoLogo(canvas, {
     alMostrarMarca(si);
   };
 
-  // Unidades del logo (viewBox 48) a píxeles, según la caja actual.
+  // Unidades del logo (viewBox 48) a píxeles, según una caja.
   const aPx = (x, y, c = caja) => {
     const escala = c.tam / ANCHO_LOGO;
     return [c.cx + (x - CENTRO) * escala, c.cy + (y - CENTRO) * escala];
   };
 
   const posicionAlAzar = () => ({ x: 12 + Math.random() * (w - 24), y: 12 + Math.random() * (h - 24) });
-  const posicionLibre = () => {
-    let p = posicionAlAzar();
-    for (let i = 0; i < 6 && atenuar && atenuar(p.x, p.y, w, h) < 0.7; i++) p = posicionAlAzar();
-    return p;
-  };
 
-  // Programa un ciclo: cada círculo se dibuja con sus puntos, uno tras otro.
+  // Programa la formación: cada círculo se dibuja con sus puntos, uno tras otro.
   // Los destinos se guardan en unidades del logo para poder moverlo y escalarlo.
   const formar = (desdeActual = false) => {
     inicio = performance.now();
@@ -144,7 +137,7 @@ export function crearTrazoLogo(canvas, {
     });
     puntos = nuevos.map((p, i) => {
       const previo = desdeActual && anteriores.length ? anteriores[i % anteriores.length] : null;
-      const pos = previo || posicionLibre();
+      const pos = previo || posicionAlAzar();
       return {
         ...p,
         x: pos.x,
@@ -153,18 +146,6 @@ export function crearTrazoLogo(canvas, {
         vy: previo ? previo.vy : azar(-0.3, 0.3),
       };
     });
-  };
-
-  const crearSueltos = () => {
-    const cantidad = Math.max(10, Math.min(60, Math.round((w * h) / 9000)));
-    sueltos = Array.from({ length: cantidad }, () => ({
-      ...posicionAlAzar(),
-      vx: azar(-0.12, 0.12),
-      vy: azar(-0.12, 0.12),
-      r: azar(1, 2.2) * k,
-      color: Math.floor(Math.random() * 4),
-      alfa: azar(0.2, 0.4),
-    }));
   };
 
   // Se deshace desde la marca: puntos hacia afuera y luego vuelve a formarse.
@@ -186,7 +167,7 @@ export function crearTrazoLogo(canvas, {
     }
   };
 
-  // Caja del logo en este momento (grande, acomodándose o en la marca).
+  // Caja del logo en el tiempo t del ciclo (grande, acomodándose o en la marca).
   const cajaEn = (t) => {
     if (deshaciendo) return marca;
     if (t < T_ACOMODO) return grande;
@@ -194,12 +175,13 @@ export function crearTrazoLogo(canvas, {
   };
 
   const actualizar = (ahora) => {
-    const t = ahora - inicio;
-    if (!deshaciendo && t > T_QUIETO) deshacer();
+    // Primero el posible reinicio, y después el tiempo del ciclo: así nunca se
+    // usa el tiempo del ciclo anterior (antes mostraba la marca antes de tiempo).
     if (deshaciendo && ahora - deshaciendo > D_DESHACER) formar(true);
-    if (!deshaciendo && t > T_ACOMODO + D_ACOMODO) mostrarMarca(true);
+    const t = ahora - inicio;
+    if (!deshaciendo && t > T_MARCA) mostrarMarca(true);
 
-    caja = cajaEn(ahora - inicio);
+    caja = cajaEn(t);
     const acomodando = !deshaciendo && t >= T_ACOMODO;
     for (const p of puntos) {
       const [tx, ty] = aPx(p.ux, p.uy);
@@ -213,9 +195,8 @@ export function crearTrazoLogo(canvas, {
         } else {
           const rx = tx + Math.sin(ahora / 900 + p.fase) * 0.5 * k;
           const ry = ty + Math.cos(ahora / 1100 + p.fase) * 0.5 * k;
-          // Resorte suave: los puntos llegan sin apuro.
-          p.vx = (p.vx + (rx - p.x) * 0.03) * 0.86;
-          p.vy = (p.vy + (ry - p.y) * 0.03) * 0.86;
+          p.vx = (p.vx + (rx - p.x) * 0.04) * 0.85;
+          p.vy = (p.vy + (ry - p.y) * 0.04) * 0.85;
         }
       } else {
         p.vx = (p.vx + azar(-0.025, 0.025)) * 0.98;
@@ -226,20 +207,10 @@ export function crearTrazoLogo(canvas, {
       p.x += p.vx;
       p.y += p.vy;
     }
-    for (const s of sueltos) {
-      derivar(s, 0.22);
-      rebotar(s, w, h, 12 * k);
-      apartarDe(s, cursor, 32 * k);
-      s.vx *= 0.99;
-      s.vy *= 0.99;
-      s.x += s.vx;
-      s.y += s.vy;
-    }
   };
 
-  const alfaBorde = (x, y) =>
-    Math.max(0, Math.min(1, (Math.min(x, y, w - x, h - y) - 2) / (16 * k))) *
-    (atenuar ? atenuar(x, y, w, h) : 1);
+  // Se desvanece cerca del borde del panel: así nunca se nota su recuadro.
+  const alfaBorde = (x, y) => Math.max(0, Math.min(1, (Math.min(x, y, w - x, h - y) - 2) / (16 * k)));
 
   const punto = (x, y, r) => {
     ctx.beginPath();
@@ -251,24 +222,15 @@ export function crearTrazoLogo(canvas, {
     ctx.clearRect(0, 0, w, h);
     const t = ahora - inicio;
 
-    // Puntos sueltos en los colores del logo.
-    for (const s of sueltos) {
-      ctx.globalAlpha = s.alfa * alfaBorde(s.x, s.y);
-      ctx.fillStyle = `rgb(${colores[s.color % colores.length]})`;
-      punto(s.x, s.y, s.r);
-    }
-
     // El logo del lienzo se apaga cuando aparece la marca real en su lugar.
-    const fin = T_ACOMODO + D_ACOMODO;
-    const cede = deshaciendo ? 1 : 1 - Math.min(1, Math.max(0, (t - fin) / D_CRUCE));
+    const cede = deshaciendo ? 1 : 1 - Math.min(1, Math.max(0, (t - T_MARCA) / D_CRUCE));
     if (cede <= 0) return;
     // Al encogerse, los puntos se achican con el logo.
     const escalaPuntos = caja.tam / grande.tam;
+    const escala = caja.tam / ANCHO_LOGO;
 
-    // Relleno de los círculos, uno tras otro, superpuestos en el mismo orden
-    // que en Logo.jsx (colores 1, 2, 3, 4).
+    // Relleno de los círculos, superpuestos en el mismo orden que en Logo.jsx.
     if (!deshaciendo) {
-      const escala = caja.tam / ANCHO_LOGO;
       ORDEN_RELLENO.forEach((ci) => {
         const c = CIRCULOS[ci];
         const p = suave(Math.min(1, Math.max(0, (t - T_RELLENO - ci * PASO_RELLENO) / D_RELLENO)));
@@ -294,7 +256,6 @@ export function crearTrazoLogo(canvas, {
     // el logo llega completo a la marca.
     const po = deshaciendo ? 0 : suave(Math.min(1, Math.max(0, (t - T_ONDA) / D_ONDA)));
     if (po > 0) {
-      const escala = caja.tam / ANCHO_LOGO;
       const acomodo = Math.min(1, Math.max(0, (t - T_ACOMODO) / D_ACOMODO));
       const hasta = Math.max(2, Math.round(po * ONDA.length));
       ctx.globalAlpha = cede;
@@ -314,14 +275,17 @@ export function crearTrazoLogo(canvas, {
     ctx.globalAlpha = 1;
   };
 
+  // El bucle corre mientras haya algo animándose; con la marca ya quieta se detiene.
   const bucle = (ahora) => {
-    marco += 1;
-    if (marco % 120 === 0) leerColores();
     if (w > 0 && h > 0) {
       actualizar(ahora);
       pintar(ahora);
     }
-    raf = requestAnimationFrame(bucle);
+    const quieto = marcaVisible && !deshaciendo && ahora - inicio > T_MARCA + D_CRUCE + 50;
+    raf = quieto ? 0 : requestAnimationFrame(bucle);
+  };
+  const animar = () => {
+    if (!raf && !destruido) raf = requestAnimationFrame(bucle);
   };
 
   const alMover = (e) => {
@@ -333,19 +297,18 @@ export function crearTrazoLogo(canvas, {
   };
   // Clic: si la marca ya está formada, se deshace y se vuelve a formar.
   const alClic = () => {
-    if (marcaVisible) deshacer();
+    if (!marcaVisible || reducido) return;
+    deshacer();
+    animar();
   };
 
   // Recalcula tamaños y posiciones (cambio de tamaño o fuentes ya cargadas).
   const reubicar = () => {
+    if (destruido) return;
     medir();
-    crearSueltos();
-    if (reducido) {
-      pintar(performance.now());
-      return;
-    }
-    // Si la marca ya estaba visible, se queda; si no, se vuelve a formar.
-    if (!marcaVisible) formar(true);
+    if (reducido || marcaVisible) return;
+    formar(true);
+    animar();
   };
 
   let tiempoResize = 0;
@@ -363,23 +326,22 @@ export function crearTrazoLogo(canvas, {
 
   medir();
   leerColores();
-  crearSueltos();
   observador?.observe(canvas);
   if (reducido) {
-    // Sin movimiento: la marca real directamente y los puntos sueltos quietos.
+    // Sin movimiento: directamente la marca real.
     mostrarMarca(true);
-    pintar(performance.now());
   } else {
     formar();
     zona.addEventListener('pointermove', alMover);
     zona.addEventListener('pointerleave', alSalir);
     zona.addEventListener('click', alClic);
-    raf = requestAnimationFrame(bucle);
+    animar();
   }
 
   return {
     reubicar,
     destruir() {
+      destruido = true;
       cancelAnimationFrame(raf);
       clearTimeout(tiempoResize);
       observador?.disconnect();

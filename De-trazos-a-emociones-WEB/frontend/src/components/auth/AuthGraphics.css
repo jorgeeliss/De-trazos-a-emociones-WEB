@@ -1,26 +1,20 @@
-/* Panel izquierdo del login y el registro: moléculas que dibujan emociones
-   (lienzo de fondo) y, abajo, el mensaje de la app. */
+/* Panel izquierdo del login y el registro: lienzo donde los puntos forman el
+   logo y, al centro, la marca real que aparece al terminar (trazoLogo.js). */
 .left-panel {
   flex: 1.1;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 3.5rem 4rem;
   overflow: hidden;
   background:
-    radial-gradient(90% 60% at 50% 32%, rgba(139, 121, 242, 0.16) 0%, transparent 70%),
+    radial-gradient(70% 55% at 50% 50%, rgba(139, 121, 242, 0.14) 0%, transparent 70%),
     var(--bg-panel);
   border-right: 1px solid var(--border);
 }
 
-/* El color del lienzo es el del halo detrás de la cara. */
 .left-panel .auth-lienzo {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  color: var(--accent);
 }
 
 /* Marca real (logo + nombre, como en las páginas): aparece cuando el logo que
@@ -29,7 +23,7 @@
   --marca-s: 64px;
   position: absolute;
   left: 50%;
-  top: 40%;
+  top: 50%;
   z-index: 1;
   display: flex;
   align-items: center;
@@ -38,7 +32,7 @@
   transform: translate(-50%, -50%);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.5s ease;
 }
 
 .left-panel .auth-marca.visible {
@@ -68,7 +62,7 @@
   line-height: 1.1;
   opacity: 0;
   transform: translateX(-12px);
-  transition: opacity 0.9s ease 0.3s, transform 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s;
+  transition: opacity 0.7s ease 0.2s, transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
 }
 
 .left-panel .auth-marca.visible .auth-marca-texto {
@@ -94,79 +88,9 @@
   color: var(--muted2, #9490a8);
 }
 
-.left-panel .hero-text {
-  position: relative;
-  z-index: 1;
-  max-width: 500px;
-  animation: authEntrada 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-}
-
-.left-panel .hero-title {
-  font-family: 'Inter', sans-serif;
-  font-size: clamp(2rem, 3vw, 2.7rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-  color: var(--text);
-  margin: 0 0 1rem;
-}
-
-/* Sin descripción, los puntos van justo debajo del título. */
-.left-panel .hero-title + .auth-puntos {
-  margin-top: 1.6rem;
-}
-
-.left-panel .hero-title .highlight {
-  color: var(--accent-soft);
-}
-
-.left-panel .hero-subtitle {
-  font-size: 1.02rem;
-  line-height: 1.6;
-  color: var(--muted);
-  margin: 0 0 1.75rem;
-  max-width: 440px;
-}
-
-/* Iconos en fila, sin texto visible (va como descripción emergente). */
-.left-panel .auth-puntos {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: row;
-  gap: 0.75rem;
-}
-
-.left-panel .auth-puntos li {
-  width: 44px;
-  height: 44px;
-  border-radius: 13px;
-  display: grid;
-  place-items: center;
-  background: var(--accent-dim);
-  color: var(--accent-soft);
-  cursor: default;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1.3), background 0.25s ease;
-}
-
-.left-panel .auth-puntos li:hover {
-  transform: translateY(-2px);
-  background: color-mix(in srgb, var(--accent) 22%, transparent);
-}
-
-/* Texto solo para lectores de pantalla. */
-.left-panel .auth-oculto {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .left-panel .hero-text {
-    animation: none;
+  .left-panel .auth-marca,
+  .left-panel .auth-marca-texto {
+    transition: none;
   }
 }

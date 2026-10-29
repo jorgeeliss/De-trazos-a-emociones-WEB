@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Mail, Lock, KeyRound } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
+import { useIntroAuth } from '../components/auth/useIntroAuth';
 import Logo from '../components/common/Logo';
 import './AuthCommon.css';
 import { api } from '../api';
@@ -12,6 +13,8 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const sesionExpirada = searchParams.get('expirado') === '1';
   const { nuevaSesion } = useAnalisisSesion();
+  // El formulario aparece cuando el logo termina de formarse (o al primer clic/tecla).
+  const [introLista, terminarIntro] = useIntroAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -54,13 +57,10 @@ const Login = () => {
   return (
     <div className="auth-container">
       {/* Panel Izquierdo - Gráficos */}
-      <AuthGraphics
-        title="Cada dibujo guarda una emoción"
-        highlight="emoción"
-      />
+      <AuthGraphics alTerminar={terminarIntro} />
 
       {/* Panel Derecho - Formulario */}
-      <div className="right-panel">
+      <div className={`right-panel ${introLista ? 'listo' : 'esperando'}`}>
         <div className="form-container">
 
           <div className="brand">
