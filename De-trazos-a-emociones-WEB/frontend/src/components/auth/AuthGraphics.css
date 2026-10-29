@@ -23,6 +23,71 @@
   color: var(--accent);
 }
 
+/* Marca real (logo + nombre, como en las páginas): aparece cuando el logo que
+   dibujan los puntos llega a su lugar. --marca-s (por JS) es el tamaño del logo. */
+.left-panel .auth-marca {
+  --marca-s: 64px;
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--marca-s) * 0.3);
+  white-space: nowrap;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.left-panel .auth-marca.visible {
+  opacity: 1;
+}
+
+.left-panel .auth-marca-logo {
+  width: var(--marca-s);
+  height: var(--marca-s);
+  flex-shrink: 0;
+}
+
+.left-panel .auth-marca-logo .logo-mark {
+  width: 100%;
+  height: 100%;
+}
+
+.left-panel .auth-marca-texto {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.5s ease 0.15s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s;
+}
+
+.left-panel .auth-marca.visible .auth-marca-texto {
+  opacity: 1;
+  transform: none;
+}
+
+/* Mismo estilo que el encabezado de las páginas (Analizar dibujo). */
+.left-panel .auth-marca-nombre {
+  font-family: 'Inter', sans-serif;
+  font-size: calc(var(--marca-s) * 0.6);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.left-panel .auth-marca-sub {
+  margin-top: calc(var(--marca-s) * 0.08);
+  font-size: max(12px, calc(var(--marca-s) * 0.2));
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted2, #9490a8);
+}
+
 .left-panel .hero-text {
   position: relative;
   z-index: 1;
