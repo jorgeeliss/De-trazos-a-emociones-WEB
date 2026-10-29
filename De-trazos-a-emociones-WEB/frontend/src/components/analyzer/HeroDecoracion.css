@@ -1,9 +1,9 @@
 /* Decoración animada del encabezado del Analyzer:
-   orbes flotantes con los colores de la rueda emocional del logo, resplandor al
-   pasar el mouse y una onda al hacer clic. La onda NO se recorta aquí: se deja
-   crecer por todo el encabezado y quien la recorta es la propia tarjeta (.hero,
-   con overflow hidden). Así el único límite visible es el recuadro del
-   encabezado, no un recuadro propio de la animación. */
+   orbes flotantes con los colores de la rueda emocional del logo que crecen al
+   pasar el mouse, y una onda al hacer clic. Nada aquí dibuja un fondo rectangular
+   (la estela es el brillo redondo de cada orbe, no un recuadro). La onda no se
+   recorta aquí: la recorta la propia tarjeta (.hero, con overflow hidden), que es
+   el único límite visible. */
 .hero-deco {
   flex: 1;
   align-self: stretch;
@@ -11,21 +11,6 @@
   min-height: 76px;
   margin-left: 10px;
   cursor: pointer;
-}
-
-/* Resplandor suave que aparece al pasar el mouse por el encabezado. */
-.hero-deco::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 65% 50%, var(--accent-dim), transparent 70%);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  pointer-events: none;
-}
-
-.analyzer-wrapper .hero:hover .hero-deco::before {
-  opacity: 1;
 }
 
 /* El contenedor del orbe hace el flotado (translate). */
@@ -100,8 +85,7 @@
   .hero-orb {
     animation: none;
   }
-  .hero-orb-dot,
-  .hero-deco::before {
+  .hero-orb-dot {
     transition: none;
   }
   .hero-onda {
