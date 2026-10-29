@@ -44,7 +44,7 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
     const lower = String(intStr).toLowerCase();
     if (lower.includes('alta') || lower.includes('alto')) return { label: 'Alta', bg: 'rgba(248,113,113,0.15)', color: '#f87171' };
     if (lower.includes('baja') || lower.includes('bajo')) return { label: 'Baja', bg: 'rgba(74,222,128,0.15)', color: '#4ade80' };
-    return { label: 'Media', bg: 'rgba(251,191,36,0.15)', color: '#fbbf24' };
+    return { label: 'Media', bg: 'rgba(251,146,60,0.16)', color: '#fb923c' };
   };
 
   const formatDate = (dateString) => {

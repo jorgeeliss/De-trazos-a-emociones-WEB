@@ -24,6 +24,8 @@ const perfilRoutes = require("./routes/perfil");
 
 const connectDB = require("./database");
 const Analysis = require("./models/Analysis");
+const User = require("./models/User");
+const { permisosEfectivos } = require("./utils/permisos");
 const verificarToken = require("./middleware/authMiddleware");
 
 
@@ -334,6 +336,21 @@ app.post(
     async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: "No se envió ninguna imagen" });
+    }
+
+    // Permiso: analizar CON contexto (persistir != "false") requiere el permiso
+    // "conContexto". El modo "solo dibujo" lo puede usar cualquier cuenta aprobada.
+    if (req.body.persistir !== "false") {
+        try {
+            const usuarioActual = await User.findById(req.usuario.id).select("esAdmin permisos");
+            if (!permisosEfectivos(usuarioActual).conContexto) {
+                return res.status(403).json({
+                    error: "Tu cuenta solo puede analizar dibujos sueltos. Pídele al administrador que te habilite el análisis con contexto."
+                });
+            }
+        } catch {
+            return res.status(500).json({ error: "Error verificando permisos" });
+        }
     }
 
     const {

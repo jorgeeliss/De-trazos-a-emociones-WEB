@@ -42,7 +42,10 @@ const authFetch = async (url, options = {}) => {
     },
   });
 
-  if (response.status === 401 || response.status === 403) {
+  // Solo el 401 (token ausente, inválido o expirado) cierra la sesión. El 403
+  // es "no tienes permiso para esto" y NO debe desloguear: el llamador muestra
+  // el mensaje del backend.
+  if (response.status === 401) {
     forzarLogin();
     throw new Error("Tu sesión expiró. Vuelve a iniciar sesión.");
   }
@@ -280,6 +283,24 @@ export const api = {
 
     if (!response.ok) {
       throw new Error(data.message || "Error al eliminar la cuenta");
+    }
+
+    return data;
+  },
+
+  gestionarUsuario: async (id, cambios) => {
+    const response = await authFetch(`${API_URL}/admin/usuarios/${id}/gestion`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cambios),
+    });
+
+    const data = await jsonSeguro(response);
+
+    if (!response.ok) {
+      throw new Error(data.message || "Error al actualizar el usuario");
     }
 
     return data;

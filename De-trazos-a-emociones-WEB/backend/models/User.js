@@ -59,6 +59,19 @@ const UserSchema = new mongoose.Schema(
         fotoPerfil: {
             type: String,
             default: ""
+        },
+
+        // Permisos por usuario, que gestiona el administrador. Si no están
+        // definidos (cuentas creadas antes de esta función) se consideran
+        // "heredados" con acceso completo; los administradores siempre tienen
+        // todos los permisos. Ver utils/permisos.js (permisosEfectivos).
+        permisos: {
+            // Analizar CON contexto del niño (incluye registrar niños y las
+            // herramientas de historial/seguimiento). Sin esto, solo se puede
+            // analizar un dibujo suelto con su descripción.
+            conContexto: { type: Boolean },
+            // Exportar / descargar PDF.
+            descargarPdf: { type: Boolean }
         }
     },
     {

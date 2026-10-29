@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { esEmailAdmin } = require("../utils/admin");
 const { validarPassword } = require("../utils/password");
+const { permisosEfectivos } = require("../utils/permisos");
 
 const router = express.Router();
 
@@ -61,7 +62,10 @@ router.post("/register", async (req, res) => {
             rol: rol,
             institucion: (institucion || "").trim(),
             esAdmin: admin,
-            estado: admin ? "aprobado" : "pendiente"
+            estado: admin ? "aprobado" : "pendiente",
+            // Las cuentas nuevas arrancan restringidas: solo análisis de dibujo
+            // suelto. El administrador habilita lo demás por usuario.
+            permisos: { conContexto: false, descargarPdf: false }
         });
 
         await nuevoUsuario.save();
@@ -177,7 +181,8 @@ router.post("/login", async (req, res) => {
                 nombre: usuario.nombre,
                 email: usuario.email,
                 rol: usuario.rol,
-                esAdmin: usuario.esAdmin
+                esAdmin: usuario.esAdmin,
+                permisos: permisosEfectivos(usuario)
             }
         });
 

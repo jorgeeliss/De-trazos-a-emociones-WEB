@@ -8,6 +8,7 @@ const User = require("../models/User");
 const Analysis = require("../models/Analysis");
 const verificarToken = require("../middleware/authMiddleware");
 const { validarPassword } = require("../utils/password");
+const { permisosEfectivos } = require("../utils/permisos");
 
 const router = express.Router();
 
@@ -39,7 +40,7 @@ GET /perfil/me
 router.get("/me", verificarToken, async (req, res) => {
     try {
         const usuario = await User.findById(req.usuario.id)
-            .select("nombre apellido email rol institucion esAdmin fotoPerfil");
+            .select("nombre apellido email rol institucion esAdmin fotoPerfil permisos");
 
         if (!usuario) {
             return res.status(404).json({ message: "Usuario no encontrado" });
@@ -53,6 +54,7 @@ router.get("/me", verificarToken, async (req, res) => {
             rol: usuario.rol,
             institucion: usuario.institucion,
             esAdmin: usuario.esAdmin,
+            permisos: permisosEfectivos(usuario),
             tieneFoto: Boolean(usuario.fotoPerfil)
         });
     } catch (error) {
