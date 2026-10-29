@@ -28,7 +28,6 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
   const marcaRef = useRef(null);
   const logoRef = useRef(null);
   const [marcaVisible, setMarcaVisible] = useState(false);
-  const [ciclo, setCiclo] = useState(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -71,11 +70,7 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
       ubicarMarca,
       atenuar,
       reducido: prefiereMenosMovimiento(),
-      alMostrarMarca: (si) => {
-        setMarcaVisible(si);
-        // Nuevo montaje del logo: así su onda se vuelve a dibujar.
-        if (si) setCiclo((n) => n + 1);
-      },
+      alMostrarMarca: setMarcaVisible,
     });
     // Con las fuentes ya cargadas, la marca mide distinto: recalcular.
     document.fonts?.ready.then(() => sim.reubicar());
@@ -90,7 +85,7 @@ const AuthGraphics = ({ title, highlight, subtitle }) => {
 
       <div ref={marcaRef} className={`auth-marca ${marcaVisible ? 'visible' : ''}`}>
         <div ref={logoRef} className="auth-marca-logo">
-          <Logo key={ciclo} size="100%" />
+          <Logo size="100%" />
         </div>
         <div className="auth-marca-texto">
           <span className="auth-marca-nombre">De trazos a emociones</span>
