@@ -1,9 +1,9 @@
 /* Decoración animada del encabezado del Analyzer:
-   orbes flotantes con los colores de la rueda emocional del logo
-   y una onda al hacer clic. La onda NO se recorta aquí: se deja crecer por todo
-   el encabezado y quien la recorta es la propia tarjeta (.hero, con overflow
-   hidden). Así el único límite visible es el recuadro del encabezado, no un
-   recuadro propio de la animación. */
+   orbes flotantes con los colores de la rueda emocional del logo, resplandor al
+   pasar el mouse y una onda al hacer clic. La onda NO se recorta aquí: se deja
+   crecer por todo el encabezado y quien la recorta es la propia tarjeta (.hero,
+   con overflow hidden). Así el único límite visible es el recuadro del
+   encabezado, no un recuadro propio de la animación. */
 .hero-deco {
   flex: 1;
   align-self: stretch;
@@ -11,6 +11,21 @@
   min-height: 76px;
   margin-left: 10px;
   cursor: pointer;
+}
+
+/* Resplandor suave que aparece al pasar el mouse por el encabezado. */
+.hero-deco::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 65% 50%, var(--accent-dim), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.analyzer-wrapper .hero:hover .hero-deco::before {
+  opacity: 1;
 }
 
 /* El contenedor del orbe hace el flotado (translate). */
@@ -23,17 +38,25 @@
   pointer-events: none;
 }
 
-/* El punto interno pone color y brillo. */
+/* El punto interno pone color y brillo, y reacciona al hover (scale + estela). */
 .hero-orb-dot {
   display: block;
   width: 100%;
   height: 100%;
   border-radius: 50%;
   background: currentColor;
-  box-shadow: 0 0 9px currentColor;
-  opacity: 0.45;
+  box-shadow: 0 0 16px currentColor;
+  opacity: 0.5;
   transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.4),
     opacity 0.45s ease, box-shadow 0.45s ease;
+}
+
+/* Al pasar el mouse por el encabezado: los orbes crecen y dejan una estela
+   de color más intensa. */
+.analyzer-wrapper .hero:hover .hero-orb-dot {
+  opacity: 0.95;
+  transform: scale(1.4);
+  box-shadow: 0 0 26px currentColor, 0 0 10px currentColor;
 }
 
 @keyframes heroOrbFloat {
@@ -77,7 +100,8 @@
   .hero-orb {
     animation: none;
   }
-  .hero-orb-dot {
+  .hero-orb-dot,
+  .hero-deco::before {
     transition: none;
   }
   .hero-onda {
