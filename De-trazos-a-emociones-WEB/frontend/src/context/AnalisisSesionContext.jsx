@@ -8,7 +8,8 @@ export const useAnalisisSesion = () => useContext(AnalisisSesionContext);
 const FORM_VACIO = {
   nombre: '', edad: '', fecha_nacimiento: '', genero: '',
   situacion_actual: '', diagnostico_previo: '', comportamiento: '',
-  dibujo_espontaneo: '', comento_mientras: '', tiempo_dibujo: ''
+  dibujo_espontaneo: '', comento_mientras: '', tiempo_dibujo: '',
+  descripcion_dibujo: ''
 };
 
 const KEYWORDS = ['alegría', 'tristeza', 'miedo', 'enojo', 'calma', 'ansiedad', 'inseguridad', 'energía', 'amor', 'felicidad', 'ira', 'frustración', 'estrés', 'tranquilidad', 'entusiasmo', 'soledad', 'angustia', 'nerviosismo', 'euforia', 'melancolía'];
@@ -160,6 +161,8 @@ export function AnalisisSesionProvider({ children }) {
     fd.append('imagen', selectedFile);
     if (modo === 'solo') {
       fd.append('persistir', 'false');
+      // La descripción opcional del dibujo también aplica en "solo dibujo".
+      if (formData.descripcion_dibujo) fd.append('descripcion_dibujo', formData.descripcion_dibujo);
     } else {
       Object.entries(formData).forEach(([k, v]) => { if (v) fd.append(k, v); });
     }

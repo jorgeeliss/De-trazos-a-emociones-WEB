@@ -133,21 +133,73 @@
   text-align: center;
 }
 
-.btn-cancelar-analisis {
-  display: block;
-  width: 100%;
-  margin-top: 12px;
-  background: transparent;
-  border: 1px solid rgba(239, 68, 68, 0.5);
-  color: #fca5a5;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  transition: all 0.2s ease;
+/* Dibujo que se muestra mientras se está analizando (sin opción de subir). */
+.analyzing-preview {
+  display: flex;
+  justify-content: center;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid var(--border2);
+  background: var(--sunken);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  margin-bottom: 1.5rem;
 }
-.btn-cancelar-analisis:hover {
-  background: rgba(239, 68, 68, 0.12);
+
+.analyzing-preview img {
+  display: block;
+  max-width: 100%;
+  max-height: 360px;
+  object-fit: contain;
+}
+
+/* Descripción opcional del dibujo (disponible con o sin contexto). */
+.desc-dibujo {
+  margin-bottom: 1.5rem;
+}
+
+.desc-dibujo-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.desc-opcional {
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.desc-dibujo-input {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  min-height: 74px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border2);
+  background: var(--sunken);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.desc-dibujo-input::placeholder {
+  color: var(--muted);
+  opacity: 0.75;
+}
+
+.desc-dibujo-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.desc-dibujo-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
 }

@@ -6,6 +6,29 @@
   margin-bottom: 1.5rem;
 }
 
+/* Botón pequeño "Cancelar", arriba a la izquierda del recuadro. */
+.analyzing-cancelar {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 5px 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--sunken);
+  border: 1px solid var(--border2);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.analyzing-cancelar:hover {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.6);
+  background: rgba(248, 113, 113, 0.1);
+}
+
 .analyzing-head {
   display: flex;
   align-items: center;

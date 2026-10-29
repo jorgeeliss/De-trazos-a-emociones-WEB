@@ -191,7 +191,8 @@ function construirContextoFinal(ctx = {}) {
     const {
         nombre, edad, fecha_nacimiento, genero,
         situacion_actual, comportamiento, diagnostico_previo,
-        dibujo_espontaneo, comento_mientras, tiempo_dibujo
+        dibujo_espontaneo, comento_mientras, tiempo_dibujo,
+        descripcion_dibujo
     } = ctx;
 
     const edadCalculada = edadDesdeFecha(fecha_nacimiento) ?? (edad ? parseInt(edad, 10) : null);
@@ -211,8 +212,9 @@ function construirContextoFinal(ctx = {}) {
         if (diagnostico_previo) contextoNino += `- Diagnóstico previo: ${diagnostico_previo}\n`;
         contextoNino += "\n";
     }
-    if (dibujo_espontaneo || comento_mientras || tiempo_dibujo) {
+    if (dibujo_espontaneo || comento_mientras || tiempo_dibujo || descripcion_dibujo) {
         contextoNino += "## Contexto del dibujo\n";
+        if (descripcion_dibujo) contextoNino += `- Descripción aportada por el adulto: ${descripcion_dibujo}\n`;
         if (dibujo_espontaneo) contextoNino += `- ¿Fue espontáneo?: ${dibujo_espontaneo}\n`;
         if (comento_mientras) contextoNino += `- Comentó mientras dibujaba: ${comento_mientras}\n`;
         if (tiempo_dibujo) contextoNino += `- Tiempo que tardó: ${tiempo_dibujo}\n`;

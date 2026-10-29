@@ -15,7 +15,7 @@ const FASES = [
 // no de un contador interno. Así, si se cambia de página y se vuelve, la barra
 // continúa donde iba en lugar de reiniciarse. Nunca llega a 100%: se acerca
 // asintóticamente a ~92% y, cuando el análisis termina, el componente desaparece.
-const AnalyzingProgress = ({ inicio }) => {
+const AnalyzingProgress = ({ inicio, onCancelar }) => {
   // El inicio queda fijo al montar (inicializador perezoso, sin refs en render).
   const [base] = useState(() => inicio || Date.now());
   const [ahora, setAhora] = useState(base);
@@ -30,6 +30,11 @@ const AnalyzingProgress = ({ inicio }) => {
 
   return (
     <div className="analyzing-box">
+      {onCancelar && (
+        <button type="button" className="analyzing-cancelar" onClick={onCancelar}>
+          Cancelar
+        </button>
+      )}
       <div className="analyzing-head">
         <div className="analyzing-badge">
           <Sparkles size={18} />

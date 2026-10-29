@@ -81,13 +81,6 @@ const AnalyzerResult = ({ analysisResult, STYLES, resetAll, previewUrl }) => {
         </div>
       </div>
 
-      <details>
-        <summary>
-          <RefreshCw size={16} /> Ver respuesta completa del modelo
-        </summary>
-        <div className="raw-content">{analysisResult.rawText}</div>
-      </details>
-
       <button className="btn-new" onClick={resetAll}>
         <RefreshCw size={16} style={{marginRight: '4px'}}/>
         Analizar otro dibujo

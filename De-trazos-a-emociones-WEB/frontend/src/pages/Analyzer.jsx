@@ -137,6 +137,8 @@ const Analyzer = () => {
             analyze={analizar}
             onCancelar={cancelarAnalisis}
             mostrarVolver={modo === 'contexto'}
+            descripcion={formData.descripcion_dibujo}
+            onDescripcionChange={handleInputChange}
           />
         )}
 
