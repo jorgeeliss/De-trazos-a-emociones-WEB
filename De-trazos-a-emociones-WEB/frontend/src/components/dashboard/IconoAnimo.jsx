@@ -1,73 +1,47 @@
-import { useState, useRef, useEffect } from 'react';
-import { Laugh, Smile, Meh, Frown, Annoyed } from 'lucide-react';
+import { useRef, useEffect } from 'react';
+import { crearSimulacion } from './moleculasCara';
 import './IconoAnimo.css';
-
-// Expresiones que recorre el icono al hacer clic, antes de volver a la del niño.
-const CICLO = [Laugh, Smile, Meh, Frown, Annoyed];
-const VUELTAS = 2;
-const INTERVALO_MS = 90;
 
 const prefiereMenosMovimiento = () =>
   typeof window !== 'undefined' &&
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-// Icono de la emoción predominante del niño, dentro de una forma orgánica que
-// cambia de contorno. Al pasar el mouse crece y la cara se balancea; al hacer
-// clic lanza una onda, la forma gira y la cara recorre las expresiones.
+// Icono de la emoción predominante del niño hecho de moléculas: al entrar
+// están dispersas y se van juntando hasta dibujar la cara. Al pasar el mouse
+// se apartan del cursor; al hacer clic la cara estalla y se vuelve a dibujar.
 const IconoAnimo = ({ visual, emocion }) => {
-  const [paso, setPaso] = useState(null); // null = reposo; número = recorriendo expresiones
-  const [ondas, setOndas] = useState([]);
-  const timerRef = useRef(null);
-  const idRef = useRef(0);
+  const canvasRef = useRef(null);
+  const simRef = useRef(null);
+  const caraRef = useRef(visual.cara);
 
-  useEffect(() => () => clearInterval(timerRef.current), []);
+  useEffect(() => {
+    const sim = crearSimulacion(canvasRef.current, {
+      cara: caraRef.current,
+      reducido: prefiereMenosMovimiento(),
+    });
+    simRef.current = sim;
+    return () => sim.destruir();
+  }, []);
 
-  const alHacerClic = () => {
-    const id = idRef.current;
-    idRef.current += 1;
-    setOndas((prev) => [...prev, id]);
+  // Al cambiar de niño (o de emoción), las moléculas pasan a la nueva cara.
+  useEffect(() => {
+    if (caraRef.current === visual.cara) return;
+    caraRef.current = visual.cara;
+    simRef.current?.cambiarCara(visual.cara);
+  }, [visual.cara]);
 
-    if (paso !== null || prefiereMenosMovimiento()) return;
-    let n = 0;
-    setPaso(0);
-    timerRef.current = setInterval(() => {
-      n += 1;
-      if (n >= CICLO.length * VUELTAS) {
-        clearInterval(timerRef.current);
-        setPaso(null);
-      } else {
-        setPaso(n);
-      }
-    }, INTERVALO_MS);
-  };
-
-  const Icono = paso === null ? visual.Icono : CICLO[paso % CICLO.length];
   const etiqueta = emocion ? `Emoción predominante: ${emocion}` : 'Sin emoción registrada todavía';
 
   return (
     <button
       type="button"
-      className={`animo ${paso !== null ? 'girando' : ''}`}
+      className="animo"
       style={{ '--animo-color': visual.color, '--animo-bg': visual.bg }}
-      onClick={alHacerClic}
+      onClick={() => simRef.current?.dispersar()}
       aria-label={etiqueta}
       title={etiqueta}
     >
-      <span className="animo-giro" aria-hidden="true">
-        <span className="animo-forma animo-forma-fuera" />
-        <span className="animo-forma" />
-      </span>
-      {ondas.map((id) => (
-        <span
-          key={id}
-          className="animo-onda"
-          aria-hidden="true"
-          onAnimationEnd={() => setOndas((prev) => prev.filter((o) => o !== id))}
-        />
-      ))}
-      <span className="animo-icono" aria-hidden="true">
-        <Icono size={46} strokeWidth={1.75} />
-      </span>
+      <canvas ref={canvasRef} className="animo-lienzo" aria-hidden="true" />
     </button>
   );
 };

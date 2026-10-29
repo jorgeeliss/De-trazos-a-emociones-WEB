@@ -1,13 +1,13 @@
-/* Icono animado de la emoción predominante (bienvenida del Dashboard).
-   --animo-color y --animo-bg llegan por style con el color de la emoción. */
+/* Icono de moléculas de la emoción predominante (bienvenida del Dashboard).
+   --animo-color y --animo-bg llegan por style con el color de la emoción;
+   el lienzo toma ese color (color: inherit) para pintar las moléculas. */
 .animo {
   position: relative;
   z-index: 1;
-  width: 120px;
-  height: 120px;
+  width: 200px;
+  height: 150px;
+  margin: -14px -12px -14px 0;
   flex-shrink: 0;
-  display: grid;
-  place-items: center;
   padding: 0;
   border: 0;
   background: none;
@@ -16,139 +16,38 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Halo suave detrás de la cara; se desvanece hacia afuera (sin bordes). */
+.animo::before {
+  content: '';
+  position: absolute;
+  inset: 12% 22%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--animo-bg) 0%, transparent 70%);
+  opacity: 0.9;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.3), opacity 0.5s ease;
+}
+
+.animo:hover::before {
+  transform: scale(1.2);
+  opacity: 1;
+}
+
+.animo-lienzo {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .animo:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 4px;
-  border-radius: 50%;
-}
-
-/* Capa que gira al hacer clic (separada del cambio de forma, para que no salte). */
-.animo-giro {
-  position: absolute;
-  inset: 0;
-}
-
-/* Forma orgánica: el contorno cambia todo el tiempo y gira despacio. */
-.animo-forma {
-  position: absolute;
-  inset: 10px;
-  /* Tinte de la emoción sobre la superficie de tarjeta, para que no se vea grisáceo. */
-  background: linear-gradient(var(--animo-bg), var(--animo-bg)), var(--card);
-  border: 1.5px solid color-mix(in srgb, var(--animo-color) 35%, transparent);
-  border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
-  animation: animoForma 9s ease-in-out infinite;
-  transition: scale 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.3), box-shadow 0.45s ease;
-}
-
-/* Segundo contorno, más tenue y a otro ritmo: da la sensación de que cambia de forma. */
-.animo-forma-fuera {
-  inset: 2px;
-  background: none;
-  border-color: color-mix(in srgb, var(--animo-color) 20%, transparent);
-  animation-duration: 13s;
-  animation-direction: reverse;
-}
-
-@keyframes animoForma {
-  0% {
-    border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
-    rotate: 0deg;
-  }
-  25% {
-    border-radius: 63% 37% 41% 59% / 58% 36% 64% 42%;
-  }
-  50% {
-    border-radius: 37% 63% 51% 49% / 37% 65% 35% 63%;
-    rotate: 180deg;
-  }
-  75% {
-    border-radius: 55% 45% 32% 68% / 48% 58% 42% 52%;
-  }
-  100% {
-    border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
-    rotate: 360deg;
-  }
-}
-
-.animo-icono {
-  position: relative;
-  display: grid;
-  place-items: center;
-  transition: scale 0.4s cubic-bezier(0.2, 0.8, 0.3, 1.4);
-}
-
-/* Al pasar el mouse: la forma crece y brilla; la cara se balancea. */
-.animo:hover .animo-forma {
-  scale: 1.08;
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--animo-color) 28%, transparent);
-}
-
-.animo:hover .animo-forma-fuera {
-  scale: 1.14;
-  box-shadow: none;
-}
-
-.animo:hover .animo-icono {
-  scale: 1.06;
-  animation: animoBalanceo 0.7s ease;
-}
-
-@keyframes animoBalanceo {
-  0% { rotate: 0deg; scale: 1; }
-  30% { rotate: -12deg; scale: 1.12; }
-  60% { rotate: 8deg; scale: 1.12; }
-  100% { rotate: 0deg; scale: 1.06; }
-}
-
-/* Al hacer clic: la forma da un giro y la cara late mientras cambia de expresión. */
-.animo.girando .animo-giro {
-  animation: animoGiro 0.9s cubic-bezier(0.3, 0.7, 0.2, 1);
-}
-
-.animo.girando .animo-icono {
-  scale: 1.15;
-}
-
-@keyframes animoGiro {
-  from { rotate: 0deg; }
-  to { rotate: 360deg; }
-}
-
-/* Onda que sale desde la forma al hacer clic. */
-.animo-onda {
-  position: absolute;
-  inset: 10px;
-  border-radius: 50%;
-  border: 2px solid var(--animo-color);
-  pointer-events: none;
-  animation: animoOnda 0.8s ease-out forwards;
-}
-
-@keyframes animoOnda {
-  from {
-    scale: 0.85;
-    opacity: 0.7;
-  }
-  to {
-    scale: 1.75;
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animo-forma,
-  .animo:hover .animo-icono,
-  .animo.girando .animo-giro {
-    animation: none;
-  }
-  .animo-onda {
-    animation-duration: 0.01s;
-  }
+  outline-offset: 2px;
+  border-radius: 16px;
 }
 
 @media (max-width: 600px) {
   .animo {
-    width: 88px;
-    height: 88px;
+    width: 140px;
+    height: 110px;
   }
 }
