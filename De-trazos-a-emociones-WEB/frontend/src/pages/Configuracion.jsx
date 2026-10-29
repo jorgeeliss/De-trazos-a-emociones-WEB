@@ -59,7 +59,6 @@ const Configuracion = () => {
         <BrandHeader />
 
         <h1 className="config-title" data-tour="config">Configuración</h1>
-        <p className="config-sub">Personaliza la apariencia de la aplicación.</p>
 
         <section className="config-section">
           <h2>Tema</h2>

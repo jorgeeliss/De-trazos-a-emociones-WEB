@@ -50,7 +50,6 @@ const Ninos = () => {
         <BrandHeader />
 
         <h1 className="ninos-title" data-tour="ninos">Mis niños</h1>
-        <p className="ninos-sub">Niños registrados a partir de tus análisis con contexto. Toca uno para ver su información.</p>
 
         {cargando ? (
           <div className="ninos-empty">Cargando…</div>

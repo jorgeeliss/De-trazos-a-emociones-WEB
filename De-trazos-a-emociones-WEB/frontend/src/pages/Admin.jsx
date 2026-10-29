@@ -101,7 +101,6 @@ const Admin = () => {
             </div>
             <div>
               <h1>Administración de registros</h1>
-              <p>Aprueba o rechaza las cuentas nuevas</p>
             </div>
           </div>
         </div>

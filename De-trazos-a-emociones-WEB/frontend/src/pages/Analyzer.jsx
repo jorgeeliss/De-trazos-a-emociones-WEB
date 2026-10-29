@@ -61,13 +61,6 @@ const Analyzer = () => {
         <header className="hero">
           <div className="hero-left">
             <h1 className="hero-title">De trazos a <span>emociones</span></h1>
-            <p className="hero-sub">
-              {ninoConocido
-                ? `Analizando un nuevo dibujo de ${formData.nombre}. Revisa la situación y sube el dibujo.`
-                : modo === 'solo'
-                  ? 'Analiza un dibujo de forma rápida. Al final decides si lo guardas y a quién.'
-                  : 'Completa el contexto del niño y sube su dibujo para obtener un análisis emocional personalizado y profundo.'}
-            </p>
           </div>
           <div className="hero-logo" aria-hidden="true">
             <Logo size={82} />

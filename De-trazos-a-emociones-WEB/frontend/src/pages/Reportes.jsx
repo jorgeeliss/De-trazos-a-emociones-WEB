@@ -59,10 +59,6 @@ const Reportes = () => {
         <BrandHeader />
 
         <h1 className="rep-title">Reportes</h1>
-        <p className="rep-sub">
-          Genera un informe consolidado en PDF con todos tus niños: su emoción
-          predominante, la situación actual y la distribución de sus análisis.
-        </p>
 
         {cargando ? (
           <div className="rep-empty">Cargando…</div>
