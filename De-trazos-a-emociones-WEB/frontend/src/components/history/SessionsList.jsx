@@ -1,9 +1,32 @@
+import { useState } from 'react';
 import { Trash2 } from 'lucide-react';
 import './SessionsList.css';
 import { api } from '../../api';
 import AuthImage from '../common/AuthImage';
+import { exportarAnalisis } from '../../utils/exportarPdf';
+
+const slug = (s) =>
+  String(s || 'nino').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
 
 const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect }) => {
+  const [generando, setGenerando] = useState(false);
+
+  const exportar = async () => {
+    if (!sessions.length || generando) return;
+    setGenerando(true);
+    try {
+      await exportarAnalisis({
+        detalle: null,
+        historial: { nombre: activeChildName || 'el niño', lista: sessions },
+        nombreArchivo: `de-trazos-${slug(activeChildName)}.pdf`,
+      });
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setGenerando(false);
+    }
+  };
+
 
   const getEmotionColor = (emotionStr = '') => {
     const lower = emotionStr.toLowerCase();
@@ -46,7 +69,15 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
           <div className="card-label">Registro de sesiones</div>
           <div className="card-title">Todos los análisis de {activeChildName || 'este niño'}</div>
         </div>
-        <button className="btn-outline-small" disabled title="Próximamente" style={{opacity: 0.55, cursor: 'not-allowed'}}>Exportar PDF</button>
+        <button
+          className="btn-outline-small"
+          onClick={exportar}
+          disabled={generando || sessions.length === 0}
+          title={sessions.length === 0 ? 'Sin análisis para exportar' : 'Exportar estos análisis en PDF'}
+          style={generando || sessions.length === 0 ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}
+        >
+          {generando ? 'Generando…' : 'Exportar PDF'}
+        </button>
       </div>
       <div className="sessions-body">
         {sessions.length === 0 ? (
