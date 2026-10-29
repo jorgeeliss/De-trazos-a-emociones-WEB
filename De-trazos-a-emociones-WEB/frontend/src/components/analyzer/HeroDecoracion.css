@@ -48,22 +48,17 @@
   }
 }
 
-/* Onda que se expande desde el punto del clic (misma acción de antes).
-   El trazo es un degradado radial que se desvanece a ambos lados, de modo que,
-   aunque el contenedor lo recorte, no aparece ningún filo recto: no se ve el recuadro. */
+/* Onda que se expande desde el punto del clic, como la original: un anillo de
+   color nítido. Ya no necesita bordes suaves, porque el recorte lo hace el
+   encabezado (.hero) y no la animación, así que no se ve ningún recuadro. */
 .hero-onda {
   position: absolute;
-  width: 18px;
-  height: 18px;
-  margin: -9px 0 0 -9px;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
   border-radius: 50%;
+  border: 2.5px solid currentColor;
   color: var(--accent);
-  background: radial-gradient(
-    circle,
-    transparent 38%,
-    currentColor 50%,
-    transparent 66%
-  );
   transform: scale(0);
   opacity: 0.85;
   pointer-events: none;
