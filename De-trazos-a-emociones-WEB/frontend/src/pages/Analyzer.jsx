@@ -70,7 +70,7 @@ const Analyzer = () => {
           <HeroDecoracion />
         </header>
 
-        {ninoConocido && (
+        {ninoConocido && !isAnalyzing && (
           <div className="nino-activo-bar">
             <div className="nino-activo-info">
               Analizando a <strong>{formData.nombre}</strong>
@@ -83,7 +83,7 @@ const Analyzer = () => {
           </div>
         )}
 
-        {!ninoConocido && (
+        {!ninoConocido && !isAnalyzing && (
           <div className="modo-selector" data-tour="modo">
             <button className={`modo-opt ${modo === 'contexto' ? 'active' : ''}`} onClick={() => cambiarModo('contexto')}>
               Con contexto del niño
