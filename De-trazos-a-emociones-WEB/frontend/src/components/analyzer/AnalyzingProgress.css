@@ -10,7 +10,8 @@
 .analyzing-cancelar {
   display: inline-flex;
   align-items: center;
-  margin-bottom: 16px;
+  flex-shrink: 0;
+  margin-left: auto;
   padding: 5px 13px;
   font-family: 'DM Sans', sans-serif;
   font-size: 12.5px;

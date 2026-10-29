@@ -30,11 +30,6 @@ const AnalyzingProgress = ({ inicio, onCancelar }) => {
 
   return (
     <div className="analyzing-box">
-      {onCancelar && (
-        <button type="button" className="analyzing-cancelar" onClick={onCancelar}>
-          Cancelar
-        </button>
-      )}
       <div className="analyzing-head">
         <div className="analyzing-badge">
           <Sparkles size={18} />
@@ -43,6 +38,11 @@ const AnalyzingProgress = ({ inicio, onCancelar }) => {
           <div className="analyzing-title">Analizando el dibujo</div>
           <div className="analyzing-phase" key={i}>{FASES[i]}…</div>
         </div>
+        {onCancelar && (
+          <button type="button" className="analyzing-cancelar" onClick={onCancelar}>
+            Cancelar
+          </button>
+        )}
       </div>
 
       <div className="analyzing-bar">
