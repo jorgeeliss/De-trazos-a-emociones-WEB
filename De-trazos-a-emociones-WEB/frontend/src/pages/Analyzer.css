@@ -60,6 +60,10 @@
   border-radius: 24px;
   padding: 26px 30px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+  /* El encabezado es el límite: la onda del clic crece y se recorta aquí,
+     contra este recuadro redondeado, no contra la cajita de la animación. */
+  position: relative;
+  overflow: hidden;
 }
 
 .analyzer-wrapper .hero-logo {

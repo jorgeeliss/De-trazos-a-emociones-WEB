@@ -1,19 +1,16 @@
 /* Decoración animada del encabezado del Analyzer:
    orbes flotantes con los colores de la rueda emocional del logo
-   y una onda al hacer clic. Los bordes se difuminan con una máscara
-   y la onda tiene el filo suave, así NO se nota el recuadro que la encierra. */
+   y una onda al hacer clic. La onda NO se recorta aquí: se deja crecer por todo
+   el encabezado y quien la recorta es la propia tarjeta (.hero, con overflow
+   hidden). Así el único límite visible es el recuadro del encabezado, no un
+   recuadro propio de la animación. */
 .hero-deco {
   flex: 1;
   align-self: stretch;
   position: relative;
   min-height: 76px;
   margin-left: 10px;
-  overflow: hidden;
   cursor: pointer;
-  /* Difumina los bordes para que NO se vea el rectángulo que encierra la animación.
-     El overflow contiene la onda, pero al tener el filo suave el recorte no se nota. */
-  -webkit-mask: radial-gradient(ellipse 108% 106% at 50% 50%, #000 28%, transparent 64%);
-          mask: radial-gradient(ellipse 108% 106% at 50% 50%, #000 28%, transparent 64%);
 }
 
 /* El contenedor del orbe hace el flotado (translate). */
