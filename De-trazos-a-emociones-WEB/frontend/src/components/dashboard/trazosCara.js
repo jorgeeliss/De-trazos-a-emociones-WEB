@@ -56,14 +56,15 @@ const trazosDeCara = (cara, { cx, cy, tam }, k) => {
   const escala = tam / 24;
   const ox = cx - tam / 2;
   const oy = cy - tam / 2;
-  const espaciado = 4.2 * k;
+  // Trazos menudos y juntos: casi puntos, con un leve sentido de trazo.
+  const espaciado = 3.1 * k;
   const marcas = [];
   for (const seg of CARAS[cara] || CARAS.neutra) {
     if (seg.punto) {
       // Ojo: un pequeño garabato de tres rayitas cruzadas.
       const x = ox + seg.punto[0] * escala;
       const y = oy + seg.punto[1] * escala;
-      for (const ang of [0.3, 1.4, 2.5]) marcas.push({ x, y, ang, largo: 4.2 * k });
+      for (const ang of [0.3, 1.4, 2.5]) marcas.push({ x, y, ang, largo: 2.6 * k });
       continue;
     }
     const n = Math.max(3, Math.round((largoDe(seg.f) * escala) / espaciado));
@@ -79,7 +80,7 @@ const trazosDeCara = (cara, { cx, cy, tam }, k) => {
         x: ox + x * escala - Math.sin(ang) * corr,
         y: oy + y * escala + Math.cos(ang) * corr,
         ang: ang + azar(-0.15, 0.15),
-        largo: espaciado * azar(1.35, 1.7),
+        largo: espaciado * azar(0.55, 0.9),
       });
     }
   }
@@ -165,7 +166,7 @@ export function crearSimulacion(canvas, {
 
   const crearSueltos = () => {
     const cantidad = Math.max(5, Math.min(40, Math.round(w * h * densidadSueltas)));
-    sueltos = Array.from({ length: cantidad }, () => crearGarabato(posicionAlAzar(), k * 0.8));
+    sueltos = Array.from({ length: cantidad }, () => crearGarabato(posicionAlAzar(), k * 0.6));
   };
 
   const actualizar = (ahora) => {
@@ -228,7 +229,7 @@ export function crearSimulacion(canvas, {
     for (const g of sueltos) pintarGarabato(ctx, g, g.alfa * alfaBorde(g.x, g.y));
 
     // Trazos de la cara, con una segunda pasada fina que imita el crayón.
-    for (const p of trazos) pintarMarca(ctx, p, 2.1 * k, alfaBorde(p.x, p.y) * p.alfa, 0.7 * k);
+    for (const p of trazos) pintarMarca(ctx, p, 1.8 * k, alfaBorde(p.x, p.y) * p.alfa, 0.5 * k);
     ctx.globalAlpha = 1;
   };
 
