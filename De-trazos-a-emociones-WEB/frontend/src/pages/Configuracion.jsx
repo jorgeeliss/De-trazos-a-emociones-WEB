@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon, Check, KeyRound, Eye, EyeOff, HelpCircle, Camera, Repeat, Trash2 } from 'lucide-react';
+import { Sun, Moon, KeyRound, Eye, EyeOff, HelpCircle, Camera, Repeat, Trash2 } from 'lucide-react';
 import BrandHeader from '../components/common/BrandHeader';
 import Sidebar from '../components/layout/Sidebar';
 import ConfirmDialog from '../components/common/ConfirmDialog';
@@ -11,13 +11,6 @@ import PasswordChecklist from '../components/common/PasswordChecklist';
 import { passwordValida } from '../utils/password';
 import './Configuracion.css';
 
-const PALETAS = [
-  { key: 'violeta', nombre: 'Violeta', color: '#8b79f2' },
-  { key: 'teal', nombre: 'Verde azulado', color: '#14b8a6' },
-  { key: 'durazno', nombre: 'Durazno', color: '#f98a6c' },
-  { key: 'oceano', nombre: 'Océano', color: '#60a5fa' },
-];
-
 const leerUsuarioLocal = () => {
   try {
     return JSON.parse(localStorage.getItem('user') || '{}');
@@ -27,7 +20,7 @@ const leerUsuarioLocal = () => {
 };
 
 const Configuracion = () => {
-  const { tema, paleta, setTema, setPaleta } = useTheme();
+  const { tema, setTema } = useTheme();
   const navigate = useNavigate();
   const { start: iniciarRecorrido } = useTour();
 
@@ -124,6 +117,8 @@ const Configuracion = () => {
     }
   };
 
+  const esOscuro = tema === 'dark';
+
   return (
     <div className="config-page">
       <Sidebar />
@@ -133,104 +128,25 @@ const Configuracion = () => {
         <h1 className="config-title" data-tour="config">Configuración</h1>
 
         <section className="config-section">
-          <h2>Tema</h2>
-          <div className="tema-opciones">
-            <button
-              className={`tema-opt ${tema === 'light' ? 'active' : ''}`}
-              onClick={() => setTema('light')}
-            >
-              <Sun size={20} /> Claro
-            </button>
-            <button
-              className={`tema-opt ${tema === 'dark' ? 'active' : ''}`}
-              onClick={() => setTema('dark')}
-            >
-              <Moon size={20} /> Oscuro
-            </button>
+          <div className="cuenta-top">
+            <h2>Cuenta</h2>
+            <label className="tema-switch" title="Cambiar entre tema claro y oscuro">
+              <span className="tema-switch-label">
+                {esOscuro ? <Moon size={16} /> : <Sun size={16} />}
+                {esOscuro ? 'Oscuro' : 'Claro'}
+              </span>
+              <span className="switch">
+                <input
+                  type="checkbox"
+                  checked={esOscuro}
+                  onChange={(e) => setTema(e.target.checked ? 'dark' : 'light')}
+                  aria-label="Tema oscuro"
+                />
+                <span className="switch-slider"></span>
+              </span>
+            </label>
           </div>
-        </section>
 
-        <section className="config-section">
-          <h2>Paleta de color</h2>
-          <div className="paleta-grid">
-            {PALETAS.map((p) => (
-              <button
-                key={p.key}
-                className={`paleta-opt ${paleta === p.key ? 'active' : ''}`}
-                onClick={() => setPaleta(p.key)}
-              >
-                <span className="paleta-swatch" style={{ background: p.color }}>
-                  {paleta === p.key && <Check size={16} />}
-                </span>
-                <span className="paleta-nombre">{p.nombre}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-
-        <section className="config-section">
-          <h2>Cambiar contraseña</h2>
-          <form className="pwd-form" onSubmit={cambiarPassword}>
-            <div className="pwd-field">
-              <input
-                type={tipoPwd}
-                name="actual"
-                className="pwd-input"
-                placeholder="Contraseña actual"
-                value={pwd.actual}
-                onChange={onPwd}
-                required
-                autoComplete="current-password"
-              />
-              <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
-                {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            <div className="pwd-field">
-              <input
-                type={tipoPwd}
-                name="nueva"
-                className="pwd-input"
-                placeholder="Nueva contraseña"
-                value={pwd.nueva}
-                onChange={onPwd}
-                required
-                autoComplete="new-password"
-              />
-              <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
-                {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            <p className="pwd-hint">Debe tener mínimo 8 caracteres, con mayúscula, minúscula, número y un símbolo.</p>
-            <PasswordChecklist password={pwd.nueva} />
-
-            <div className="pwd-field">
-              <input
-                type={tipoPwd}
-                name="confirmar"
-                className="pwd-input"
-                placeholder="Confirmar nueva contraseña"
-                value={pwd.confirmar}
-                onChange={onPwd}
-                required
-                autoComplete="new-password"
-              />
-              <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
-                {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-
-            {pwdMsg && <div className={`pwd-msg ${pwdMsg.tipo}`}>{pwdMsg.texto}</div>}
-            <button type="submit" className="pwd-btn" disabled={guardandoPwd}>
-              <KeyRound size={16} /> {guardandoPwd ? 'Guardando…' : 'Actualizar contraseña'}
-            </button>
-          </form>
-        </section>
-
-        <section className="config-section">
-          <h2>Cuenta</h2>
           <div className="cuenta-foto">
             <span className="cuenta-avatar">
               {fotoUrl ? <img src={fotoUrl} alt="Foto de perfil" /> : iniciales}
@@ -259,6 +175,67 @@ const Configuracion = () => {
               <Trash2 size={16} /> Eliminar cuenta
             </button>
           </div>
+
+          <div className="cuenta-seguridad">
+            <h3>Seguridad · cambiar contraseña</h3>
+            <form className="pwd-form" onSubmit={cambiarPassword}>
+              <div className="pwd-field">
+                <input
+                  type={tipoPwd}
+                  name="actual"
+                  className="pwd-input"
+                  placeholder="Contraseña actual"
+                  value={pwd.actual}
+                  onChange={onPwd}
+                  required
+                  autoComplete="current-password"
+                />
+                <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
+                  {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              <div className="pwd-field">
+                <input
+                  type={tipoPwd}
+                  name="nueva"
+                  className="pwd-input"
+                  placeholder="Nueva contraseña"
+                  value={pwd.nueva}
+                  onChange={onPwd}
+                  required
+                  autoComplete="new-password"
+                />
+                <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
+                  {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              <p className="pwd-hint">Debe tener mínimo 8 caracteres, con mayúscula, minúscula, número y un símbolo.</p>
+              <PasswordChecklist password={pwd.nueva} />
+
+              <div className="pwd-field">
+                <input
+                  type={tipoPwd}
+                  name="confirmar"
+                  className="pwd-input"
+                  placeholder="Confirmar nueva contraseña"
+                  value={pwd.confirmar}
+                  onChange={onPwd}
+                  required
+                  autoComplete="new-password"
+                />
+                <button type="button" className="pwd-eye" onClick={() => setVerPwd((v) => !v)} aria-label={verPwd ? 'Ocultar contraseñas' : 'Mostrar contraseñas'}>
+                  {verPwd ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              {pwdMsg && <div className={`pwd-msg ${pwdMsg.tipo}`}>{pwdMsg.texto}</div>}
+              <button type="submit" className="pwd-btn" disabled={guardandoPwd}>
+                <KeyRound size={16} /> {guardandoPwd ? 'Guardando…' : 'Actualizar contraseña'}
+              </button>
+            </form>
+          </div>
         </section>
 
         <section className="config-section">
@@ -269,7 +246,7 @@ const Configuracion = () => {
         </section>
 
         <p className="config-nota">
-          Tu tema y paleta se guardan en este dispositivo.
+          El tema se guarda en este dispositivo y se conserva al cerrar sesión.
         </p>
       </div>
 
