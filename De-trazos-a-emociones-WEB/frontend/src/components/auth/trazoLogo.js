@@ -48,7 +48,7 @@ const PASO_RELLENO = 70;
 const T_ONDA = T_MARCA - 550; // la onda se traza al final del viaje
 const D_ONDA = 500;
 const D_CRUCE = 300; // el lienzo cede el lugar a la marca real
-const D_DESHACER = 600;
+const D_DESHACER = 700; // dispersión desde el clic antes de volver a formarse
 
 // Curva del viaje: arranca y frena con suavidad (seno), menos mecánica.
 const deslizar = (x) => -(Math.cos(Math.PI * x) - 1) / 2;
@@ -62,8 +62,10 @@ const mezclar = (a, b, p) => ({
 export function crearTrazoLogo(canvas, {
   // Elemento donde el cursor aparta los puntos.
   zona = canvas,
-  // Elemento donde un clic deshace la marca y la vuelve a formar.
+  // Elemento donde un clic deshace la marca y la vuelve a formar, y filtro
+  // para ignorar algunos clics (p. ej. sobre el formulario).
   zonaClic = zona,
+  aceptarClic = () => true,
   // Otros elementos cuyo cambio de tamaño obliga a recalcular posiciones.
   observar = [],
   // Rectángulo (en coordenadas del lienzo) donde los puntos sueltos se ven
@@ -193,19 +195,14 @@ export function crearTrazoLogo(canvas, {
     const o = origen || { x: marca.cx, y: marca.cy };
     const alcance = Math.max(160, marca.tam * 3);
     for (const p of puntos) {
-      // Parten del logo de la marca, donde se veían al desaparecer.
-      [p.x, p.y] = aPx(p.ux, p.uy, marca);
-      const dx = p.x - o.x;
-      const dy = p.y - o.y;
-      const d = Math.hypot(dx, dy) || 1;
-      const cerca = 0.6 + 1.4 * Math.max(0, 1 - d / alcance);
-      const f = azar(2.8, 5.5) * Math.sqrt(k) * cerca;
-      // Algo de abanico alrededor de la dirección, para que se vea un estallido.
-      const giro = azar(-0.5, 0.5);
-      const ux = dx / d;
-      const uy = dy / d;
-      p.vx = (ux * Math.cos(giro) - uy * Math.sin(giro)) * f;
-      p.vy = (ux * Math.sin(giro) + uy * Math.cos(giro)) * f;
+      // Todos los puntos nacen en el punto del clic y se dispersan desde ahí,
+      // en todas direcciones; luego viajan a formar el logo (formar).
+      const ang = Math.random() * TAU;
+      const f = azar(2, 7) * Math.sqrt(k);
+      p.x = o.x + Math.cos(ang) * azar(0, 3);
+      p.y = o.y + Math.sin(ang) * azar(0, 3);
+      p.vx = Math.cos(ang) * f;
+      p.vy = Math.sin(ang) * f;
       p.sale = Infinity;
     }
     // Los puntos sueltos cercanos también se apartan del clic.
@@ -324,11 +321,10 @@ export function crearTrazoLogo(canvas, {
 
     // Puntos del contorno: se atenúan al rellenarse para no ensuciar el color.
     const relleno = deshaciendo ? 0 : Math.min(1, Math.max(0, (t - T_RELLENO) / D_RELLENO));
-    // Al estallar, los puntos salen del tamaño del logo pequeño y crecen
+    // Al estallar, los puntos salen pequeños del punto del clic y crecen
     // mientras se dispersan (si no, se ven como un bulto).
-    const escalaMarca = Math.max(0.35, marca.tam / grande.tam);
     const tamPunto = deshaciendo
-      ? escalaMarca + (1 - escalaMarca) * Math.min(1, (ahora - deshaciendo) / D_DESHACER)
+      ? 0.35 + 0.65 * Math.min(1, (ahora - deshaciendo) / D_DESHACER)
       : Math.max(0.35, escalaPuntos);
     for (const p of puntos) {
       ctx.globalAlpha = p.alfa * alfaBorde(p.x, p.y) * (1 - 0.8 * relleno) * cede;
@@ -377,7 +373,7 @@ export function crearTrazoLogo(canvas, {
   // Clic: si la marca ya está formada, estalla desde el punto del clic y se
   // vuelve a formar.
   const alClic = (e) => {
-    if (!marcaVisible || reducido) return;
+    if (!marcaVisible || reducido || !aceptarClic(e)) return;
     const r = canvas.getBoundingClientRect();
     deshacer({ x: e.clientX - r.left, y: e.clientY - r.top });
   };

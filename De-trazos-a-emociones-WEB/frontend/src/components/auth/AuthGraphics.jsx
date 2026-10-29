@@ -70,9 +70,12 @@ const AuthGraphics = ({ alTerminar = () => {} }) => {
     };
 
     const sim = crearTrazoLogo(canvas, {
-      // El cursor aparta puntos en toda la página; el clic solo en el panel del logo.
+      // El cursor aparta puntos en toda la página. Un clic en cualquier parte del
+      // fondo (no sobre el formulario ni sus controles) dispersa los puntos
+      // desde ahí y vuelven a formar el logo.
       zona: contenedor,
-      zonaClic: panel,
+      zonaClic: contenedor,
+      aceptarClic: (e) => !e.target.closest('.form-container, a, button, input, select, textarea, label'),
       observar: [panel],
       tenue,
       ubicar,

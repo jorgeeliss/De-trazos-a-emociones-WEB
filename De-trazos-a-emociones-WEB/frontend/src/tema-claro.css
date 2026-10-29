@@ -479,6 +479,33 @@
     radial-gradient(45% 55% at 76% 45%, rgba(109, 92, 224, 0.05) 0%, transparent 70%),
     linear-gradient(180deg, #f8f7fe 0%, #eff1f8 100%);
 }
+/* Formulario de vidrio en claro: más luminoso, con borde casi blanco. */
+@media (min-width: 901px) {
+  :root[data-theme="light"] .auth-container .right-panel .form-container {
+    background: linear-gradient(
+      150deg,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.45) 45%,
+      rgba(255, 255, 255, 0.6) 100%
+    );
+    border-color: rgba(255, 255, 255, 0.85);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.9),
+      0 0 0 1px rgba(109, 92, 224, 0.06),
+      0 24px 60px -20px rgba(31, 36, 48, 0.22);
+  }
+  :root[data-theme="light"] .auth-container .right-panel .form-container::before {
+    background: radial-gradient(120% 60% at 15% -10%, rgba(255, 255, 255, 0.7) 0%, transparent 55%);
+  }
+  :root[data-theme="light"] .auth-container .form-container .input-wrapper input,
+  :root[data-theme="light"] .auth-container .form-container .role-select {
+    background-color: rgba(255, 255, 255, 0.75);
+    border-color: rgba(17, 24, 39, 0.1);
+  }
+  :root[data-theme="light"] .auth-container .form-container .form-footer {
+    border-top-color: rgba(17, 24, 39, 0.08);
+  }
+}
 /* Campos en blanco: resaltan sobre el fondo lila suave de toda la página. */
 :root[data-theme="light"] .auth-container .input-wrapper input,
 :root[data-theme="light"] .auth-container .role-select {

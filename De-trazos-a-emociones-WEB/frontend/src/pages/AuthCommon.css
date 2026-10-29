@@ -46,13 +46,62 @@
   overflow-x: hidden;
 }
 
-/* En pantallas grandes el formulario tiene ancho fijo: mientras su panel se
-   abre, lo va descubriendo sin reacomodar el texto. */
+/* En pantallas grandes el formulario es una tarjeta de vidrio ("liquid
+   glass"): translúcida, desenfoca los puntos de fondo y tiene borde luminoso.
+   Ancho fijo: mientras su panel se abre, la va descubriendo sin reacomodar el
+   texto. */
 @media (min-width: 901px) {
   .auth-container .right-panel .form-container {
+    position: relative;
     flex-shrink: 0;
-    min-width: 400px;
+    min-width: 440px;
+    max-width: 440px;
+    padding: 2.4rem 2.2rem 2rem;
+    border-radius: 28px;
+    background: linear-gradient(
+      150deg,
+      rgba(255, 255, 255, 0.11) 0%,
+      rgba(255, 255, 255, 0.04) 45%,
+      rgba(255, 255, 255, 0.07) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(22px) saturate(170%);
+    -webkit-backdrop-filter: blur(22px) saturate(170%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.05),
+      0 24px 60px -18px rgba(0, 0, 0, 0.55);
   }
+
+  /* Brillo especular en la esquina superior, como la luz sobre el vidrio. */
+  .auth-container .right-panel .form-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(120% 60% at 15% -10%, rgba(255, 255, 255, 0.16) 0%, transparent 55%);
+    pointer-events: none;
+  }
+
+  .auth-container .right-panel.listo .form-container {
+    animation: vidrioEntrada 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  }
+
+  /* Campos translúcidos, integrados al vidrio. */
+  .auth-container .form-container .input-wrapper input,
+  .auth-container .form-container .role-select {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+
+  .auth-container .form-container .form-footer {
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+@keyframes vidrioEntrada {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to { opacity: 1; transform: none; }
 }
 
 .auth-container.intro .right-panel {
@@ -269,6 +318,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .auth-container .right-panel.listo .form-container,
   .auth-container .right-panel.listo .form-container > *,
   .auth-container .right-panel.listo .form-container form > * {
     animation: none;
