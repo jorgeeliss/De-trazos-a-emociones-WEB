@@ -88,7 +88,7 @@ const Dashboard = () => {
         <div className="welcome" data-tour="dash">
           <div className="welcome-left">
             <div className="welcome-greeting">
-              👋 Hola, {nombreUsuario}
+              Hola, {nombreUsuario}
             </div>
             <div className="welcome-title">
               ¿Cómo está <span>{selected?.nombre && selected.nombre !== 'Sin nombre' ? selected.nombre : 'tu niño/a'}</span> hoy?
