@@ -8,6 +8,7 @@ import AnalyzerSavePanel from '../components/analyzer/AnalyzerSavePanel';
 import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 import { useTour } from '../context/TourContext';
 import Logo from '../components/common/Logo';
+import HeroDecoracion from '../components/analyzer/HeroDecoracion';
 
 const STYLES = [
   { bg: '#e0f2fe', color: '#1e40af', dot: '#93c5fd' },
@@ -66,6 +67,7 @@ const Analyzer = () => {
             <div className="hero-name">De trazos a emociones</div>
             <div className="hero-tag">Psicología infantil · IA</div>
           </div>
+          <HeroDecoracion />
         </header>
 
         {ninoConocido && (
