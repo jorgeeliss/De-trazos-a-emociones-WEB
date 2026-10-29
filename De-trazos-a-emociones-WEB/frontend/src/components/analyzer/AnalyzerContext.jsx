@@ -2,7 +2,7 @@ import { ArrowRight } from 'lucide-react';
 import './AnalyzerContext.css';
 import { textoEdad } from '../../utils/emociones';
 
-const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setStep, ninoConocido }) => {
+const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, onContinuar, ninoConocido }) => {
   return (
     <div id="screen-1" className="screen">
       {ninoConocido ? (
@@ -145,7 +145,7 @@ const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, setSt
         </div>
       </div>
 
-      <button className="btn-next" onClick={() => setStep(2)} style={{width: '100%'}}>
+      <button className="btn-next" onClick={onContinuar} style={{width: '100%'}}>
         Continuar al dibujo
         <ArrowRight size={18} />
       </button>

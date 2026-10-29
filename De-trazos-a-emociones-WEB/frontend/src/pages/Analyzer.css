@@ -87,6 +87,69 @@
   margin-top: 5px;
 }
 
+/* Aviso: se pasó a "Solo dibujo" por continuar sin contexto. */
+.analyzer-wrapper .aviso-modo {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 1.25rem;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--accent-dim);
+  border: 1px solid var(--border2);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.analyzer-wrapper .aviso-modo-icon {
+  flex-shrink: 0;
+  color: var(--accent);
+  margin-top: 1px;
+}
+
+.analyzer-wrapper .aviso-modo span {
+  flex: 1;
+  color: var(--muted);
+}
+
+.analyzer-wrapper .aviso-modo strong {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.analyzer-wrapper .aviso-modo-link {
+  padding: 0;
+  background: none;
+  border: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.analyzer-wrapper .aviso-modo-cerrar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin: -2px -2px 0 0;
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--muted);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.analyzer-wrapper .aviso-modo-cerrar:hover {
+  color: var(--text);
+  background: var(--sunken);
+}
+
 @media (max-width: 600px) {
   .analyzer-wrapper .hero {
     flex-direction: column;

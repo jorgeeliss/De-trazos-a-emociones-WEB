@@ -1,4 +1,5 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { AlertCircle, X } from 'lucide-react';
 import './Analyzer.css';
 import Sidebar from '../components/layout/Sidebar';
 import AnalyzerContext from '../components/analyzer/AnalyzerContext';
@@ -17,6 +18,13 @@ const STYLES = [
   { bg: '#e0f2fe', color: '#1e40af', dot: '#7dd3fc' },
   { bg: '#eff6ff', color: '#2563eb', dot: '#93c5fd' },
   { bg: '#dbeafe', color: '#1e40af', dot: '#2563eb' },
+];
+
+// Campos de contexto del niño; si todos están vacíos, "Con contexto" no aporta
+// nada y el análisis equivaldría a "Solo dibujo".
+const CAMPOS_CONTEXTO = [
+  'nombre', 'fecha_nacimiento', 'genero', 'situacion_actual', 'comportamiento',
+  'diagnostico_previo', 'dibujo_espontaneo', 'comento_mientras', 'tiempo_dibujo',
 ];
 
 const Analyzer = () => {
@@ -53,6 +61,22 @@ const Analyzer = () => {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  // Aviso cuando se pasa a "Solo dibujo" por continuar sin escribir contexto.
+  const [avisoSinContexto, setAvisoSinContexto] = useState(false);
+
+  // Al continuar desde el formulario de contexto: si no hay ningún dato escrito,
+  // se cambia a "Solo dibujo" y se avisa; si hay algún dato, se sigue con contexto.
+  const continuarContexto = () => {
+    const hayContexto = CAMPOS_CONTEXTO.some((k) => String(formData[k] || '').trim() !== '');
+    if (hayContexto) {
+      setAvisoSinContexto(false);
+      setStep(2);
+    } else {
+      setAvisoSinContexto(true);
+      cambiarModo('solo');
+    }
+  };
+
   return (
     <div className="analyzer-wrapper">
       <Sidebar active="app" />
@@ -85,10 +109,10 @@ const Analyzer = () => {
 
         {!ninoConocido && !isAnalyzing && (
           <div className="modo-selector" data-tour="modo">
-            <button className={`modo-opt ${modo === 'contexto' ? 'active' : ''}`} onClick={() => cambiarModo('contexto')}>
+            <button className={`modo-opt ${modo === 'contexto' ? 'active' : ''}`} onClick={() => { setAvisoSinContexto(false); cambiarModo('contexto'); }}>
               Con contexto del niño
             </button>
-            <button className={`modo-opt ${modo === 'solo' ? 'active' : ''}`} onClick={() => cambiarModo('solo')}>
+            <button className={`modo-opt ${modo === 'solo' ? 'active' : ''}`} onClick={() => { setAvisoSinContexto(false); cambiarModo('solo'); }}>
               Solo dibujo
             </button>
           </div>
@@ -112,12 +136,28 @@ const Analyzer = () => {
           </div>
         </div>
 
+        {avisoSinContexto && step === 2 && (
+          <div className="aviso-modo">
+            <AlertCircle size={16} className="aviso-modo-icon" />
+            <span>
+              No agregaste datos de contexto, así que el análisis se hará como <strong>Solo dibujo</strong>. Puedes{' '}
+              <button type="button" className="aviso-modo-link" onClick={() => { setAvisoSinContexto(false); cambiarModo('contexto'); }}>
+                agregar contexto
+              </button>{' '}
+              si lo prefieres.
+            </span>
+            <button type="button" className="aviso-modo-cerrar" onClick={() => setAvisoSinContexto(false)} aria-label="Cerrar aviso">
+              <X size={15} />
+            </button>
+          </div>
+        )}
+
         {step === 1 && (
           <AnalyzerContext
             formData={formData}
             handleInputChange={handleInputChange}
             handleRadioChange={handleRadioChange}
-            setStep={setStep}
+            onContinuar={continuarContexto}
             ninoConocido={ninoConocido}
           />
         )}
