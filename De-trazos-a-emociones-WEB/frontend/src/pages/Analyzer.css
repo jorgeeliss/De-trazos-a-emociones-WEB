@@ -44,9 +44,8 @@
 .analyzer-wrapper .container {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 2rem 5rem;
+  padding: 32px 40px 80px;
+  animation: fadeUp 0.5s ease both;
 }
 
 /* HEADER */
@@ -61,7 +60,6 @@
   padding: 26px 30px;
   margin-bottom: 1.5rem;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
-  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .analyzer-wrapper .hero-left {
@@ -242,18 +240,15 @@
 .analyzer-wrapper .steps {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0;
-  margin-bottom: 2rem;
-  animation: fadeUp 0.8s 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  margin: 0 0 2rem;
   background: var(--card);
   backdrop-filter: blur(10px);
   padding: 6px 12px;
   border-radius: 999px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   width: max-content;
-  margin-left: auto;
-  margin-right: auto;
   border: 1px solid var(--border);
 }
 

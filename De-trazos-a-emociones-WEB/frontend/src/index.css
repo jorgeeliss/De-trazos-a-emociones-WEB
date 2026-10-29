@@ -142,3 +142,9 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+/* Animación de entrada compartida por todas las páginas. */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
