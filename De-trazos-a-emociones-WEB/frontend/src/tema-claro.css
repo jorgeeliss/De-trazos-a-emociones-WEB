@@ -258,12 +258,6 @@
   background: var(--teal);
   box-shadow: none;
 }
-:root[data-theme="light"] .intensity-fill.low {
-  background: var(--blue);
-}
-:root[data-theme="light"] .intensity-fill.medio {
-  background: var(--accent);
-}
 :root[data-theme="light"] .analysis-notice,
 :root[data-theme="light"] .adm-sincontexto {
   background: var(--t-warn-bg);

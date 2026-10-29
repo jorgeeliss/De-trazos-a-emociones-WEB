@@ -214,9 +214,11 @@ export function crearSimulacion(canvas, {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
-    // Halo suave detrás de la cara.
+    // Halo suave detrás de la cara. Se apaga antes de tocar los bordes del
+    // lienzo: si no, el banner lo corta y queda una franja de color abajo.
     if (rgb) {
-      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, tam * 0.85);
+      const radio = Math.max(10, Math.min(tam * 0.85, cy - 4, h - cy - 4, w - cx - 4));
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, radio);
       g.addColorStop(0, `rgba(${rgb}, 0.14)`);
       g.addColorStop(1, `rgba(${rgb}, 0)`);
       ctx.globalAlpha = 1;

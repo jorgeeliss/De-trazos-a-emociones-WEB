@@ -75,6 +75,10 @@
   --emo-ansiedad-bg: rgba(251, 146, 60, 0.15);
   --emo-neutra: #94a3b8;
   --emo-neutra-bg: rgba(148, 163, 184, 0.15);
+  /* Las barras mezclan su color con este gris (de luminosidad parecida) para
+     verse menos saturadas sin oscurecerse (un ámbar oscurecido se ve marrón). */
+  --barra-mezcla: #c4c1d8;
+  --barra-pct: 55%; /* cuánto color de la emoción lleva la barra */
   /* Intensidades */
   --int-alta: #f87171;
   --int-media: #fb923c;
@@ -150,6 +154,8 @@
   --emo-ansiedad-bg: rgba(234, 88, 12, 0.1);
   --emo-neutra: #64748b;
   --emo-neutra-bg: rgba(100, 116, 139, 0.12);
+  --barra-mezcla: #d8dbe3;
+  --barra-pct: 45%;
   --int-alta: #dc2626;
   --int-media: #ea580c;
   --int-baja: #16a34a;

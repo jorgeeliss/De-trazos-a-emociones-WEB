@@ -75,7 +75,7 @@ const SummaryCard = ({ sessions = [], dotsHeight = ['0px', '0px', '0px', '0px', 
               </div>
             </div>
             <div className="s-bar-wrap">
-              <div className="s-bar" style={{width: animatedWidths[i] || '0%', background: item.color, boxShadow: `0 0 10px ${item.bg}`, transition: 'width 1s cubic-bezier(0.16, 1, 0.3, 1)'}}></div>
+              <div className="s-bar" style={{width: animatedWidths[i] || '0%', background: `color-mix(in srgb, ${item.color} var(--barra-pct), var(--barra-mezcla))`, transition: 'width 1s cubic-bezier(0.16, 1, 0.3, 1)'}}></div>
             </div>
           </div>
         ))}
