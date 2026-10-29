@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, Building2, CheckCircle, Clock } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
+import Logo from '../components/common/Logo';
 import './AuthCommon.css';
 import './Register.css';
 import { api } from '../api';
@@ -62,12 +63,7 @@ const Register = () => {
           
           <div className="brand">
             <div className="brand-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-                <line x1="9" y1="9" x2="9.01" y2="9"/>
-                <line x1="15" y1="9" x2="15.01" y2="9"/>
-              </svg>
+              <Logo size={24} />
             </div>
             <div className="brand-text">
               <h2>De trazos a emociones</h2>

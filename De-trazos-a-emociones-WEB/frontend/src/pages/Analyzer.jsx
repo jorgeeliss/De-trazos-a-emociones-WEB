@@ -7,6 +7,7 @@ import AnalyzerResult from '../components/analyzer/AnalyzerResult';
 import AnalyzerSavePanel from '../components/analyzer/AnalyzerSavePanel';
 import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 import { useTour } from '../context/TourContext';
+import Logo from '../components/common/Logo';
 
 const STYLES = [
   { bg: '#e0f2fe', color: '#1e40af', dot: '#93c5fd' },
@@ -69,18 +70,7 @@ const Analyzer = () => {
             </p>
           </div>
           <div className="hero-logo" aria-hidden="true">
-            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-              {/* hoja */}
-              <rect x="9" y="7" width="23" height="33" rx="3" />
-              {/* línea que se "dibuja" */}
-              <path className="dp-line" d="M14 31c2.5-4.5 5.5 2.5 8-0.5s4.5-3 6-1" />
-              {/* lápiz */}
-              <g className="dp-pencil">
-                <path d="M29 20 37 12" />
-                <path d="M37 12l2.2-2.2a1.4 1.4 0 0 1 2 2L41 14z" fill="currentColor" stroke="none" />
-                <path d="M29 20l-1.4 3.4 3.4-1.4z" fill="currentColor" stroke="none" />
-              </g>
-            </svg>
+            <Logo size={46} />
           </div>
         </header>
 

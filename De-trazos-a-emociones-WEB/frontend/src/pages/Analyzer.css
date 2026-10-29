@@ -44,6 +44,7 @@
 .analyzer-wrapper .container {
   position: relative;
   z-index: 1;
+  max-width: 860px;
   padding: 32px 40px 80px;
   animation: fadeUp 0.5s ease both;
 }
@@ -116,31 +117,9 @@
   height: 46px;
 }
 
-/* La línea se "dibuja" y el lápiz la recorre, en bucle. */
-.analyzer-wrapper .hero-logo .dp-line {
-  stroke-dasharray: 34;
-  animation: dpDraw 3s ease-in-out infinite;
-}
-.analyzer-wrapper .hero-logo .dp-pencil {
-  animation: dpMove 3s ease-in-out infinite;
-}
-
 @keyframes heroFloat {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
-}
-@keyframes dpDraw {
-  0% { stroke-dashoffset: 34; opacity: 0; }
-  12% { opacity: 1; }
-  55% { stroke-dashoffset: 0; opacity: 1; }
-  90% { stroke-dashoffset: 0; opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 0; }
-}
-@keyframes dpMove {
-  0% { transform: translate(-7px, 4px); }
-  55% { transform: translate(0, 0); }
-  90% { transform: translate(0, 0); }
-  100% { transform: translate(0, 0); }
 }
 
 @media (max-width: 600px) {
