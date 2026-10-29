@@ -185,3 +185,27 @@
   border-top: 1px solid var(--border);
   padding-top: 12px;
 }
+
+/* Ícono animado del encabezado de "Actividades sugeridas". */
+.act-spark {
+  color: var(--accent);
+  animation: actSpark 2.4s ease-in-out infinite;
+}
+
+@keyframes actSpark {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.18) rotate(12deg);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .act-spark {
+    animation: none;
+  }
+}

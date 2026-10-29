@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import './ActivitiesSection.css';
 import { emocionPredominante } from '../../utils/emociones';
 import { actividadesPara } from '../../data/actividades';
@@ -20,7 +20,7 @@ const ActivitiesSection = ({ child }) => {
           <div className="act-title">Actividades sugeridas</div>
           <div className="act-subtitle">Para hacer con {nombre} esta semana · toca una para ver por qué</div>
         </div>
-        <span style={{ fontSize: '24px', animation: 'float 3s infinite ease-in-out alternate' }}>✨</span>
+        <Sparkles className="act-spark" size={22} />
       </div>
       <div className="act-body">
         {actividades.map((act, i) => (

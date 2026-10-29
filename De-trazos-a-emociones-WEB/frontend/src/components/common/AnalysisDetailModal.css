@@ -252,3 +252,17 @@
   border-radius: 10px;
   object-fit: contain;
 }
+
+.adm-image-missing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px dashed var(--border2);
+  background: var(--sunken);
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.5;
+}

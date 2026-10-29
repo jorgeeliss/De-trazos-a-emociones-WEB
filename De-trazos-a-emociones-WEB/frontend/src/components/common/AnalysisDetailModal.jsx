@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, ZoomIn, RefreshCw, FileDown, Undo2 } from 'lucide-react';
+import { X, ZoomIn, RefreshCw, FileDown, Undo2, ImageOff } from 'lucide-react';
 import './AnalysisDetailModal.css';
 import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
 import { api } from '../../api';
@@ -12,6 +12,7 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
   const [zoom, setZoom] = useState(false);
   const [exportar, setExportar] = useState(false);
   const [imgUrl, setImgUrl] = useState(null);
+  const [imgError, setImgError] = useState(false);
   const [resultadoLocal, setResultadoLocal] = useState(null);
   const [yaReanalizado, setYaReanalizado] = useState(false);
   const [reanalizando, setReanalizando] = useState(false);
@@ -30,13 +31,14 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
         const res = await fetch(`${API_URL}/analisis/${analisisId}/imagen`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok || cancelado) return;
+        if (cancelado) return;
+        if (!res.ok) { setImgError(true); return; }
         const blob = await res.blob();
         if (cancelado) return;
         objectUrl = URL.createObjectURL(blob);
         setImgUrl(objectUrl);
       } catch {
-        /* sin imagen */
+        if (!cancelado) setImgError(true);
       }
     };
     if (analisisId && tieneImagen) cargar();
@@ -122,6 +124,12 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
           <div className="adm-image-wrap" onClick={() => setZoom(true)} title="Ampliar dibujo">
             <img src={imgUrl} alt="Dibujo analizado" className="adm-image" />
             <div className="adm-zoom-hint"><ZoomIn size={14} /> Ampliar</div>
+          </div>
+        )}
+        {!imgUrl && tieneImagen && imgError && (
+          <div className="adm-image-missing">
+            <ImageOff size={22} />
+            <span>La imagen de este dibujo no está disponible en este servidor.</span>
           </div>
         )}
 
