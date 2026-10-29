@@ -27,6 +27,7 @@ const Admin = () => {
   const [procesando, setProcesando] = useState(null);
   const [porBorrar, setPorBorrar] = useState(null);
   const [guardandoGestion, setGuardandoGestion] = useState(null);
+  const [cambioRol, setCambioRol] = useState(null);
   const miId = leerUsuario().id;
 
   const actualizar = async (u, cambios) => {
@@ -111,6 +112,8 @@ const Admin = () => {
     }
   };
 
+  const visibles = usuarios.filter((u) => u._id !== miId);
+
   return (
     <div className="admin-page">
       <Sidebar />
@@ -149,7 +152,7 @@ const Admin = () => {
 
         {cargando ? (
           <div className="admin-empty">Cargando…</div>
-        ) : usuarios.length === 0 ? (
+        ) : visibles.length === 0 ? (
           <div className="admin-empty">
             <Inbox size={40} />
             <p>
@@ -164,7 +167,7 @@ const Admin = () => {
           </div>
         ) : (
           <div className="admin-list">
-            {usuarios.map((u) => (
+            {visibles.map((u) => (
               <div key={u._id} className="admin-card">
                 <div className="admin-card-main">
                   <div className="admin-card-name">
@@ -214,7 +217,7 @@ const Admin = () => {
                     <select
                       value={u.rol}
                       disabled={guardandoGestion === u._id}
-                      onChange={(e) => actualizar(u, { rol: e.target.value })}
+                      onChange={(e) => setCambioRol({ u, rol: e.target.value })}
                     >
                       <option value="padre">Padre / Madre</option>
                       <option value="psicologo">Psicólogo(a)</option>
@@ -265,6 +268,21 @@ const Admin = () => {
         cargando={procesando === porBorrar?._id}
         onConfirmar={confirmarEliminar}
         onCancelar={() => setPorBorrar(null)}
+      />
+
+      <ConfirmDialog
+        abierto={!!cambioRol}
+        titulo="Cambiar rol"
+        mensaje={cambioRol ? `¿Cambiar el rol de ${cambioRol.u.nombre} ${cambioRol.u.apellido} a "${ROL_LABEL[cambioRol.rol] || cambioRol.rol}"?` : ''}
+        detalle="El usuario verá sus permisos y herramientas según el nuevo rol."
+        textoConfirmar="Cambiar rol"
+        cargando={cambioRol ? guardandoGestion === cambioRol.u._id : false}
+        onConfirmar={async () => {
+          const c = cambioRol;
+          await actualizar(c.u, { rol: c.rol });
+          setCambioRol(null);
+        }}
+        onCancelar={() => setCambioRol(null)}
       />
     </div>
   );

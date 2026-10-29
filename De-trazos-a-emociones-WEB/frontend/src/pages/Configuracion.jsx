@@ -19,6 +19,12 @@ const leerUsuarioLocal = () => {
   }
 };
 
+const ROL_LABEL = {
+  padre: 'Padre / Madre',
+  psicologo: 'Psicólogo(a)',
+  profesor: 'Profesor(a)',
+};
+
 const Configuracion = () => {
   const { tema, setTema } = useTheme();
   const navigate = useNavigate();
@@ -32,7 +38,7 @@ const Configuracion = () => {
 
   // Cuenta: foto de perfil, cambiar de cuenta y eliminar cuenta.
   const fileRef = useRef(null);
-  const [perfil] = useState(leerUsuarioLocal);
+  const [perfil, setPerfil] = useState(leerUsuarioLocal);
   const [fotoUrl, setFotoUrl] = useState(null);
   const [recargaFoto, setRecargaFoto] = useState(0);
   const [subiendo, setSubiendo] = useState(false);
@@ -55,6 +61,20 @@ const Configuracion = () => {
       if (objetoUrl) URL.revokeObjectURL(objetoUrl);
     };
   }, [recargaFoto]);
+
+  // Datos frescos del perfil (rol y permisos) para mostrarlos en la cuenta.
+  useEffect(() => {
+    let activo = true;
+    api
+      .getPerfil()
+      .then((p) => {
+        if (activo) setPerfil((prev) => ({ ...prev, ...p }));
+      })
+      .catch(() => {});
+    return () => {
+      activo = false;
+    };
+  }, []);
 
   const iniciales =
     ((perfil.nombre?.[0] || '') + (perfil.apellido?.[0] || '')).toUpperCase() || 'U';
@@ -154,6 +174,18 @@ const Configuracion = () => {
             <div className="cuenta-foto-info">
               <div className="cuenta-nombre">{perfil.nombre} {perfil.apellido || ''}</div>
               <div className="cuenta-email">{perfil.email}</div>
+              <div className="cuenta-chips">
+                <span className="cuenta-chip">{ROL_LABEL[perfil.rol] || perfil.rol || 'Sin rol'}</span>
+                {perfil.esAdmin ? (
+                  <span className="cuenta-chip admin">Administrador</span>
+                ) : (
+                  <>
+                    {perfil.permisos?.conContexto && <span className="cuenta-chip">Análisis con contexto</span>}
+                    {perfil.permisos?.descargarPdf && <span className="cuenta-chip">Descargar PDF</span>}
+                    {!perfil.permisos?.conContexto && <span className="cuenta-chip">Solo dibujos sueltos</span>}
+                  </>
+                )}
+              </div>
             </div>
             <input
               type="file"

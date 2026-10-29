@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, Building2, CheckCircle, Clock } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, CheckCircle, Clock } from 'lucide-react';
 import AuthGraphics from '../components/auth/AuthGraphics';
 import Logo from '../components/common/Logo';
 import './AuthCommon.css';
@@ -18,8 +18,7 @@ const Register = () => {
     apellido: '',
     email: '',
     password: '',
-    rol: '',
-    institucion: ''
+    rol: ''
   });
 
   const handleChange = (e) => {
@@ -200,22 +199,6 @@ const Register = () => {
                   Profesor(a)
                 </option>
               </select>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="institucion">INSTITUCIÓN O ENTIDAD</label>
-              <div className="input-wrapper">
-                <div className="input-icon">
-                  <Building2 size={20} />
-                </div>
-                <input
-                  type="text"
-                  id="institucion"
-                  placeholder="Colegio, consultorio o entidad (si aplica)"
-                  value={formData.institucion}
-                  onChange={handleChange}
-                />
               </div>
             </div>
 

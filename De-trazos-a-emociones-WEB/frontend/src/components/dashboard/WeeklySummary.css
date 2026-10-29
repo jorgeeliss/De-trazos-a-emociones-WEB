@@ -94,11 +94,14 @@
   display: flex;
   gap: 8px;
   align-items: flex-end;
+  justify-content: flex-start;
   margin-bottom: 20px;
 }
 
 .day-col {
-  flex: 1;
+  /* Ancho fijo: con pocos análisis la barra NO ocupa todo el espacio. */
+  flex: 0 1 56px;
+  max-width: 72px;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -7,18 +7,19 @@ export function emotionVisual(emocion = '') {
     return { emoji: '😟', color: '#f87171', bg: 'rgba(248,113,113,0.15)' };
   if (e.includes('tristeza') || e.includes('miedo') || e.includes('melancolía') || e.includes('soledad'))
     return { emoji: '😔', color: '#60a5fa', bg: 'rgba(96,165,250,0.15)' };
-  if (e.includes('alegría') || e.includes('alegria') || e.includes('felicidad') || e.includes('euforia') || e.includes('entusiasmo') || e.includes('amor'))
+  if (e.includes('alegr') || e.includes('felic') || e.includes('feliz') || e.includes('content') || e.includes('euforia') || e.includes('entusiasmo') || e.includes('amor'))
     return { emoji: '😊', color: '#2dd4bf', bg: 'rgba(45,212,191,0.15)' };
   if (e.includes('calma') || e.includes('tranquilidad') || e.includes('paz'))
     return { emoji: '😌', color: '#a89ee0', bg: 'rgba(168,158,224,0.15)' };
-  return { emoji: '🙂', color: '#fbbf24', bg: 'rgba(251,191,36,0.15)' };
+  // Respaldo neutro (gris azulado), para no caer en un ámbar que se ve marrón.
+  return { emoji: '🙂', color: '#94a3b8', bg: 'rgba(148,163,184,0.15)' };
 }
 
 export function intensityInfo(intensidad = '') {
   const i = String(intensidad).toLowerCase();
   if (i.includes('alta') || i.includes('alto')) return { label: 'alta', color: '#f87171', valor: 3 };
   if (i.includes('baja') || i.includes('bajo') || i.includes('leve')) return { label: 'baja', color: '#4ade80', valor: 1 };
-  return { label: 'media', color: '#fbbf24', valor: 2 };
+  return { label: 'media', color: '#fb923c', valor: 2 };
 }
 
 // Emociones consideradas negativas, para reglas de alerta orientativas.

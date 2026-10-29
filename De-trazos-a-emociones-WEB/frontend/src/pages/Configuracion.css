@@ -402,3 +402,25 @@
   color: var(--text);
   margin: 0 0 1rem;
 }
+
+/* Chips de rol y permisos del propio usuario */
+.cuenta-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.cuenta-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+.cuenta-chip.admin {
+  background: rgba(45, 212, 191, 0.14);
+  color: var(--teal);
+}
