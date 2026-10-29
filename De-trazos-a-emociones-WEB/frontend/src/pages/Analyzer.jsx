@@ -10,6 +10,7 @@ import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 import { useTour } from '../context/TourContext';
 import Logo from '../components/common/Logo';
 import HeroDecoracion from '../components/analyzer/HeroDecoracion';
+import { puedeContexto } from '../utils/permisos';
 
 const STYLES = [
   { bg: '#e0f2fe', color: '#1e40af', dot: '#93c5fd' },
@@ -41,12 +42,16 @@ const Analyzer = () => {
     guardarIndependiente, asignarANino, noGuardar, resetAll, setNotificacion,
   } = useAnalisisSesion();
 
+  // Solo quien tiene permiso puede analizar CON contexto; el resto, solo dibujo.
+  const conContexto = puedeContexto();
+
   // Al entrar al Analyzer: refresca la lista de niños, limpia el aviso pendiente
   // y lanza el recorrido guiado la primera vez (o si se pidió desde Configuración).
   useEffect(() => {
     const t = setTimeout(() => {
       cargarNinos();
       setNotificacion(null);
+      if (!puedeContexto()) cambiarModo('solo');
       try {
         if (localStorage.getItem('tutorial_forzar') === '1' || localStorage.getItem('tutorial_visto') !== '1') {
           iniciarTour();
@@ -107,7 +112,7 @@ const Analyzer = () => {
           </div>
         )}
 
-        {!ninoConocido && !isAnalyzing && (
+        {!ninoConocido && !isAnalyzing && conContexto && (
           <div className="modo-selector" data-tour="modo">
             <button className={`modo-opt ${modo === 'contexto' ? 'active' : ''}`} onClick={() => { setAvisoSinContexto(false); cambiarModo('contexto'); }}>
               Con contexto del niño
@@ -115,6 +120,15 @@ const Analyzer = () => {
             <button className={`modo-opt ${modo === 'solo' ? 'active' : ''}`} onClick={() => { setAvisoSinContexto(false); cambiarModo('solo'); }}>
               Solo dibujo
             </button>
+          </div>
+        )}
+
+        {!ninoConocido && !isAnalyzing && !conContexto && (
+          <div className="aviso-modo" style={{ marginBottom: 16 }}>
+            <AlertCircle size={16} className="aviso-modo-icon" />
+            <span>
+              Tu cuenta analiza <strong>dibujos sueltos</strong> (con su descripción). Para el análisis con contexto del niño, pídele acceso al administrador.
+            </span>
           </div>
         )}
 

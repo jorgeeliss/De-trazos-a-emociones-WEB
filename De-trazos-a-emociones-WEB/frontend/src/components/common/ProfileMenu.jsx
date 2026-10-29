@@ -39,6 +39,11 @@ const ProfileMenu = ({ placement }) => {
       .getPerfil()
       .then((p) => {
         if (activo) setPerfil((prev) => ({ ...prev, ...p }));
+        // Refresca los datos guardados (permisos, esAdmin) para el gating de la UI.
+        try {
+          const u = JSON.parse(localStorage.getItem('user') || '{}');
+          localStorage.setItem('user', JSON.stringify({ ...u, ...p }));
+        } catch { /* ignore */ }
       })
       .catch(() => {});
     return () => {

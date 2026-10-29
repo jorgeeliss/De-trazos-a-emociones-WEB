@@ -6,6 +6,7 @@ import { api } from '../../api';
 import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 import ExportPdfModal from './ExportPdfModal';
 import { useBloquearScroll } from '../../hooks/useBloquearScroll';
+import { puedePdf } from '../../utils/permisos';
 import { API_URL } from '../../config';
 
 const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }) => {
@@ -95,9 +96,11 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
             <span className="adm-chip" style={{ background: visual.bg, color: visual.color }}>{visual.emoji} {r.emocion_predominante || 'Sin emoción'}</span>
             <span className="adm-intensity" style={{ color: inten.color }}>Intensidad {inten.label}</span>
           </div>
-          <button className="adm-export" onClick={() => setExportar(true)}>
-            <FileDown size={15} /> Exportar PDF
-          </button>
+          {puedePdf() && (
+            <button className="adm-export" onClick={() => setExportar(true)}>
+              <FileDown size={15} /> Exportar PDF
+            </button>
+          )}
         </div>
 
         {sinContexto && (

@@ -5,6 +5,7 @@ import { exportarReporte } from '../utils/exportarPdf';
 import { emocionPredominante, emotionVisual } from '../utils/emociones';
 import BrandHeader from '../components/common/BrandHeader';
 import Sidebar from '../components/layout/Sidebar';
+import { puedePdf } from '../utils/permisos';
 import './Reportes.css';
 
 const Reportes = () => {
@@ -88,9 +89,11 @@ const Reportes = () => {
               })}
             </div>
 
-            <button className="rep-download" onClick={descargar} disabled={generando}>
-              <FileDown size={18} /> {generando ? 'Generando PDF…' : 'Descargar reporte PDF'}
-            </button>
+            {puedePdf() && (
+              <button className="rep-download" onClick={descargar} disabled={generando}>
+                <FileDown size={18} /> {generando ? 'Generando PDF…' : 'Descargar reporte PDF'}
+              </button>
+            )}
           </>
         )}
       </div>

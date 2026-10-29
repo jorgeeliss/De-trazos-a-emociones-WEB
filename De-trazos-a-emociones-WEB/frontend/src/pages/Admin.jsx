@@ -3,6 +3,7 @@ import { ShieldCheck, Check, X, Inbox, RefreshCw, Ban, Trash2 } from 'lucide-rea
 import { api } from '../api';
 import Sidebar from '../components/layout/Sidebar';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+import { leerUsuario } from '../utils/permisos';
 import './Admin.css';
 
 const FILTROS = [
@@ -25,6 +26,26 @@ const Admin = () => {
   const [error, setError] = useState('');
   const [procesando, setProcesando] = useState(null);
   const [porBorrar, setPorBorrar] = useState(null);
+  const [guardandoGestion, setGuardandoGestion] = useState(null);
+  const miId = leerUsuario().id;
+
+  const actualizar = async (u, cambios) => {
+    setGuardandoGestion(u._id);
+    try {
+      const r = await api.gestionarUsuario(u._id, cambios);
+      setUsuarios((prev) =>
+        prev.map((x) =>
+          x._id === u._id
+            ? { ...x, rol: r.rol, esAdmin: r.esAdmin, estado: r.estado ?? x.estado, permisos: r.permisos }
+            : x
+        )
+      );
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setGuardandoGestion(null);
+    }
+  };
 
   useEffect(() => {
     let activo = true;
@@ -185,6 +206,48 @@ const Admin = () => {
                   <button className="btn-eliminar-admin" disabled={procesando === u._id} onClick={() => setPorBorrar(u)}>
                     <Trash2 size={16} /> Eliminar
                   </button>
+                </div>
+
+                <div className="admin-gestion">
+                  <label className="adm-g-field">
+                    <span>Rol</span>
+                    <select
+                      value={u.rol}
+                      disabled={guardandoGestion === u._id}
+                      onChange={(e) => actualizar(u, { rol: e.target.value })}
+                    >
+                      <option value="padre">Padre / Madre</option>
+                      <option value="psicologo">Psicólogo(a)</option>
+                      <option value="profesor">Profesor(a)</option>
+                    </select>
+                  </label>
+                  <label className="adm-g-check" title={u.esAdmin ? 'Los administradores ya tienen todos los permisos' : ''}>
+                    <input
+                      type="checkbox"
+                      checked={!!u.permisos?.conContexto}
+                      disabled={u.esAdmin || guardandoGestion === u._id}
+                      onChange={(e) => actualizar(u, { permisos: { conContexto: e.target.checked } })}
+                    />
+                    Análisis con contexto
+                  </label>
+                  <label className="adm-g-check" title={u.esAdmin ? 'Los administradores ya tienen todos los permisos' : ''}>
+                    <input
+                      type="checkbox"
+                      checked={!!u.permisos?.descargarPdf}
+                      disabled={u.esAdmin || guardandoGestion === u._id}
+                      onChange={(e) => actualizar(u, { permisos: { descargarPdf: e.target.checked } })}
+                    />
+                    Descargar PDF
+                  </label>
+                  <label className="adm-g-check" title={u._id === miId ? 'No puedes cambiar tu propio rol de administrador' : ''}>
+                    <input
+                      type="checkbox"
+                      checked={!!u.esAdmin}
+                      disabled={u._id === miId || guardandoGestion === u._id}
+                      onChange={(e) => actualizar(u, { esAdmin: e.target.checked })}
+                    />
+                    Administrador
+                  </label>
                 </div>
               </div>
             ))}

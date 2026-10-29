@@ -5,6 +5,7 @@ import { api } from '../../api';
 import AuthImage from '../common/AuthImage';
 import ConfirmDialog from '../common/ConfirmDialog';
 import { exportarAnalisis } from '../../utils/exportarPdf';
+import { puedePdf } from '../../utils/permisos';
 
 const slug = (s) =>
   String(s || 'nino').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
@@ -81,15 +82,17 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
           <div className="card-label">Registro de sesiones</div>
           <div className="card-title">Todos los análisis de {activeChildName || 'este niño'}</div>
         </div>
-        <button
-          className="btn-outline-small"
-          onClick={exportar}
-          disabled={generando || sessions.length === 0}
-          title={sessions.length === 0 ? 'Sin análisis para exportar' : 'Exportar estos análisis en PDF'}
-          style={generando || sessions.length === 0 ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}
-        >
-          {generando ? 'Generando…' : 'Exportar PDF'}
-        </button>
+        {puedePdf() && (
+          <button
+            className="btn-outline-small"
+            onClick={exportar}
+            disabled={generando || sessions.length === 0}
+            title={sessions.length === 0 ? 'Sin análisis para exportar' : 'Exportar estos análisis en PDF'}
+            style={generando || sessions.length === 0 ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}
+          >
+            {generando ? 'Generando…' : 'Exportar PDF'}
+          </button>
+        )}
       </div>
       <div className="sessions-body">
         {sessions.length === 0 ? (

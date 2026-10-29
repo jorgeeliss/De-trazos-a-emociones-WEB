@@ -311,3 +311,54 @@
     justify-content: center;
   }
 }
+
+/* Gestión de rol y permisos por usuario */
+.admin-gestion {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid var(--input-border);
+}
+
+.adm-g-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-gray);
+}
+
+.adm-g-field select {
+  background: var(--card2, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--input-border);
+  color: var(--text-white, var(--text));
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  font-family: var(--sans);
+  cursor: pointer;
+}
+
+.adm-g-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  cursor: pointer;
+}
+
+.adm-g-check input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-purple);
+  cursor: pointer;
+}
+
+.adm-g-check input:disabled {
+  cursor: not-allowed;
+}
