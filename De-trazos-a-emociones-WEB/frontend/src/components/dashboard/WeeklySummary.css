@@ -147,7 +147,6 @@
   background: var(--card2);
   border-radius: 16px;
   padding: 16px 18px;
-  border-left: 3px solid var(--purple);
   transition: transform 0.3s;
 }
 

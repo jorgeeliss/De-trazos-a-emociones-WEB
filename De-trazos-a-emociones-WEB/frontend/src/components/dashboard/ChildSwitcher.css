@@ -2,8 +2,20 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
+  padding: 6px 2px 10px;
+  overflow-x: auto;
+  scrollbar-width: thin;
   animation: fadeUp 0.6s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.child-switcher::-webkit-scrollbar {
+  height: 6px;
+}
+
+.child-switcher::-webkit-scrollbar-thumb {
+  background: var(--border2);
+  border-radius: 999px;
 }
 
 .child-card {

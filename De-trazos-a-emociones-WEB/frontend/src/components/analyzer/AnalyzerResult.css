@@ -201,7 +201,6 @@ details summary::-webkit-details-marker {
   background: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   padding: 16px 20px;
-  border-left: 3px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease;
 }
 
@@ -211,7 +210,6 @@ details summary::-webkit-details-marker {
 }
 
 .sa-section.highlight {
-  border-left-color: #2dd4bf;
   background: linear-gradient(90deg, rgba(45, 212, 191, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
 }
 

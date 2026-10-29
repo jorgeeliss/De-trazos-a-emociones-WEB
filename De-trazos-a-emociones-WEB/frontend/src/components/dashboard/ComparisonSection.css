@@ -64,7 +64,6 @@ img.compare-thumb {
   font-size: 13px;
   color: var(--muted);
   line-height: 1.6;
-  border-left: 4px solid var(--teal);
   transition: transform 0.3s;
 }
 

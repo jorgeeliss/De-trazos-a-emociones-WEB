@@ -168,4 +168,10 @@
   font-weight: 600;
   color: var(--purple-light, #a89ee0);
   white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tl-item:hover .tl-ver-mas {
+  opacity: 1;
 }
