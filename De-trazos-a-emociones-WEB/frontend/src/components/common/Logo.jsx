@@ -1,23 +1,30 @@
 import './Logo.css';
 
-// Logo de "De trazos a emociones": una sola línea continua que forma una "e"
-// manuscrita (de emociones) y termina en un punto. Se "dibuja" al aparecer.
-// Hereda el color (currentColor), así se adapta al fondo donde se use.
+// Logo "De trazos a emociones": rueda emocional (cuatro círculos superpuestos)
+// con un trazo ondulado blanco en el centro. El trazo se dibuja al aparecer.
 const Logo = ({ size = 24 }) => (
   <svg
-    className="logo-e"
+    className="logo-mark"
     width={size}
     height={size}
-    viewBox="0 0 40 40"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="3"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    viewBox="0 0 48 48"
     aria-hidden="true"
   >
-    <path className="logo-e-stroke" d="M12 21 H25 C30 21 30 12 23 11 C15 10 9 18 12 26 C14 31 21 33 28 28" />
-    <circle className="logo-e-dot" cx="29.6" cy="28.6" r="2.2" fill="currentColor" stroke="none" />
+    <g className="logo-wheel">
+      <circle cx="19" cy="19" r="11.5" fill="#d7a24c" opacity="0.85" />
+      <circle cx="29" cy="19" r="11.5" fill="#6e9a86" opacity="0.85" />
+      <circle cx="19" cy="29" r="11.5" fill="#7595bf" opacity="0.85" />
+      <circle cx="29" cy="29" r="11.5" fill="#cf949d" opacity="0.85" />
+    </g>
+    <path
+      className="logo-wave"
+      d="M11 26 C16 20.5 20 30 24 26 C28 22 32 31.5 37 26"
+      fill="none"
+      stroke="#ffffff"
+      strokeWidth="3.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 

@@ -5,7 +5,7 @@ const BrandHeader = () => (
   <div className="brand-header">
     <div className="brand-header-left">
       <div className="brand-header-icon">
-        <Logo size={22} />
+        <Logo size={36} />
       </div>
       <div className="brand-header-text">
         <span className="brand-header-name">De trazos a emociones</span>

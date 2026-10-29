@@ -1,17 +1,14 @@
-.logo-e-stroke {
-  stroke-dasharray: 95;
-  stroke-dashoffset: 95;
-  animation: logoDraw 1.6s ease forwards;
+.logo-mark {
+  display: block;
 }
 
-.logo-e-dot {
-  opacity: 0;
-  animation: logoDot 0.3s ease 1.5s forwards;
+/* El trazo ondulado se "dibuja" al aparecer. */
+.logo-wave {
+  stroke-dasharray: 42;
+  stroke-dashoffset: 42;
+  animation: logoDraw 1.3s ease 0.2s forwards;
 }
 
 @keyframes logoDraw {
   to { stroke-dashoffset: 0; }
-}
-@keyframes logoDot {
-  to { opacity: 1; }
 }

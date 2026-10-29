@@ -63,7 +63,7 @@ const Register = () => {
           
           <div className="brand">
             <div className="brand-icon">
-              <Logo size={24} />
+              <Logo size={36} />
             </div>
             <div className="brand-text">
               <h2>De trazos a emociones</h2>

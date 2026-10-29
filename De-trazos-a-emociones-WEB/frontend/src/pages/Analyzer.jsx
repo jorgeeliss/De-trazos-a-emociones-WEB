@@ -70,7 +70,7 @@ const Analyzer = () => {
             </p>
           </div>
           <div className="hero-logo" aria-hidden="true">
-            <Logo size={46} />
+            <Logo size={64} />
           </div>
         </header>
 

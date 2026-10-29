@@ -42,12 +42,9 @@
 .auth-container .brand-icon {
   width: 40px;
   height: 40px;
-  background: linear-gradient(135deg, #a78bfa, #8b5cf6);
-  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text);
 }
 
 .auth-container .brand-text h2 {

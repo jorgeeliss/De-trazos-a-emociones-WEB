@@ -26,3 +26,6 @@ de-trazos-*.pdf
 
 # Capturas de pantalla compartidas para revisión (no se versionan)
 WhatsApp Image*
+
+# Imágenes de referencia/diseño soltadas en la raíz del repo (no se versionan)
+/*.png
