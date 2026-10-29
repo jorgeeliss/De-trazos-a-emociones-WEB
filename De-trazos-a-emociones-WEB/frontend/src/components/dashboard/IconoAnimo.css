@@ -1,53 +1,39 @@
-/* Icono de moléculas de la emoción predominante (bienvenida del Dashboard).
-   --animo-color y --animo-bg llegan por style con el color de la emoción;
-   el lienzo toma ese color (color: inherit) para pintar las moléculas. */
-.animo {
-  position: relative;
+/* Moléculas de la emoción predominante: cubren todo el banner de bienvenida
+   (.welcome) por detrás del texto. --animo-color (por style) da el color del
+   halo; las moléculas usan los colores del logo. */
+.animo-lienzo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  color: var(--animo-color);
+}
+
+/* Zona de clic sobre la cara (lado derecho del banner). */
+.animo-boton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 270px;
   z-index: 1;
-  width: 200px;
-  height: 150px;
-  margin: -14px -12px -14px 0;
-  flex-shrink: 0;
   padding: 0;
   border: 0;
   background: none;
-  color: var(--animo-color);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Halo suave detrás de la cara; se desvanece hacia afuera (sin bordes). */
-.animo::before {
-  content: '';
-  position: absolute;
-  inset: 12% 22%;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--animo-bg) 0%, transparent 70%);
-  opacity: 0.9;
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.3), opacity 0.5s ease;
-}
-
-.animo:hover::before {
-  transform: scale(1.2);
-  opacity: 1;
-}
-
-.animo-lienzo {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.animo:focus-visible {
+.animo-boton:focus-visible {
   outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: 16px;
+  outline-offset: -8px;
+  border-radius: 20px;
 }
 
-@media (max-width: 600px) {
-  .animo {
-    width: 140px;
-    height: 110px;
+@media (max-width: 560px) {
+  .animo-boton {
+    width: 130px;
   }
 }

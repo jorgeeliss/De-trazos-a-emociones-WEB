@@ -51,9 +51,9 @@ const Register = () => {
     <div className="auth-container">
       {/* Panel Izquierdo - Gráficos */}
       <AuthGraphics 
-        title="Comienza tu viaje hacia las emociones" 
-        highlight="emociones" 
-        subtitle="Psicología infantil · Análisis profundo" 
+        title="Acompaña el mundo emocional de cada niño"
+        highlight="emocional"
+        subtitle="Crea tu cuenta para analizar dibujos y recibir una lectura orientativa, siempre como apoyo a tu criterio."
       />
 
       {/* Panel Derecho - Formulario */}
@@ -90,13 +90,13 @@ const Register = () => {
           <>
           <div className="form-header">
             <h1>Crear cuenta</h1>
-            <p>Crea tu cuenta y empieza el análisis</p>
+            <p>Completa tus datos para empezar.</p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="firstname">NOMBRE</label>
+                <label htmlFor="firstname">Nombre</label>
                 <div className="input-wrapper">
                   <div className="input-icon">
                     <User size={20} />
@@ -112,7 +112,7 @@ const Register = () => {
                 </div>
               </div>
               <div className="form-group">
-                <label htmlFor="lastname">APELLIDO</label>
+                <label htmlFor="lastname">Apellido</label>
                 <div className="input-wrapper">
                   <div className="input-icon">
                     <User size={20} />
@@ -130,7 +130,7 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">CORREO ELECTRÓNICO</label>
+              <label htmlFor="email">Correo electrónico</label>
               <div className="input-wrapper">
                 <div className="input-icon">
                   <Mail size={20} />
@@ -147,7 +147,7 @@ const Register = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password">CONTRASEÑA</label>
+              <label htmlFor="password">Contraseña</label>
               <div className="input-wrapper">
                 <div className="input-icon">
                   <Lock size={20} />
@@ -174,7 +174,7 @@ const Register = () => {
             </div>
             
             <div className="form-group">
-              <label htmlFor="role">ROL</label>
+              <label htmlFor="role">Rol</label>
               <div className="input-wrapper">
               <select 
                 id="rol"

@@ -55,9 +55,9 @@ const Login = () => {
     <div className="auth-container">
       {/* Panel Izquierdo - Gráficos */}
       <AuthGraphics
-        title="Descubre el mundo emocional de cada niño"
-        highlight="emocional"
-        subtitle="Psicología infantil · Análisis profundo"
+        title="Cada dibujo guarda una emoción"
+        highlight="emoción"
+        subtitle="Una lectura orientativa de los dibujos infantiles, interpretada con el contexto de cada niño. Acompaña tu criterio, no lo reemplaza."
       />
 
       {/* Panel Derecho - Formulario */}
@@ -78,7 +78,7 @@ const Login = () => {
             <>
               <div className="form-header">
                 <h1>Iniciar sesión</h1>
-                <p>Inicia sesión con tu correo electrónico</p>
+                <p>Ingresa con tu correo y contraseña para continuar.</p>
               </div>
 
               {sesionExpirada && (
@@ -89,7 +89,7 @@ const Login = () => {
 
               <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label htmlFor="email">CORREO ELECTRÓNICO</label>
+                  <label htmlFor="email">Correo electrónico</label>
                   <div className="input-wrapper">
                     <div className="input-icon">
                       <Mail size={20} />
@@ -106,7 +106,7 @@ const Login = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="password">CONTRASEÑA</label>
+                  <label htmlFor="password">Contraseña</label>
                   <div className="input-wrapper">
                     <div className="input-icon">
                       <Lock size={20} />
@@ -128,7 +128,7 @@ const Login = () => {
               </form>
 
               <div className="form-footer">
-                ¿No tienes cuenta? <Link to="/register">Regístrate gratis</Link>
+                ¿Aún no tienes cuenta? <Link to="/register">Crear cuenta</Link>
               </div>
             </>
           ) : (
@@ -144,7 +144,7 @@ const Login = () => {
 
               <form onSubmit={verificarCodigo}>
                 <div className="form-group">
-                  <label htmlFor="codigo">CÓDIGO DE VERIFICACIÓN</label>
+                  <label htmlFor="codigo">Código de verificación</label>
                   <div className="input-wrapper">
                     <div className="input-icon">
                       <KeyRound size={20} />

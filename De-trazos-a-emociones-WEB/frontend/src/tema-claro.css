@@ -50,8 +50,9 @@
   .history-wrapper .btn-new,
   .analyzer-wrapper .btn-next,
   .analyzer-wrapper .btn-analyze,
-  .analyzer-wrapper .nino-activo-btn,
+  .analyzer-wrapper .nino-activo-btn:not(.ghost),
   .analyzer-wrapper .modo-opt.active,
+  .radio-opt.selected,
   .auth-container .btn-submit
 ) {
   background: var(--t-btn);
@@ -72,7 +73,8 @@
   .history-wrapper .btn-new,
   .analyzer-wrapper .btn-next,
   .analyzer-wrapper .btn-analyze,
-  .analyzer-wrapper .nino-activo-btn,
+  .analyzer-wrapper .nino-activo-btn:not(.ghost),
+  .radio-opt.selected,
   .auth-container .btn-submit
 ):hover:not(:disabled) {
   background: var(--t-btn-hover);
@@ -469,36 +471,19 @@
 }
 
 /* ---------- Inicio de sesión y registro ---------- */
+/* Panel de moléculas con un fondo claro apenas teñido de violeta;
+   el formulario queda sobre blanco. */
 :root[data-theme="light"] .left-panel {
-  background: radial-gradient(circle at center, #e9e6fb 0%, var(--bg-dark) 60%);
+  background:
+    radial-gradient(90% 60% at 50% 32%, rgba(109, 92, 224, 0.1) 0%, transparent 70%),
+    linear-gradient(180deg, #f8f7fe 0%, #eff1f8 100%);
 }
-:root[data-theme="light"] .glow-orb.purple {
-  background: rgba(109, 92, 224, 0.16);
+:root[data-theme="light"] .auth-container .right-panel {
+  background: var(--surface);
 }
-:root[data-theme="light"] .eye-line,
-:root[data-theme="light"] .eye-line:nth-child(2) {
-  border-color: rgba(109, 92, 224, 0.14);
-  box-shadow: inset 0 0 100px rgba(109, 92, 224, 0.06);
-}
-:root[data-theme="light"] .face-container::before,
-:root[data-theme="light"] .face-container::after {
-  border-color: rgba(17, 24, 39, 0.08);
-}
-:root[data-theme="light"] .face-yellow {
-  color: #eab308;
-}
-:root[data-theme="light"] .face-yellow-small {
-  color: rgba(234, 179, 8, 0.6);
-}
-:root[data-theme="light"] .face-sad {
-  color: var(--accent);
-}
-:root[data-theme="light"] .shape {
-  border-bottom-color: rgba(109, 92, 224, 0.25);
-}
-:root[data-theme="light"] .star {
-  background: var(--accent-soft);
-  box-shadow: 0 0 8px 1px var(--accent-glow);
+:root[data-theme="light"] .auth-container .input-wrapper input:focus,
+:root[data-theme="light"] .auth-container .role-select:focus {
+  background-color: var(--surface);
 }
 :root[data-theme="light"] .auth-container .form-footer {
   border-top-color: var(--border);

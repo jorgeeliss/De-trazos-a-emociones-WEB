@@ -32,15 +32,20 @@
 .auth-container .role-select {
   width: 100%;
   background-color: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: 8px;
-  padding: 16px 16px;
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 14px 16px;
   color: var(--text-white);
   font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
+  font-size: 0.98rem;
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+}
+
+.auth-container .role-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-dim);
 }
 
 .auth-container .checkbox-group {

@@ -20,7 +20,7 @@
   --muted: #a1a1aa;
   --muted2: #9490a8;
   --text-gray: #a1a1aa;    /* alias heredado */
-  --input-bg: #2b2827;
+  --input-bg: #15132a;
   --input-border: #3b3735;
   --btn-bg: #19142c;
   --btn-border: #261f40;
@@ -216,6 +216,19 @@ a {
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Flotado suave (p. ej. la campana de alerta del Dashboard). */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+/* Entrada escalonada del login y el registro. */
+@keyframes authEntrada {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
 }
 
 /* Entrada suave y escalonada del contenido (como en el Historial). */

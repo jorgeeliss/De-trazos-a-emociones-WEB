@@ -66,6 +66,13 @@
   overflow: hidden;
 }
 
+/* El título queda por encima de la onda del clic de la decoración. */
+.analyzer-wrapper .hero-text {
+  position: relative;
+  z-index: 10;
+  max-width: 450px;
+}
+
 .analyzer-wrapper .hero-logo {
   flex-shrink: 0;
   display: flex;

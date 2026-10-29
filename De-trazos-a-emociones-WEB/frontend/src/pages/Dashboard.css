@@ -88,6 +88,24 @@
   background: radial-gradient(circle, rgba(139, 121, 242, 0.15) 0%, transparent 70%);
 }
 
+/* El texto va por encima de las moléculas (IconoAnimo) y deja libre la
+   derecha, donde se dibuja la cara. */
+.welcome {
+  min-height: 190px;
+}
+
+.welcome-left {
+  position: relative;
+  z-index: 2;
+  padding-right: 240px;
+}
+
+@media (max-width: 560px) {
+  .welcome-left {
+    padding-right: 110px;
+  }
+}
+
 .welcome-greeting {
   font-size: 13px;
   color: var(--purple-light);
