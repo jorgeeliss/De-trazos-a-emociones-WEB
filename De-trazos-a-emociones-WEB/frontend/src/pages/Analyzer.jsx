@@ -63,19 +63,19 @@ const Analyzer = () => {
           <ProfileMenu />
         </div>
 
-        <header className="header">
-          <div className="badge"><span className="badge-dot"></span> Psicología infantil · IA</div>
-          {nombreUsuario && !ninoConocido && (
-            <div className="welcome-user">Bienvenido/a, {nombreUsuario}</div>
-          )}
-          <h1>De trazos<br/>a <em>emociones</em></h1>
-          <p className="header-sub">
-            {ninoConocido
-              ? `Analizando un nuevo dibujo de ${formData.nombre}. Revisa la situación y sube el dibujo.`
-              : modo === 'solo'
-                ? 'Analiza un dibujo de forma rápida. Al final decides si lo guardas y a quién.'
-                : 'Completa el contexto del niño y sube su dibujo para obtener un análisis emocional personalizado y profundo.'}
-          </p>
+        <header className="hero">
+          <div className="hero-left">
+            <div className="hero-greeting">👋 Bienvenido/a{nombreUsuario ? `, ${nombreUsuario}` : ''}</div>
+            <h1 className="hero-title">De trazos a <span>emociones</span></h1>
+            <p className="hero-sub">
+              {ninoConocido
+                ? `Analizando un nuevo dibujo de ${formData.nombre}. Revisa la situación y sube el dibujo.`
+                : modo === 'solo'
+                  ? 'Analiza un dibujo de forma rápida. Al final decides si lo guardas y a quién.'
+                  : 'Completa el contexto del niño y sube su dibujo para obtener un análisis emocional personalizado y profundo.'}
+            </p>
+          </div>
+          <div className="hero-emoji">🎨</div>
         </header>
 
         {ninoConocido && (
