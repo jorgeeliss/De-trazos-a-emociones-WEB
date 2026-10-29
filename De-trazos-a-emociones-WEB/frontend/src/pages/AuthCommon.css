@@ -1,6 +1,11 @@
+/* Un solo fondo para toda la página (sin división entre paneles): los puntos
+   de la animación también se ven detrás del formulario. */
 .auth-container {
   font-family: 'DM Sans', sans-serif;
-  background-color: var(--bg-dark);
+  background:
+    radial-gradient(60% 70% at 28% 50%, rgba(139, 121, 242, 0.13) 0%, transparent 70%),
+    radial-gradient(45% 55% at 76% 45%, rgba(139, 121, 242, 0.06) 0%, transparent 70%),
+    var(--bg-panel);
   color: var(--text-white);
   height: 100vh;
   display: flex;
@@ -13,7 +18,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--bg-dark);
+  background: transparent;
   padding: 2.5rem 2rem;
   position: relative;
   z-index: 10;
@@ -32,8 +37,8 @@
 .auth-container .left-panel,
 .auth-container .right-panel {
   transition:
-    flex-grow 0.9s cubic-bezier(0.65, 0, 0.35, 1),
-    padding 0.9s cubic-bezier(0.65, 0, 0.35, 1);
+    flex-grow 0.7s cubic-bezier(0.65, 0, 0.35, 1),
+    padding 0.7s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .auth-container .right-panel {
@@ -57,33 +62,24 @@
   overflow: hidden;
 }
 
-.auth-container.intro .left-panel {
-  border-right-color: transparent;
-}
-
 /* El formulario espera oculto (y fuera del alcance del teclado). */
 .auth-container .right-panel.esperando .form-container {
   visibility: hidden;
 }
 
 /* Entrada escalonada al aparecer, cuando el panel ya se está abriendo:
-   entra desde la derecha, siguiendo el corrimiento del panel. */
-@keyframes authEntradaLado {
-  from { opacity: 0; transform: translateX(28px); }
-  to { opacity: 1; transform: none; }
-}
-
+   marca, encabezado, formulario y pie en orden. */
 .auth-container .right-panel.listo .form-container > *,
 .auth-container .right-panel.listo .form-container form > * {
-  animation: authEntradaLado 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+  animation: authEntrada 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
 }
-.auth-container .right-panel.listo .form-container > *:nth-child(2) { animation-delay: 0.4s; }
-.auth-container .right-panel.listo .form-container > *:nth-child(3) { animation-delay: 0.45s; }
-.auth-container .right-panel.listo .form-container > *:nth-child(n + 4) { animation-delay: 0.5s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(1) { animation-delay: 0.48s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(2) { animation-delay: 0.53s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(3) { animation-delay: 0.58s; }
-.auth-container .right-panel.listo .form-container form > *:nth-child(n + 4) { animation-delay: 0.63s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(2) { animation-delay: 0.41s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(3) { animation-delay: 0.47s; }
+.auth-container .right-panel.listo .form-container > *:nth-child(n + 4) { animation-delay: 0.53s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(1) { animation-delay: 0.51s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(2) { animation-delay: 0.57s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(3) { animation-delay: 0.63s; }
+.auth-container .right-panel.listo .form-container form > *:nth-child(n + 4) { animation-delay: 0.69s; }
 
 .auth-container .brand {
   display: flex;

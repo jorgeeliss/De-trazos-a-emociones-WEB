@@ -1,20 +1,20 @@
-/* Panel izquierdo del login y el registro: lienzo donde los puntos forman el
-   logo y, al centro, la marca real que aparece al terminar (trazoLogo.js). */
+/* Panel izquierdo del login y el registro: el logo se forma aquí y, al centro,
+   aparece la marca real al terminar (trazoLogo.js). Sin fondo ni borde propio:
+   el fondo es el de toda la página (.auth-container), sin división. */
 .left-panel {
   flex: 1.1;
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(70% 55% at 50% 50%, rgba(139, 121, 242, 0.14) 0%, transparent 70%),
-    var(--bg-panel);
-  border-right: 1px solid var(--border);
 }
 
+/* El lienzo cubre toda la página, así los puntos de fondo también se ven
+   detrás del formulario. */
 .left-panel .auth-lienzo {
-  position: absolute;
+  position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
+  z-index: 0;
 }
 
 /* Marca real (logo + nombre, como en las páginas): aparece cuando el logo que

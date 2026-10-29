@@ -12,15 +12,12 @@ const S_BASE = 64;
 
 // Panel izquierdo del login y el registro: puntos que dibujan el logo en grande
 // y lo llevan a su lugar en la marca (logo + nombre, como en las páginas), que
-// entonces aparece real (trazoLogo.js). Cuando el logo completo empieza a ir a
-// la marca avisa con "alTerminar" (el panel se corre y entra el formulario).
-// Con "sinIntro" (ya vista en esta sesión) muestra la marca directamente.
-const AuthGraphics = ({ alTerminar = () => {}, sinIntro = false }) => {
+// entonces aparece real (trazoLogo.js). Al terminar avisa con "alTerminar".
+const AuthGraphics = ({ alTerminar = () => {} }) => {
   const canvasRef = useRef(null);
   const marcaRef = useRef(null);
   const logoRef = useRef(null);
   const terminarRef = useRef(alTerminar);
-  const sinIntroRef = useRef(sinIntro); // se decide al montar
   const [marcaVisible, setMarcaVisible] = useState(false);
 
   useEffect(() => {
@@ -31,21 +28,34 @@ const AuthGraphics = ({ alTerminar = () => {}, sinIntro = false }) => {
     const canvas = canvasRef.current;
     const marca = marcaRef.current;
 
-    // Marca centrada en el panel. Su tamaño sale del ancho final del panel
-    // (mientras se forma el logo ocupa toda la pantalla y luego se corre), así
-    // no cambia de tamaño al correrse. 1.1 / 2.1: proporción de los paneles;
-    // 64: margen horizontal del panel del formulario (2rem a cada lado).
-    const ubicar = (w, h) => {
-      const contenedor = canvas.parentElement.parentElement;
-      const anchoFinal = Math.min(w, (((contenedor?.clientWidth || w) - 64) * 1.1) / 2.1);
+    const panel = canvas.parentElement;
+    const contenedor = panel.parentElement;
+
+    // El lienzo cubre toda la página (los puntos se ven también detrás del
+    // formulario); el logo se forma en el centro del panel izquierdo. La marca
+    // toma su tamaño del ancho final del panel (mientras se forma el logo ocupa
+    // toda la pantalla y luego se corre), así no cambia al correrse.
+    // 1.1 / 2.1: proporción de los paneles; 64: margen del panel del formulario.
+    const ubicar = () => {
+      const p = panel.getBoundingClientRect();
+      const c = canvas.getBoundingClientRect();
+      const anchoFinal = Math.min(p.width, ((contenedor.clientWidth - 64) * 1.1) / 2.1);
       marca.style.setProperty('--marca-s', `${S_BASE}px`);
       const s = Math.max(44, Math.min(84, (S_BASE * (anchoFinal - 96)) / (marca.offsetWidth || 1)));
       marca.style.setProperty('--marca-s', `${s}px`);
-      const centroY = h / 2;
-      marca.style.top = `${centroY}px`;
-      // El logo grande de la animación, centrado en el mismo punto.
-      const tam = Math.max(120, Math.min(w * 0.46, h * 0.5, 300));
-      return { cx: w / 2, cy: centroY, tam };
+      marca.style.top = `${p.height / 2}px`;
+      // El logo grande de la animación, centrado en el panel.
+      const tam = Math.max(120, Math.min(p.width * 0.46, p.height * 0.5, 300));
+      return { cx: p.left - c.left + p.width / 2, cy: p.top - c.top + p.height / 2, tam };
+    };
+
+    // Puntos más tenues detrás del formulario, cuando ya se muestra.
+    const tenue = () => {
+      const f = contenedor.querySelector('.right-panel.listo .form-container');
+      if (!f) return null;
+      const r = f.getBoundingClientRect();
+      const c = canvas.getBoundingClientRect();
+      return { x0: r.left - c.left, y0: r.top - c.top, x1: r.right - c.left, y1: r.bottom - c.top };
     };
 
     // Dónde queda el logo dentro de la marca (en coordenadas del lienzo).
@@ -60,13 +70,14 @@ const AuthGraphics = ({ alTerminar = () => {}, sinIntro = false }) => {
     };
 
     const sim = crearTrazoLogo(canvas, {
-      zona: canvas.parentElement,
+      // El cursor aparta puntos en toda la página; el clic solo en el panel del logo.
+      zona: contenedor,
+      zonaClic: panel,
+      observar: [panel],
+      tenue,
       ubicar,
       ubicarMarca,
       reducido: prefiereMenosMovimiento(),
-      inmediato: sinIntroRef.current,
-      // El logo y el panel se mueven a la vez: un solo movimiento.
-      alAcomodar: () => terminarRef.current(),
       alMostrarMarca: (si) => {
         setMarcaVisible(si);
         if (si) terminarRef.current();

@@ -13,7 +13,7 @@ import { passwordValida } from '../utils/password';
 const Register = () => {
   const navigate = useNavigate();
   // El formulario aparece cuando el logo termina de formarse (o al primer clic/tecla).
-  const [introLista, terminarIntro, introVista] = useIntroAuth();
+  const [introLista, terminarIntro] = useIntroAuth();
   const [resultado, setResultado] = useState(null);
   const [verPassword, setVerPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,7 +53,7 @@ const Register = () => {
   return (
     <div className={`auth-container ${introLista ? '' : 'intro'}`}>
       {/* Panel Izquierdo - Gráficos */}
-      <AuthGraphics alTerminar={terminarIntro} sinIntro={introVista} />
+      <AuthGraphics alTerminar={terminarIntro} />
 
       {/* Panel Derecho - Formulario */}
       <div className={`right-panel ${introLista ? 'listo' : 'esperando'}`}>

@@ -33,21 +33,20 @@ const ONDA = [
 ];
 
 // Tiempos del ciclo (ms desde que empieza a formarse). Cada etapa empieza
-// cuando la anterior terminó. A los ~3 s el logo completo empieza a ir a la
-// marca y, a la vez, el panel se corre y entra el formulario (alAcomodar).
-const T_EMPIEZA = 150; // un instante de puntos dispersos antes de dibujar
-const T_CIRCULO = 300; // desfase entre círculos
-const T_TRAZO = 600; // cuánto tarda en salir cada círculo completo
-const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 150; // con los 4 círculos ya trazados
-const D_RELLENO = 450;
-const PASO_RELLENO = 80;
-const T_ONDA = T_RELLENO + 3 * PASO_RELLENO + D_RELLENO - 100; // logo relleno: se traza la onda
-const D_ONDA = 550;
-const T_ACOMODO = T_ONDA + D_ONDA + 50; // logo grande completo: va a la marca
-const D_ACOMODO = 900; // igual que el corrimiento del panel (AuthCommon.css)
+// cuando la anterior terminó; la marca aparece a los ~2,4 s.
+const T_EMPIEZA = 100; // un instante de puntos dispersos antes de dibujar
+const T_CIRCULO = 160; // desfase entre círculos
+const T_TRAZO = 380; // cuánto tarda en salir cada círculo completo
+const T_RELLENO = T_EMPIEZA + 3 * T_CIRCULO + T_TRAZO + 80; // con los 4 círculos ya trazados
+const D_RELLENO = 320;
+const PASO_RELLENO = 50;
+const T_ONDA = T_RELLENO + 3 * PASO_RELLENO + D_RELLENO - 80; // logo relleno: se traza la onda
+const D_ONDA = 380;
+const T_ACOMODO = T_ONDA + D_ONDA + 60; // logo grande completo un instante
+const D_ACOMODO = 550;
 const T_MARCA = T_ACOMODO + D_ACOMODO;
-const D_CRUCE = 400; // el lienzo cede el lugar a la marca real
-const D_DESHACER = 700;
+const D_CRUCE = 300; // el lienzo cede el lugar a la marca real
+const D_DESHACER = 600;
 
 const mezclar = (a, b, p) => ({
   cx: a.cx + (b.cx - a.cx) * p,
@@ -56,17 +55,21 @@ const mezclar = (a, b, p) => ({
 });
 
 export function crearTrazoLogo(canvas, {
+  // Elemento donde el cursor aparta los puntos.
   zona = canvas,
+  // Elemento donde un clic deshace la marca y la vuelve a formar.
+  zonaClic = zona,
+  // Otros elementos cuyo cambio de tamaño obliga a recalcular posiciones.
+  observar = [],
+  // Rectángulo (en coordenadas del lienzo) donde los puntos sueltos se ven
+  // más tenues, p. ej. detrás del formulario: () => { x0, y0, x1, y1 } | null.
+  tenue = () => null,
   // Logo grande donde se dibuja: (w, h) => { cx, cy, tam } (tam = ancho del logo).
   ubicar,
   // Lugar del logo dentro de la marca real: () => { cx, cy, tam }.
   ubicarMarca,
   // Se llama con true cuando la marca real debe verse y con false al deshacerse.
   alMostrarMarca = () => {},
-  // Se llama una vez, cuando el logo completo empieza a ir a la marca.
-  alAcomodar = () => {},
-  // Sin intro (ya vista en esta sesión): la marca directamente, con los puntos de fondo.
-  inmediato = false,
   reducido = false,
 }) {
   const ctx = canvas.getContext('2d');
@@ -85,10 +88,9 @@ export function crearTrazoLogo(canvas, {
   let inicio = performance.now();
   let deshaciendo = null; // momento en que empezó a deshacerse
   let marcaVisible = false;
-  let avisoAcomodo = false;
   let destruido = false; // tras destruir() no vuelve a animarse
 
-  // Mide el lienzo. Si cambió de ancho (el panel se corre al terminar), los
+  // Mide el lienzo y las ubicaciones. Si cambió de ancho (otra ventana), los
   // puntos sueltos se reparten en proporción para seguir cubriendo el espacio.
   const medir = () => {
     const anchoAntes = w;
@@ -206,10 +208,6 @@ export function crearTrazoLogo(canvas, {
     // usa el tiempo del ciclo anterior (mostraba la marca antes de tiempo).
     if (deshaciendo && ahora - deshaciendo > D_DESHACER) formar(true);
     const t = ahora - inicio;
-    if (!deshaciendo && t >= T_ACOMODO && !avisoAcomodo) {
-      avisoAcomodo = true;
-      alAcomodar();
-    }
     if (!deshaciendo && t > T_MARCA) mostrarMarca(true);
 
     caja = cajaEn(t);
@@ -226,8 +224,9 @@ export function crearTrazoLogo(canvas, {
         } else {
           const rx = tx + Math.sin(ahora / 900 + p.fase) * 0.5 * k;
           const ry = ty + Math.cos(ahora / 1100 + p.fase) * 0.5 * k;
-          p.vx = (p.vx + (rx - p.x) * 0.05) * 0.83;
-          p.vy = (p.vy + (ry - p.y) * 0.05) * 0.83;
+          // Resorte firme: los puntos llegan rápido, al ritmo de la formación.
+          p.vx = (p.vx + (rx - p.x) * 0.09) * 0.78;
+          p.vy = (p.vy + (ry - p.y) * 0.09) * 0.78;
         }
       } else {
         p.vx = (p.vx + azar(-0.025, 0.025)) * 0.98;
@@ -262,9 +261,16 @@ export function crearTrazoLogo(canvas, {
     ctx.clearRect(0, 0, w, h);
     const t = ahora - inicio;
 
-    // Puntos sueltos de fondo, en los colores del logo.
+    // Puntos sueltos de fondo, en los colores del logo; más tenues dentro de la
+    // zona indicada (el formulario), con un borde suave.
+    const zt = tenue();
+    const factorTenue = (x, y) => {
+      if (!zt) return 1;
+      const fuera = Math.max(zt.x0 - x, x - zt.x1, zt.y0 - y, y - zt.y1, 0);
+      return 0.3 + 0.7 * Math.min(1, fuera / 30);
+    };
     for (const s of sueltos) {
-      ctx.globalAlpha = s.alfa * alfaBorde(s.x, s.y);
+      ctx.globalAlpha = s.alfa * alfaBorde(s.x, s.y) * factorTenue(s.x, s.y);
       ctx.fillStyle = `rgb(${colores[s.color % colores.length]})`;
       punto(s.x, s.y, s.r);
     }
@@ -361,17 +367,16 @@ export function crearTrazoLogo(canvas, {
   leerColores();
   crearSueltos();
   observador?.observe(canvas);
+  for (const el of observar) if (el) observador?.observe(el);
   if (reducido) {
     // Sin movimiento: directamente la marca real y los puntos de fondo quietos.
     mostrarMarca(true);
     pintar(performance.now());
   } else {
-    // Con intro ya vista, la marca directamente (un clic la vuelve a formar).
-    if (inmediato) mostrarMarca(true);
-    else formar();
+    formar();
     zona.addEventListener('pointermove', alMover);
     zona.addEventListener('pointerleave', alSalir);
-    zona.addEventListener('click', alClic);
+    zonaClic.addEventListener('click', alClic);
     raf = requestAnimationFrame(bucle);
   }
 
@@ -383,7 +388,7 @@ export function crearTrazoLogo(canvas, {
       observador?.disconnect();
       zona.removeEventListener('pointermove', alMover);
       zona.removeEventListener('pointerleave', alSalir);
-      zona.removeEventListener('click', alClic);
+      zonaClic.removeEventListener('click', alClic);
     },
   };
 }
