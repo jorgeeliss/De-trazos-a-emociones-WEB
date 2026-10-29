@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ShieldCheck, Check, X, Inbox, RefreshCw, Ban, Trash2 } from 'lucide-react';
 import { api } from '../api';
 import Sidebar from '../components/layout/Sidebar';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import './Admin.css';
 
 const FILTROS = [
@@ -23,6 +24,7 @@ const Admin = () => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
   const [procesando, setProcesando] = useState(null);
+  const [porBorrar, setPorBorrar] = useState(null);
 
   useEffect(() => {
     let activo = true;
@@ -60,16 +62,14 @@ const Admin = () => {
     }
   };
 
-  const eliminar = async (u) => {
-    const ok = window.confirm(
-      `¿Eliminar la cuenta de ${u.nombre} ${u.apellido} (${u.email})? ` +
-        'Se borrarán también todos sus análisis. Esta acción no se puede deshacer.'
-    );
-    if (!ok) return;
+  const confirmarEliminar = async () => {
+    const u = porBorrar;
+    if (!u) return;
     setProcesando(u._id);
     try {
       await api.eliminarUsuario(u._id);
       setUsuarios((prev) => prev.filter((x) => x._id !== u._id));
+      setPorBorrar(null);
     } catch (e) {
       alert(e.message);
     } finally {
@@ -182,7 +182,7 @@ const Admin = () => {
                       <Check size={16} /> Habilitar
                     </button>
                   )}
-                  <button className="btn-eliminar-admin" disabled={procesando === u._id} onClick={() => eliminar(u)}>
+                  <button className="btn-eliminar-admin" disabled={procesando === u._id} onClick={() => setPorBorrar(u)}>
                     <Trash2 size={16} /> Eliminar
                   </button>
                 </div>
@@ -191,6 +191,18 @@ const Admin = () => {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        abierto={!!porBorrar}
+        peligro
+        titulo="Eliminar cuenta"
+        mensaje={porBorrar ? `¿Eliminar la cuenta de ${porBorrar.nombre} ${porBorrar.apellido} (${porBorrar.email})?` : ''}
+        detalle="Se borrarán también todos sus análisis. Esta acción no se puede deshacer."
+        textoConfirmar="Eliminar"
+        cargando={procesando === porBorrar?._id}
+        onConfirmar={confirmarEliminar}
+        onCancelar={() => setPorBorrar(null)}
+      />
     </div>
   );
 };

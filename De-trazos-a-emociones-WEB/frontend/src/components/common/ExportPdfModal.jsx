@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, FileDown } from 'lucide-react';
 import { api } from '../../api';
 import { exportarAnalisis } from '../../utils/exportarPdf';
+import { useBloquearScroll } from '../../hooks/useBloquearScroll';
 import './ExportPdfModal.css';
 
 // Convierte el objectURL de la imagen (blob) en dataURL para incrustarlo en el PDF.
@@ -27,6 +28,8 @@ const ExportPdfModal = ({ analisis, imgUrl, onClose }) => {
   const [incHistorial, setIncHistorial] = useState(false);
   const [generando, setGenerando] = useState(false);
   const [error, setError] = useState('');
+
+  useBloquearScroll(true);
 
   const exportar = async () => {
     if (!incDetalle && !incHistorial) {

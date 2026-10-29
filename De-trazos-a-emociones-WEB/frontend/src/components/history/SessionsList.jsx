@@ -3,6 +3,7 @@ import { Trash2 } from 'lucide-react';
 import './SessionsList.css';
 import { api } from '../../api';
 import AuthImage from '../common/AuthImage';
+import ConfirmDialog from '../common/ConfirmDialog';
 import { exportarAnalisis } from '../../utils/exportarPdf';
 
 const slug = (s) =>
@@ -10,6 +11,8 @@ const slug = (s) =>
 
 const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect }) => {
   const [generando, setGenerando] = useState(false);
+  const [porBorrar, setPorBorrar] = useState(null);
+  const [borrando, setBorrando] = useState(false);
 
   const exportar = async () => {
     if (!sessions.length || generando) return;
@@ -51,18 +54,27 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
     return `${fecha}, ${hora}`;
   };
 
-  const handleDelete = async (e, id) => {
+  const pedirBorrar = (e, id) => {
     e.stopPropagation();
-    if (!window.confirm('¿Eliminar este análisis? Esta acción no se puede deshacer.')) return;
+    setPorBorrar(id);
+  };
+
+  const confirmarBorrado = async () => {
+    if (!porBorrar) return;
+    setBorrando(true);
     try {
-      await api.eliminarAnalisis(id);
-      if (onDeleted) onDeleted(id);
+      await api.eliminarAnalisis(porBorrar);
+      if (onDeleted) onDeleted(porBorrar);
+      setPorBorrar(null);
     } catch (err) {
       alert(err.message);
+    } finally {
+      setBorrando(false);
     }
   };
 
   return (
+    <>
     <div className="dashboard-card sessions-card">
       <div className="card-header">
         <div>
@@ -122,7 +134,7 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
                 <button
                   className="session-delete"
                   title="Eliminar análisis"
-                  onClick={(e) => handleDelete(e, session._id)}
+                  onClick={(e) => pedirBorrar(e, session._id)}
                 >
                   <Trash2 size={18} />
                 </button>
@@ -132,6 +144,18 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
         )}
       </div>
     </div>
+      <ConfirmDialog
+        abierto={!!porBorrar}
+        peligro
+        titulo="Eliminar análisis"
+        mensaje="¿Eliminar este análisis?"
+        detalle="Esta acción no se puede deshacer."
+        textoConfirmar="Eliminar"
+        cargando={borrando}
+        onConfirmar={confirmarBorrado}
+        onCancelar={() => setPorBorrar(null)}
+      />
+    </>
   );
 };
 

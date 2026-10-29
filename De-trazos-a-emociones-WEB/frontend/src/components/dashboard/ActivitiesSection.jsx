@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import './ActivitiesSection.css';
 import { emocionPredominante } from '../../utils/emociones';
 import { actividadesPara } from '../../data/actividades';
+import { useBloquearScroll } from '../../hooks/useBloquearScroll';
 
 const ActivitiesSection = ({ child }) => {
   const nombre = child?.nombre && child.nombre !== 'Sin nombre' ? child.nombre : 'el niño';
@@ -10,6 +11,7 @@ const ActivitiesSection = ({ child }) => {
   const { actividades, consejos } = actividadesPara(emocion);
 
   const [detalle, setDetalle] = useState(null);
+  useBloquearScroll(!!detalle);
 
   return (
     <div className="dashboard-card activities-section" data-tour="actividades">

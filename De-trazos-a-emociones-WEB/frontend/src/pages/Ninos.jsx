@@ -5,6 +5,7 @@ import { api } from '../api';
 import { emotionVisual, emocionPredominante, textoEdad, formatFecha } from '../utils/emociones';
 import BrandHeader from '../components/common/BrandHeader';
 import Sidebar from '../components/layout/Sidebar';
+import { useBloquearScroll } from '../hooks/useBloquearScroll';
 import './Ninos.css';
 
 const Ninos = () => {
@@ -12,6 +13,7 @@ const Ninos = () => {
   const [ninos, setNinos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [detalle, setDetalle] = useState(null);
+  useBloquearScroll(!!detalle);
 
   useEffect(() => {
     let activo = true;

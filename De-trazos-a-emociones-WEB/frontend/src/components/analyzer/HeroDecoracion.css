@@ -9,6 +9,10 @@
   margin-left: 10px;
   overflow: hidden;
   cursor: pointer;
+  /* Difumina los bordes para que NO se vea el rectángulo que encierra la animación.
+     El overflow sigue conteniendo la onda del clic, pero el recorte deja de notarse. */
+  -webkit-mask: radial-gradient(ellipse 115% 112% at 50% 50%, #000 45%, transparent 86%);
+          mask: radial-gradient(ellipse 115% 112% at 50% 50%, #000 45%, transparent 86%);
 }
 
 /* Resplandor suave que aparece al pasar el mouse por el encabezado. */
@@ -16,7 +20,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 65% 50%, var(--accent-dim), transparent 70%);
+  background: radial-gradient(circle at 50% 50%, var(--accent-dim), transparent 72%);
   opacity: 0;
   transition: opacity 0.5s ease;
   pointer-events: none;

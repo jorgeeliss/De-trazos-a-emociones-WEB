@@ -1,27 +1,47 @@
+import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './ChildSwitcher.css';
 import { emotionVisual, emocionPredominante, textoEdad } from '../../utils/emociones';
 import { api } from '../../api';
 import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) => {
   const navigate = useNavigate();
   const { nuevaSesion } = useAnalisisSesion();
+  const [porBorrar, setPorBorrar] = useState(null);
+  const [fase2, setFase2] = useState(false);
+  const [borrando, setBorrando] = useState(false);
 
-  const handleDelete = async (e, nino) => {
+  const pedirBorrar = (e, nino) => {
     e.stopPropagation();
-    const n = nino.analisis.length;
-    if (!window.confirm(`¿Eliminar a "${nino.nombre}" y sus ${n} análisis? Se borrarán también sus dibujos. Esta acción no se puede deshacer.`)) return;
+    setFase2(false);
+    setPorBorrar(nino);
+  };
+
+  const cancelarBorrado = () => {
+    setPorBorrar(null);
+    setFase2(false);
+  };
+
+  const confirmarBorrado = async () => {
+    if (!porBorrar) return;
+    setBorrando(true);
+    const ids = porBorrar.analisis.map((a) => a._id);
     try {
-      await api.eliminarNino(nino.analisis.map((a) => a._id));
-      if (onDeleted) onDeleted(nino.analisis.map((a) => a._id));
+      await api.eliminarNino(ids);
+      if (onDeleted) onDeleted(ids);
+      cancelarBorrado();
     } catch (err) {
       alert(err.message);
+    } finally {
+      setBorrando(false);
     }
   };
 
   return (
+    <>
     <div className="child-switcher">
       {ninos.map((nino) => {
         const emocion = emocionPredominante(nino.analisis);
@@ -39,7 +59,7 @@ const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) =
               <div className="child-cage">{textoEdad(nino) || `${nino.analisis.length} análisis`}</div>
             </div>
             <span className="child-mood">{visual.emoji}</span>
-            <button className="child-delete" title="Eliminar niño" onClick={(e) => handleDelete(e, nino)}>
+            <button className="child-delete" title="Eliminar niño" onClick={(e) => pedirBorrar(e, nino)}>
               <Trash2 size={16} />
             </button>
           </div>
@@ -50,6 +70,29 @@ const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) =
         Agregar niño
       </div>
     </div>
+
+      <ConfirmDialog
+        abierto={!!porBorrar && !fase2}
+        peligro
+        titulo="Eliminar niño"
+        mensaje={porBorrar ? `¿Eliminar a "${porBorrar.nombre}" y sus ${porBorrar.analisis.length} análisis?` : ''}
+        detalle="Se borrarán también sus dibujos."
+        textoConfirmar="Continuar"
+        onConfirmar={() => setFase2(true)}
+        onCancelar={cancelarBorrado}
+      />
+      <ConfirmDialog
+        abierto={!!porBorrar && fase2}
+        peligro
+        titulo="Confirmar eliminación"
+        mensaje={porBorrar ? `Vas a eliminar definitivamente a "${porBorrar.nombre}".` : ''}
+        detalle="Esta acción no se puede deshacer."
+        textoConfirmar="Eliminar definitivamente"
+        cargando={borrando}
+        onConfirmar={confirmarBorrado}
+        onCancelar={cancelarBorrado}
+      />
+    </>
   );
 };
 

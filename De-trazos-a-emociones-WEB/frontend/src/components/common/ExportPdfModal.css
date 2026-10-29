@@ -4,14 +4,16 @@
   background: var(--overlay);
   backdrop-filter: blur(3px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 2000;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .exp-card {
   position: relative;
+  margin: auto;
   background: var(--card);
   border: 1px solid var(--border2);
   border-radius: 18px;

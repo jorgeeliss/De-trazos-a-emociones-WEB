@@ -5,6 +5,7 @@ import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emoci
 import { api } from '../../api';
 import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 import ExportPdfModal from './ExportPdfModal';
+import { useBloquearScroll } from '../../hooks/useBloquearScroll';
 import { API_URL } from '../../config';
 
 const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }) => {
@@ -41,6 +42,8 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
     if (analisisId && tieneImagen) cargar();
     return () => { cancelado = true; if (objectUrl) URL.revokeObjectURL(objectUrl); };
   }, [analisisId, tieneImagen]);
+
+  useBloquearScroll(!!analisis);
 
   if (!analisis) return null;
 

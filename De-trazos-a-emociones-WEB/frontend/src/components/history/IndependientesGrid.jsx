@@ -3,11 +3,14 @@ import { Trash2 } from 'lucide-react';
 import './IndependientesGrid.css';
 import { api } from '../../api';
 import AuthImage from '../common/AuthImage';
+import ConfirmDialog from '../common/ConfirmDialog';
 import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
 
 const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
   const [ninoSel, setNinoSel] = useState('');
   const [ocupado, setOcupado] = useState(false);
+  const [porBorrar, setPorBorrar] = useState(false);
+  const [borrando, setBorrando] = useState(false);
   const r = analisis.resultado_ia || {};
   const visual = emotionVisual(r.emocion_predominante || '');
   const inten = intensityInfo(r.intensidad || '');
@@ -32,22 +35,30 @@ const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
     }
   };
 
-  const borrar = async (e) => {
+  const pedirBorrar = (e) => {
     e.stopPropagation();
-    if (!window.confirm('¿Eliminar este dibujo y su análisis? No se puede deshacer.')) return;
+    setPorBorrar(true);
+  };
+
+  const confirmarBorrado = async () => {
+    setBorrando(true);
     try {
       await api.eliminarAnalisis(analisis._id);
       if (onDeleted) onDeleted(analisis._id);
+      setPorBorrar(false);
     } catch (err) {
       alert(err.message);
+    } finally {
+      setBorrando(false);
     }
   };
 
   return (
+    <>
     <div className="ind-card" onClick={() => onSelect(analisis)} title="Ver el dibujo y el análisis">
       <div className="ind-thumb">
         {analisis.ruta_imagen ? <AuthImage analisisId={analisis._id} alt="Dibujo" /> : <span>🖼️</span>}
-        <button className="ind-delete" title="Eliminar" onClick={borrar}><Trash2 size={16} /></button>
+        <button className="ind-delete" title="Eliminar" onClick={pedirBorrar}><Trash2 size={16} /></button>
       </div>
       <div className="ind-body">
         <div className="ind-meta">
@@ -66,6 +77,18 @@ const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
         </div>
       </div>
     </div>
+      <ConfirmDialog
+        abierto={porBorrar}
+        peligro
+        titulo="Eliminar dibujo"
+        mensaje="¿Eliminar este dibujo y su análisis?"
+        detalle="Esta acción no se puede deshacer."
+        textoConfirmar="Eliminar"
+        cargando={borrando}
+        onConfirmar={confirmarBorrado}
+        onCancelar={() => setPorBorrar(false)}
+      />
+    </>
   );
 };
 
