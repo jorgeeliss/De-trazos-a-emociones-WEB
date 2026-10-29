@@ -11,10 +11,16 @@ import {
   emocionPredominante,
 } from './emociones';
 
-const ACCENT = '#7c5cfc';
-const TEXT = '#1f2433';
-const MUTED = '#6b6880';
-const BORDER = '#ece9f7';
+// Paleta sobria para impresión (sin colores fluorescentes).
+const ACCENT = '#4a4878';     // indigo apagado, para títulos de sección
+const TEXT = '#1f2433';       // texto principal
+const MUTED = '#6b6880';      // texto secundario
+const BORDER = '#e4e2ee';     // bordes sutiles
+const HEADER_BG = '#352f5e';  // banda superior, indigo profundo
+const CHIP_BG = '#f1f0f6';    // fondo neutro de los chips de emoción
+const CHIP_TEXT = '#3a3752';  // texto de los chips
+const BAR_TRACK = '#eceaf3';  // fondo de las barras
+const BAR_FILL = '#6f6c99';   // relleno sobrio y uniforme de las barras
 
 const esc = (s) =>
   String(s ?? '')
@@ -25,8 +31,8 @@ const esc = (s) =>
 
 const chipEmocion = (emocion) => {
   const v = emotionVisual(emocion || '');
-  return `<span style="display:inline-block;background:${v.bg};color:${v.color};
-    padding:5px 14px;border-radius:999px;font-size:14px;font-weight:700;">
+  return `<span style="display:inline-block;background:${CHIP_BG};color:${CHIP_TEXT};
+    border:1px solid ${BORDER};padding:5px 14px;border-radius:999px;font-size:14px;font-weight:700;">
     ${esc(v.emoji)} ${esc(emocion || 'Sin dato')}</span>`;
 };
 
@@ -54,8 +60,8 @@ const graficoDistribucion = (lista) => {
       return `<div style="display:flex;align-items:center;gap:10px;margin:0 0 9px;">
         <div style="width:120px;font-size:12px;color:${TEXT};text-transform:capitalize;
           white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(v.emoji)} ${esc(emo)}</div>
-        <div style="flex:1;background:#f2f0fa;border-radius:8px;height:18px;position:relative;">
-          <div style="width:${ancho}%;background:${v.color};height:18px;border-radius:8px;"></div>
+        <div style="flex:1;background:${BAR_TRACK};border-radius:8px;height:18px;position:relative;">
+          <div style="width:${ancho}%;background:${BAR_FILL};height:18px;border-radius:8px;"></div>
         </div>
         <div style="width:24px;text-align:right;font-size:12px;font-weight:700;color:${TEXT};">${n}</div>
       </div>`;
@@ -129,7 +135,7 @@ export const seccionDetalle = (analisis, imagenDataUrl) => {
     ${meta.length ? `<div style="font-size:12px;color:${MUTED};margin:0 0 12px;">${meta.join('&nbsp;&nbsp;·&nbsp;&nbsp;')}</div>` : ''}
     <div style="margin:0 0 16px;">
       ${chipEmocion(r.emocion_predominante)}
-      <span style="margin-left:10px;font-size:13px;font-weight:700;color:${inten.color};">Intensidad ${esc(inten.label)}</span>
+      <span style="margin-left:10px;font-size:13px;font-weight:700;color:${TEXT};">Intensidad ${esc(inten.label)}</span>
     </div>
     ${imagenHtml}
     ${rasgosHtml}
@@ -177,7 +183,7 @@ export const seccionConsolidado = (ninos) => {
 // Envuelve el contenido en un documento con cabecera y pie, ancho de página A4.
 export const documento = (innerHtml, subtitulo) => `
   <div style="width:794px;box-sizing:border-box;background:#ffffff;font-family:'DM Sans',Arial,sans-serif;color:${TEXT};">
-    <div style="background:linear-gradient(135deg,#8b5cf6,#7c5cfc);padding:26px 32px;color:#ffffff;">
+    <div style="background:${HEADER_BG};padding:26px 32px;color:#ffffff;">
       <div style="font-size:22px;font-weight:800;">De trazos a emociones</div>
       <div style="font-size:12px;opacity:0.9;margin-top:2px;letter-spacing:0.04em;">${esc(subtitulo || 'Apoyo orientativo · Psicología infantil')}</div>
     </div>
