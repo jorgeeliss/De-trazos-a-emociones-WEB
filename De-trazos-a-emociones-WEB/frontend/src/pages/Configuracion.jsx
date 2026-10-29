@@ -28,13 +28,12 @@ const ROL_LABEL = {
   profesor: 'Profesor(a)',
 };
 
-// Pestañas de Configuración. "Eliminar cuenta" va de última (zona de peligro).
+// Pestañas de Configuración. "Eliminar cuenta" va dentro de la pestaña Cuenta.
 const TABS = [
   { id: 'cuenta', label: 'Cuenta', icon: User },
   { id: 'apariencia', label: 'Apariencia', icon: Palette },
   { id: 'seguridad', label: 'Seguridad', icon: ShieldCheck },
   { id: 'ayuda', label: 'Ayuda', icon: HelpCircle },
-  { id: 'eliminar', label: 'Eliminar cuenta', icon: Trash2, peligro: true },
 ];
 
 const Configuracion = () => {
@@ -218,6 +217,9 @@ const Configuracion = () => {
               <button type="button" className="pwd-btn" onClick={cambiarDeCuenta}>
                 <Repeat size={16} /> Cambiar de cuenta
               </button>
+              <button type="button" className="cuenta-eliminar pequeno" onClick={() => setConfirmarPaso(1)}>
+                <Trash2 size={14} /> Eliminar cuenta
+              </button>
             </div>
           </section>
         )}
@@ -321,18 +323,6 @@ const Configuracion = () => {
           </section>
         )}
 
-        {tab === 'eliminar' && (
-          <section className="config-section">
-            <h2>Eliminar cuenta</h2>
-            <p className="cuenta-peligro-nota">
-              Se borrarán tu cuenta y todos tus análisis e imágenes de forma permanente.
-              Esta acción no se puede deshacer.
-            </p>
-            <button type="button" className="cuenta-eliminar" onClick={() => setConfirmarPaso(1)}>
-              <Trash2 size={16} /> Eliminar cuenta
-            </button>
-          </section>
-        )}
       </div>
 
       <ConfirmDialog

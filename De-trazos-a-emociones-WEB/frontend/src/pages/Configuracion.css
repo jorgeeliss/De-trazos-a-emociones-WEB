@@ -131,14 +131,6 @@
   margin-top: 2px;
 }
 
-/* Zona de peligro: eliminar cuenta (última pestaña) */
-.cuenta-peligro-nota {
-  color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
-  margin: 0 0 1.25rem;
-}
-
 /* Cambiar contraseña */
 .pwd-form {
   display: flex;
@@ -286,8 +278,9 @@
 
 .cuenta-acciones {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
 .cuenta-eliminar {
@@ -308,6 +301,18 @@
 
 .cuenta-eliminar:hover {
   background: rgba(239, 68, 68, 0.12);
+}
+
+/* Variante pequeña: "Eliminar cuenta" debajo de "Cambiar de cuenta" */
+.cuenta-eliminar.pequeno {
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  border: none;
+  opacity: 0.85;
+}
+
+.cuenta-eliminar.pequeno:hover {
+  opacity: 1;
 }
 
 /* Encabezado del recuadro Cuenta (título + switch de tema a un lado) */
