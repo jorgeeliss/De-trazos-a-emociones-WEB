@@ -68,6 +68,14 @@ const Analyzer = () => {
                   : 'Completa el contexto del niño y sube su dibujo para obtener un análisis emocional personalizado y profundo.'}
             </p>
           </div>
+          <div className="hero-logo" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <circle className="hl-face" cx="24" cy="24" r="19" />
+              <path className="hl-smile" d="M15 28c2.5 3.6 6 5.4 9 5.4s6.5-1.8 9-5.4" />
+              <circle className="hl-eye" cx="18" cy="20" r="1.8" fill="currentColor" stroke="none" />
+              <circle className="hl-eye" cx="30" cy="20" r="1.8" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
         </header>
 
         {ninoConocido && (

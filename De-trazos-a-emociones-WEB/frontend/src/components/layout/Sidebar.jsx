@@ -5,13 +5,6 @@ import ProfileMenu from '../common/ProfileMenu';
 const Sidebar = ({ active }) => {
   const navigate = useNavigate();
 
-  let esAdmin;
-  try {
-    esAdmin = JSON.parse(localStorage.getItem('user') || '{}').esAdmin === true;
-  } catch {
-    esAdmin = false;
-  }
-
   return (
     <aside className="sidebar" data-tour="nav">
       <div className={`nav-item ${active === 'app' ? 'active' : ''}`} title="Analizar dibujo" onClick={() => navigate('/app')}>
@@ -36,14 +29,6 @@ const Sidebar = ({ active }) => {
           <circle cx="12" cy="12" r="9" />
         </svg>
       </div>
-      {esAdmin && (
-        <div className={`nav-item ${active === 'admin' ? 'active' : ''}`} title="Administración" onClick={() => navigate('/admin')}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            <path d="M9 12l2 2 4-4" />
-          </svg>
-        </div>
-      )}
       <div className={`nav-item ${active === 'ninos' ? 'active' : ''}`} title="Mis niños" onClick={() => navigate('/ninos')}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <circle cx="9" cy="7" r="4" />
