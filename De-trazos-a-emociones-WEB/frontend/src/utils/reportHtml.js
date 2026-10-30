@@ -116,8 +116,32 @@ export const bloquesDetalle = (analisis, imagenDataUrl) => {
   const c = colorEmocion(r.emocion_predominante);
   const rasgos = Array.isArray(r.rasgos_observados) ? r.rasgos_observados.filter(Boolean) : [];
   const lectura = r.lectura_orientativa || r.analisis_completo || '';
-  const filas = esIndep ? [] : filasContexto(ctx);
+  const sinContexto = analisis.analizado_sin_contexto === true;
+  const filas = esIndep || sinContexto ? [] : filasContexto(ctx);
+  const datosNino = [textoEdad(ctx), ctx.genero && capital(ctx.genero)].filter(Boolean).join(' · ');
   const bloques = [];
+
+  // El contexto que se muestra es el que se usó en ESTE análisis. Si el dibujo
+  // se analizó sin contexto (modo Solo dibujo, asignado después al niño), se
+  // dice así, en vez de presentar sus datos básicos como si se hubieran usado.
+  const contextoHtml = filas.length
+    ? `<div style="margin-top:18px;padding:14px 16px;background:${SUAVE};border-radius:12px;">
+        ${tituloSeccion('Contexto con el que se analizó')}
+        <div style="display:flex;flex-wrap:wrap;gap:10px 22px;">
+          ${filas.map(([etq, val]) => `
+            <div style="${['Situación actual', 'Diagnóstico previo', 'Comentó mientras dibujaba'].includes(etq) ? 'width:100%;' : 'min-width:140px;'}">
+              <div style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${MUTED};">${esc(etq)}</div>
+              <div style="font-size:12.5px;color:${TEXT};margin-top:2px;line-height:1.5;">${esc(val)}</div>
+            </div>`).join('')}
+        </div>
+      </div>`
+    : (esIndep || sinContexto)
+      ? `<div style="margin-top:18px;padding:12px 16px;background:${SUAVE};border-radius:12px;font-size:12.5px;line-height:1.55;color:${TEXT};">
+          ${tituloSeccion('Contexto del análisis')}
+          Este dibujo se analizó <b>sin el contexto del niño</b> (modo «Solo dibujo»): la lectura se basa solo en lo que se ve en el dibujo.
+          ${!esIndep && datosNino ? `<div style="margin-top:6px;color:${MUTED};">Datos del niño: ${esc(datosNino)}</div>` : ''}
+        </div>`
+      : '';
 
   // 1) Encabezado del análisis, dibujo y contexto.
   bloques.push(card(`
@@ -133,17 +157,7 @@ export const bloquesDetalle = (analisis, imagenDataUrl) => {
       </div>
       ${imagenDataUrl ? `<img src="${imagenDataUrl}" style="width:210px;max-height:210px;object-fit:contain;border-radius:12px;border:1px solid ${BORDER};background:#fff;" />` : ''}
     </div>
-    ${filas.length ? `
-      <div style="margin-top:18px;padding:14px 16px;background:${SUAVE};border-radius:12px;">
-        ${tituloSeccion('Contexto del niño')}
-        <div style="display:flex;flex-wrap:wrap;gap:10px 22px;">
-          ${filas.map(([etq, val]) => `
-            <div style="${['Situación actual', 'Diagnóstico previo', 'Comentó mientras dibujaba'].includes(etq) ? 'width:100%;' : 'min-width:140px;'}">
-              <div style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${MUTED};">${esc(etq)}</div>
-              <div style="font-size:12.5px;color:${TEXT};margin-top:2px;line-height:1.5;">${esc(val)}</div>
-            </div>`).join('')}
-        </div>
-      </div>` : ''}
+    ${contextoHtml}
   `, { acento: c }));
 
   // 2) Rasgos observados.
