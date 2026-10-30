@@ -146,8 +146,6 @@ function resolverFormatoOllama() {
     return modo === "json" ? "json" : ESQUEMA_ANALISIS;
 }
 
-// Intenta parsear la respuesta del modelo. Si el JSON llega incompleto o mal
-// formado, recupera el texto crudo y devuelve algo mostrable en vez de fallar.
 // minicpm-v (basado en un modelo chino) a veces mete palabras en chino y
 // puntuación de ancho completo en medio del español ("en一方面，el sol").
 // Se pasa la puntuación a su forma normal y se quitan los caracteres CJK.
@@ -171,6 +169,8 @@ function limpiarResultadoIA(datos) {
     return datos;
 }
 
+// Intenta parsear la respuesta del modelo. Si el JSON llega incompleto o mal
+// formado, recupera el texto crudo y devuelve algo mostrable en vez de fallar.
 function parsearRespuestaIA(rawContent) {
     const limpio = String(rawContent || "")
         .replace(/```json/gi, "")
