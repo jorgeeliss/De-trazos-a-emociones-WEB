@@ -51,3 +51,21 @@ test('emociones: nombre limpio y reconocimiento sin depender de tildes', async (
   assert.equal(esEmocionNegativa('melancolia'), true);
   assert.equal(limpiarResultadoIA({ emocion_predominante: 'Melancolia alta' }).emocion_predominante, 'Melancolía');
 });
+
+test('clima emocional: valencia, puntos y tendencia', async () => {
+  const { valenciaEmocion, puntosClima, resumenClima } = await import('./clima.js');
+  assert.equal(valenciaEmocion('Alegre'), 1);
+  assert.equal(valenciaEmocion('Melancolia alta'), -1);
+  assert.equal(valenciaEmocion('sorpresa'), 0);
+  const ahora = Date.parse('2026-10-30T12:00:00Z');
+  const s = (emocion, intensidad, fecha) => ({ fecha, resultado_ia: { emocion_predominante: emocion, intensidad } });
+  // Del más reciente al más antiguo, como llegan del backend.
+  const sesiones = [s('Melancolía', 'media', '2026-10-30'), s('Alegre', 'media', '2026-10-29'), s('Calma', 'alta', '2026-05-01')];
+  const todo = puntosClima(sesiones, 'todo', ahora);
+  assert.deepEqual(todo.map((p) => p.valor), [3, 2, -2]);
+  assert.equal(puntosClima(sesiones, '3m', ahora).length, 2);
+  assert.equal(resumenClima(puntosClima(sesiones, '3m', ahora)).tipo, 'baja');
+  assert.equal(resumenClima([{ valor: -2 }, { valor: 1 }]).tipo, 'mejora');
+  assert.equal(resumenClima([{ valor: 2 }, { valor: 2 }]).tipo, 'estable');
+  assert.equal(resumenClima([{ valor: 2 }]), null);
+});

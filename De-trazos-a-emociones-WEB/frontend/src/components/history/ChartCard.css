@@ -54,3 +54,128 @@
   flex-shrink: 0;
   box-shadow: 0 0 10px currentColor;
 }
+
+/* ===== Clima emocional ===== */
+.history-wrapper .clima-periodo {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 11px;
+  background: var(--sunken);
+  border: 1px solid var(--border);
+}
+.history-wrapper .clima-periodo button {
+  padding: 5px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.history-wrapper .clima-periodo button:hover {
+  color: var(--text);
+}
+.history-wrapper .clima-periodo button.activo {
+  background: var(--purple-dim);
+  color: var(--purple-light);
+}
+
+.history-wrapper .clima-vacio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
+  padding: 0 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.history-wrapper .clima-zona.agradable {
+  fill: color-mix(in srgb, var(--emo-calma) 7%, transparent);
+}
+.history-wrapper .clima-zona.dificil {
+  fill: color-mix(in srgb, var(--emo-ansiedad) 7%, transparent);
+}
+.history-wrapper .clima-centro {
+  stroke: var(--border2);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+}
+.history-wrapper .clima-eje {
+  fill: var(--muted);
+  font-size: 11px;
+}
+.history-wrapper .clima-fecha {
+  fill: var(--muted);
+  font-size: 10px;
+}
+
+.history-wrapper .clima-linea {
+  fill: none;
+  stroke: var(--muted2);
+  stroke-opacity: 0.55;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 1.4s ease forwards;
+}
+
+.history-wrapper .clima-punto {
+  cursor: pointer;
+  outline: none;
+  opacity: 0;
+  animation: climaPunto 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.history-wrapper .clima-punto circle {
+  fill: color-mix(in srgb, var(--emo) 24%, var(--card));
+  stroke: var(--emo);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.history-wrapper .clima-punto svg {
+  color: var(--emo);
+  pointer-events: none;
+}
+.history-wrapper .clima-punto:hover circle,
+.history-wrapper .clima-punto:focus-visible circle {
+  transform: scale(1.18);
+  filter: drop-shadow(0 0 6px var(--emo));
+}
+
+@keyframes climaPunto {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.history-wrapper .clima-resumen {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 24px 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--sunken);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.history-wrapper .clima-resumen svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.history-wrapper .clima-resumen.mejora svg { color: var(--emo-alegria); }
+.history-wrapper .clima-resumen.baja svg { color: var(--emo-ansiedad); }
+.history-wrapper .clima-resumen.estable svg { color: var(--muted2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .history-wrapper .clima-linea { animation: none; stroke-dashoffset: 0; }
+  .history-wrapper .clima-punto { animation: none; opacity: 1; }
+}

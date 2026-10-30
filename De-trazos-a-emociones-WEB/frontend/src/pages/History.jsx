@@ -160,7 +160,7 @@ const History = () => {
             ) : (
               <>
                 <div className="grid-top">
-                  <ChartCard sessions={activeSessions} activeChildName={activeChildName} />
+                  <ChartCard sessions={activeSessions} activeChildName={activeChildName} onSelect={setDetalle} />
                   <SummaryCard sessions={activeSessions} />
                 </div>
 
