@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const sharp = require("sharp");
+const { recortarCuadradoAJpeg } = require("../utils/imagen");
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const path = require("path");
@@ -19,7 +19,7 @@ if (!fs.existsSync(perfilesDir)) {
     fs.mkdirSync(perfilesDir, { recursive: true });
 }
 
-// La foto se procesa en memoria con sharp, por eso se usa memoryStorage.
+// La foto se procesa en memoria (utils/imagen.js), por eso se usa memoryStorage.
 const TIPOS_IMAGEN = ["image/jpeg", "image/png", "image/webp"];
 const upload = multer({
     storage: multer.memoryStorage(),
@@ -79,10 +79,7 @@ router.post("/foto", verificarToken, upload.single("foto"), async (req, res) => 
         const nombreArchivo = `${req.usuario.id}.jpg`;
         const destino = path.join(perfilesDir, nombreArchivo);
 
-        await sharp(req.file.buffer)
-            .resize(256, 256, { fit: "cover" })
-            .jpeg({ quality: 82 })
-            .toFile(destino);
+        await recortarCuadradoAJpeg(req.file.buffer, destino, { lado: 256, calidad: 82 });
 
         await User.findByIdAndUpdate(req.usuario.id, {
             fotoPerfil: `/uploads/perfiles/${nombreArchivo}`

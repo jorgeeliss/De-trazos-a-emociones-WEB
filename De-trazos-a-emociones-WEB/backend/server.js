@@ -17,7 +17,7 @@ const axios = require("axios");
 const multer = require("multer");
 const fs = require("fs");
 const cors = require("cors");
-const sharp = require("sharp");
+const { reducirAJpeg, motorImagen } = require("./utils/imagen");
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
 const perfilRoutes = require("./routes/perfil");
@@ -372,10 +372,7 @@ app.post(
     try {
         // Redimensionar y comprimir la imagen para que el modelo la procese más rápido.
         const processedImagePath = req.file.path + "-resized.jpg";
-        await sharp(req.file.path)
-            .resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true })
-            .jpeg({ quality: 80 })
-            .toFile(processedImagePath);
+        await reducirAJpeg(req.file.path, processedImagePath, { max: 800, calidad: 80 });
 
         const imagenBase64 = fs.readFileSync(processedImagePath, { encoding: "base64" });
         const { resultado: resultadoJSON, aviso: avisoParseo } = await obtenerAnalisisIA(imagenBase64, contextoFinal);
@@ -747,4 +744,5 @@ app.use((err, req, res, next) => {
 
 app.listen(process.env.PORT || 3000, () => {
     console.log("Servidor iniciado en puerto", process.env.PORT || 3000);
+    console.log("Procesamiento de imágenes con", motorImagen);
 });
