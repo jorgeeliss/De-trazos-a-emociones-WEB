@@ -525,3 +525,12 @@
   0% { opacity: 0; transform: scale(0.9); }
   100% { opacity: 1; transform: scale(1); }
 }
+
+/* Resumen del contexto en el paso del dibujo. */
+.analyzer-wrapper .ctx-paso {
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.5s ease both;
+}
+.analyzer-wrapper .ctx-paso .ctx-resumen {
+  background: var(--card);
+}

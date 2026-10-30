@@ -54,4 +54,25 @@ function construirContextoFinal(ctx = {}) {
         : "";
 }
 
-module.exports = { edadDesdeFecha, construirContextoFinal };
+// Campos del contexto que se pueden ajustar al reanalizar. El nombre no:
+// identifica al niño en el historial.
+const CAMPOS_EDITABLES = [
+    "edad", "fecha_nacimiento", "genero",
+    "situacion_actual", "comportamiento", "diagnostico_previo",
+    "dibujo_espontaneo", "comento_mientras", "tiempo_dibujo"
+];
+const LARGO_MAXIMO = 1000;
+
+// Contexto editado que llega del frontend, limpio: solo campos permitidos, como
+// texto, sin espacios sobrantes y con un largo máximo. null si no vino ninguno.
+function sanitizarContexto(entrada) {
+    if (!entrada || typeof entrada !== "object" || Array.isArray(entrada)) return null;
+    const limpio = {};
+    for (const campo of CAMPOS_EDITABLES) {
+        if (entrada[campo] === undefined || entrada[campo] === null) continue;
+        limpio[campo] = String(entrada[campo]).trim().slice(0, LARGO_MAXIMO);
+    }
+    return limpio;
+}
+
+module.exports = { edadDesdeFecha, construirContextoFinal, sanitizarContexto, CAMPOS_EDITABLES };

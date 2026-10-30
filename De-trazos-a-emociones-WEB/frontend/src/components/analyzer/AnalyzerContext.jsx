@@ -1,11 +1,15 @@
-import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, Pencil } from 'lucide-react';
+import '../common/ContextoNino.css';
 import './AnalyzerContext.css';
 import { textoEdad } from '../../utils/emociones';
 
 const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, onContinuar, ninoConocido }) => {
+  // Niño ya conocido: sus datos básicos se muestran resumidos y se pueden editar.
+  const [editarBasicos, setEditarBasicos] = useState(false);
   return (
     <div id="screen-1" className="screen">
-      {ninoConocido ? (
+      {ninoConocido && !editarBasicos ? (
         <div className="card nino-conocido-card">
           <div className="card-header">
             <div className="card-icon">
@@ -14,16 +18,19 @@ const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, onCon
                 <path d="M2 16c0-3.3 3.1-6 7-6s7 2.7 7 6" />
               </svg>
             </div>
-            <div>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div className="card-title">{formData.nombre || 'Niño sin nombre'}</div>
               <div className="card-subtitle">
-                {[textoEdad(formData) || null, formData.genero].filter(Boolean).join(' · ') || 'Datos ya registrados'}
+                {[textoEdad(formData) || null, formData.genero].filter(Boolean).join(' · ') || 'Sin fecha de nacimiento ni género'}
               </div>
             </div>
+            <button type="button" className="ctx-editar" onClick={() => setEditarBasicos(true)}>
+              <Pencil size={14} /> Editar datos
+            </button>
           </div>
           <div className="card-body">
             <p style={{ margin: 0, fontSize: '13.5px', color: 'var(--muted, #6b7280)' }}>
-              Se reutilizan los datos de este niño. Solo necesitas revisar la situación actual y subir el nuevo dibujo.
+              Se reutiliza el contexto de este niño (abajo). Revísalo, actualiza lo que haya cambiado y sigue con el dibujo.
             </p>
           </div>
         </div>
@@ -45,7 +52,7 @@ const AnalyzerContext = ({ formData, handleInputChange, handleRadioChange, onCon
             <div className="form-grid cols-3">
               <div className="field">
                 <label>Nombre <span className="optional">Opcional</span></label>
-                <input type="text" id="nombre" value={formData.nombre} onChange={handleInputChange} placeholder="Ej: Sofía" />
+                <input type="text" id="nombre" value={formData.nombre} onChange={handleInputChange} placeholder="Ej: Sofía" readOnly={ninoConocido} title={ninoConocido ? 'El nombre identifica al niño en el historial' : undefined} />
               </div>
               <div className="field">
                 <label>Fecha de nacimiento</label>

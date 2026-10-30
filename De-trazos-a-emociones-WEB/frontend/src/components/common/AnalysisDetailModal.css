@@ -94,6 +94,7 @@
   align-items: center;
   gap: 6px;
   margin-top: 10px;
+  margin-bottom: 16px;
   background: var(--accent-dim);
   border: 1px solid var(--accent);
   color: var(--accent-soft);
@@ -276,4 +277,9 @@
   color: var(--muted);
   font-size: 13.5px;
   line-height: 1.5;
+}
+
+/* Contexto del niño (resumen, revisión y edición antes de reanalizar). */
+.adm-contexto {
+  margin-bottom: 18px;
 }

@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const { reducirAJpeg } = require("../utils/imagen");
 const { obtenerAnalisisIA, construirContextoFinal } = require("../services/ia");
+const { sanitizarContexto } = require("../services/ia/contexto");
 const Analysis = require("../models/Analysis");
 const User = require("../models/User");
 const { permisosEfectivos } = require("../utils/permisos");
@@ -277,6 +278,8 @@ router.patch("/analisis/:id/desasignar", verificarToken, async (req, res) => {
    REANALIZAR UN DIBUJO YA GUARDADO, AHORA CON CONTEXTO
 ========================= */
 
+// Body opcional: { contexto_nino } con el contexto revisado o editado por el
+// usuario antes de reanalizar. Se guarda en el análisis junto al nuevo resultado.
 router.post("/analisis/:id/reanalizar", verificarToken, async (req, res) => {
     const { id } = req.params;
 
@@ -285,6 +288,14 @@ router.post("/analisis/:id/reanalizar", verificarToken, async (req, res) => {
     }
 
     try {
+        // Reanalizar es analizar CON contexto: requiere el mismo permiso.
+        const usuarioActual = await User.findById(req.usuario.id).select("esAdmin permisos");
+        if (!permisosEfectivos(usuarioActual).conContexto) {
+            return res.status(403).json({
+                error: "Tu cuenta no tiene habilitado el análisis con contexto. Pídele al administrador que te lo habilite."
+            });
+        }
+
         const analisis = await Analysis.findOne({ _id: id, usuarioId: req.usuario.id });
         if (!analisis || !analisis.ruta_imagen) {
             return res.status(404).json({ error: "Análisis no encontrado" });
@@ -295,15 +306,18 @@ router.post("/analisis/:id/reanalizar", verificarToken, async (req, res) => {
             return res.status(404).json({ error: "La imagen ya no está disponible" });
         }
 
-        const contextoFinal = construirContextoFinal(analisis.contexto_nino || {});
+        const cambios = sanitizarContexto((req.body || {}).contexto_nino);
+        const contexto = { ...(analisis.toObject().contexto_nino || {}), ...(cambios || {}) };
+        const contextoFinal = construirContextoFinal(contexto);
         const imagenBase64 = fs.readFileSync(rutaFisica, { encoding: "base64" });
         const { resultado, aviso } = await obtenerAnalisisIA(imagenBase64, contextoFinal);
 
+        analisis.contexto_nino = contexto;
         analisis.resultado_ia = resultado;
         analisis.analizado_sin_contexto = false;
         await analisis.save();
 
-        res.json({ analisis: resultado, aviso, simulado: resultado.simulado === true });
+        res.json({ analisis: resultado, contexto_nino: contexto, aviso, simulado: resultado.simulado === true });
 
     } catch (error) {
         console.error("Error reanalizando:", error);

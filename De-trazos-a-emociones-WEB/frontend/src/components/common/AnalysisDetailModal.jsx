@@ -8,17 +8,30 @@ import { api } from '../../api';
 import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 import ExportPdfModal from './ExportPdfModal';
 import { useBloquearScroll } from '../../hooks/useBloquearScroll';
-import { puedePdf } from '../../utils/permisos';
+import { puedePdf, puedeContexto } from '../../utils/permisos';
 import { useImagenAnalisis } from '../../hooks/useImagenAnalisis';
 import { useAvisos } from '../../context/AvisosContext';
+import { contextoDelNino } from '../../utils/contextoNino';
+import { ContextoResumen, ContextoEditor } from './ContextoNino';
 
-const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }) => {
+// Solo los datos con valor (para que no pisen con vacíos al combinar).
+const soloLlenos = (ctx = {}) =>
+  Object.fromEntries(Object.entries(ctx || {}).filter(([, v]) => String(v ?? '').trim() !== ''));
+
+// analisisDelNino: los demás análisis del mismo niño, para proponer su contexto
+// más completo al reanalizar (ver utils/contextoNino.js).
+const AnalysisDetailModal = ({ analisis, analisisDelNino = [], onClose, onActualizado, onDesasignado }) => {
   const [zoom, setZoom] = useState(false);
   const [exportar, setExportar] = useState(false);
   const [resultadoLocal, setResultadoLocal] = useState(null);
   const [yaReanalizado, setYaReanalizado] = useState(false);
   const [reanalizando, setReanalizando] = useState(false);
   const [desasignando, setDesasignando] = useState(false);
+  // Reanálisis: null (ver) → 'revisar' (contexto que se usará) → 'editar'.
+  const [revision, setRevision] = useState(null);
+  const [ctxEdicion, setCtxEdicion] = useState({});
+  const [ctxAntesDeEditar, setCtxAntesDeEditar] = useState({});
+  const [ctxGuardado, setCtxGuardado] = useState(null); // contexto tras reanalizar
   const { avisarError } = useAvisos();
 
   const tieneImagen = !!analisis?.ruta_imagen;
@@ -39,15 +52,40 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
   const lectura = r.lectura_orientativa || r.analisis_completo || 'Sin lectura disponible para este análisis.';
 
   const sinContexto = !yaReanalizado && analisis.analizado_sin_contexto;
-  const puedeReanalizar = sinContexto && !analisis.independiente;
+  const conPermiso = puedeContexto();
+  const puedeReanalizar = sinContexto && !analisis.independiente && conPermiso;
+  const nombreNino = analisis.contexto_nino?.nombre || 'el niño';
+
+  // Contexto que se propone para reanalizar: lo del propio análisis y, para lo
+  // que falte, lo más reciente del niño en sus otros análisis.
+  const ctxPropuesto = {
+    ...contextoDelNino(analisisDelNino.filter((a) => a.contexto_nino?.nombre === analisis.contexto_nino?.nombre)),
+    ...soloLlenos(analisis.contexto_nino),
+  };
+  const ctxMostrado = ctxGuardado || (sinContexto ? ctxPropuesto : analisis.contexto_nino || {});
+
+  const abrirRevision = () => {
+    setCtxEdicion(ctxPropuesto);
+    setRevision('revisar');
+  };
+  const editar = () => {
+    setCtxAntesDeEditar(ctxEdicion);
+    setRevision('editar');
+  };
+  const cancelarEdicion = () => {
+    setCtxEdicion(ctxAntesDeEditar);
+    setRevision('revisar');
+  };
 
   const reanalizar = async () => {
     setReanalizando(true);
     try {
-      const data = await api.reanalizar(analisis._id);
+      const data = await api.reanalizar(analisis._id, ctxEdicion);
       setResultadoLocal(data.analisis);
+      setCtxGuardado(data.contexto_nino || ctxEdicion);
       setYaReanalizado(true);
-      if (onActualizado) onActualizado(analisis._id, data.analisis);
+      setRevision(null);
+      if (onActualizado) onActualizado(analisis._id, data.analisis, data.contexto_nino || ctxEdicion);
     } catch (err) {
       avisarError('No se pudo reanalizar el dibujo', err);
     } finally {
@@ -91,17 +129,65 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
         {sinContexto && (
           <div className="adm-sincontexto">
             <span className="adm-badge-sc">Analizado sin contexto</span>
-            {puedeReanalizar ? (
-              <button className="adm-reanalizar" onClick={reanalizar} disabled={reanalizando}>
-                <RefreshCw size={14} /> Reanalizar con contexto
-              </button>
-            ) : (
-              <span className="adm-sc-hint">Asígnalo a un niño para reanalizar con su contexto.</span>
-            )}
+            <span className="adm-sc-hint">
+              {analisis.independiente
+                ? 'Asígnalo a un niño para reanalizar con su contexto.'
+                : conPermiso
+                  ? 'Puedes reanalizarlo con el contexto del niño (abajo).'
+                  : 'Tu cuenta no tiene habilitado el análisis con contexto.'}
+            </span>
             {!analisis.independiente && (
-              <button className="adm-desasignar" onClick={desasignar} disabled={desasignando}>
+              <button className="adm-desasignar" onClick={desasignar} disabled={desasignando || reanalizando}>
                 <Undo2 size={14} /> {desasignando ? 'Desasignando…' : 'Desasignar'}
               </button>
+            )}
+          </div>
+        )}
+
+        {/* Contexto del niño: el usado en el análisis o, si se analizó sin
+            contexto, el que se usará al reanalizar (revisable y editable). */}
+        {!analisis.independiente && !reanalizando && (
+          <div className="adm-contexto">
+            {revision === null && (
+              <ContextoResumen
+                ctx={ctxMostrado}
+                titulo={sinContexto ? `Contexto de ${nombreNino}` : 'Contexto usado en este análisis'}
+                subtitulo={sinContexto ? 'Se usará si reanalizas este dibujo.' : undefined}
+                acciones={puedeReanalizar ? (
+                  <button className="adm-reanalizar" onClick={abrirRevision}>
+                    <RefreshCw size={14} /> Reanalizar con contexto
+                  </button>
+                ) : null}
+              />
+            )}
+            {revision === 'revisar' && (
+              <ContextoResumen
+                ctx={ctxEdicion}
+                titulo="Revisa el contexto antes de reanalizar"
+                subtitulo={`Datos de ${nombreNino} que se usarán en el nuevo análisis.`}
+                onEditar={editar}
+                acciones={(
+                  <>
+                    <button className="adm-desasignar" onClick={() => setRevision(null)}>Cancelar</button>
+                    <button className="adm-reanalizar" onClick={reanalizar}>
+                      <RefreshCw size={14} /> Reanalizar ahora
+                    </button>
+                  </>
+                )}
+              />
+            )}
+            {revision === 'editar' && (
+              <section className="ctx-resumen">
+                <div className="ctx-resumen-titulos">
+                  <h4>Editar el contexto de {nombreNino}</h4>
+                  <p>Los cambios se guardan junto al nuevo análisis.</p>
+                </div>
+                <ContextoEditor valor={ctxEdicion} onChange={setCtxEdicion} />
+                <div className="ctx-acciones">
+                  <button className="adm-desasignar" onClick={cancelarEdicion}>Cancelar</button>
+                  <button className="adm-reanalizar" onClick={() => setRevision('revisar')}>Listo</button>
+                </div>
+              </section>
             )}
           </div>
         )}

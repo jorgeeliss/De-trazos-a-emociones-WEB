@@ -209,9 +209,12 @@ export const api = {
     return data;
   },
 
-  reanalizar: async (id) => {
+  // contexto (opcional): el contexto del niño revisado o editado antes de reanalizar.
+  reanalizar: async (id, contexto) => {
     const response = await authFetch(`${API_URL}/analisis/${id}/reanalizar`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(contexto ? { contexto_nino: contexto } : {}),
     });
 
     const data = await jsonSeguro(response);

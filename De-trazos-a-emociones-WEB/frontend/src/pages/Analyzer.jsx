@@ -4,6 +4,7 @@ import './Analyzer.css';
 import Sidebar from '../components/layout/Sidebar';
 import AnalyzerContext from '../components/analyzer/AnalyzerContext';
 import AnalyzerUpload from '../components/analyzer/AnalyzerUpload';
+import { ContextoResumen } from '../components/common/ContextoNino';
 import AnalyzerResult from '../components/analyzer/AnalyzerResult';
 import AnalyzerSavePanel from '../components/analyzer/AnalyzerSavePanel';
 import { useAnalisisSesion } from '../context/AnalisisSesionContext';
@@ -167,6 +168,18 @@ const Analyzer = () => {
           />
         )}
 
+        {/* El contexto se ve mientras se sube el dibujo (y se puede editar). */}
+        {step === 2 && modo === 'contexto' && !isAnalyzing && (
+          <div className="ctx-paso">
+            <ContextoResumen
+              ctx={formData}
+              titulo={formData.nombre ? `Contexto de ${formData.nombre}` : 'Contexto del niño'}
+              subtitulo="Se usará en este análisis."
+              onEditar={() => setStep(1)}
+            />
+          </div>
+        )}
+
         {step === 2 && (
           <AnalyzerUpload
             setStep={setStep}
@@ -203,6 +216,7 @@ const Analyzer = () => {
               analysisResult={analysisResult}
               resetAll={resetAll}
               previewUrl={previewUrl}
+              contexto={modo === 'contexto' ? formData : null}
             />
           </>
         )}

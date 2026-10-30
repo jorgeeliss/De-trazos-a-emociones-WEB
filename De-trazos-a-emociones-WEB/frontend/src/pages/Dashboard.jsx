@@ -126,7 +126,13 @@ const Dashboard = () => {
       {detalle && (
         <AnalysisDetailModal
           analisis={detalle}
+          analisisDelNino={historyData}
           onClose={() => setDetalle(null)}
+          onActualizado={(id, resultado, contexto) => {
+            const cambios = { resultado_ia: resultado, analizado_sin_contexto: false, ...(contexto ? { contexto_nino: contexto } : {}) };
+            setHistoryData((prev) => prev.map((a) => (a._id === id ? { ...a, ...cambios } : a)));
+            setDetalle((prev) => (prev && prev._id === id ? { ...prev, ...cambios } : prev));
+          }}
           onDesasignado={() => { recargar(); setDetalle(null); }}
         />
       )}

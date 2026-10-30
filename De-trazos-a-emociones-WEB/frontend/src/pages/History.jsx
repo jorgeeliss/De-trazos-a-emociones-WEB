@@ -15,6 +15,7 @@ import SessionsList from '../components/history/SessionsList';
 import IndependientesGrid from '../components/history/IndependientesGrid';
 import AnalysisDetailModal from '../components/common/AnalysisDetailModal';
 import BrandHeader from '../components/common/BrandHeader';
+import { contextoDelNino } from '../utils/contextoNino';
 
 const INDEP = '__independientes__';
 
@@ -91,9 +92,10 @@ const History = () => {
     setDetalle(prev => (prev && prev._id === id ? null : prev));
   };
 
-  const handleActualizado = (id, nuevoResultado) => {
-    setHistoryData(prev => prev.map(a => (a._id === id ? { ...a, resultado_ia: nuevoResultado, analizado_sin_contexto: false } : a)));
-    setDetalle(prev => (prev && prev._id === id ? { ...prev, resultado_ia: nuevoResultado, analizado_sin_contexto: false } : prev));
+  const handleActualizado = (id, nuevoResultado, contexto) => {
+    const cambios = { resultado_ia: nuevoResultado, analizado_sin_contexto: false, ...(contexto ? { contexto_nino: contexto } : {}) };
+    setHistoryData(prev => prev.map(a => (a._id === id ? { ...a, ...cambios } : a)));
+    setDetalle(prev => (prev && prev._id === id ? { ...prev, ...cambios } : prev));
   };
 
   return (
@@ -114,7 +116,8 @@ const History = () => {
             <button
               className="btn-new"
               onClick={() => {
-                const contexto = (!esIndep && activeSessions[0]?.contexto_nino) || null;
+                // El contexto más completo del niño (no solo el del último análisis).
+                const contexto = !esIndep && activeSessions.length ? contextoDelNino(activeSessions) : null;
                 if (contexto) precargarContexto(contexto); else nuevaSesion();
                 navigate('/app');
               }}
@@ -176,6 +179,7 @@ const History = () => {
       {detalle && (
         <AnalysisDetailModal
           analisis={detalle}
+          analisisDelNino={historyData}
           onClose={() => setDetalle(null)}
           onActualizado={handleActualizado}
           onDesasignado={() => { recargar(); setDetalle(null); }}

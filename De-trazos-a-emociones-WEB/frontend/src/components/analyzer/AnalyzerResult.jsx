@@ -2,6 +2,7 @@ import { RefreshCw, Timer, Eye, Puzzle, Compass, Info } from 'lucide-react';
 import './AnalyzerResult.css';
 import { emotionVisual } from '../../utils/emociones';
 import { enParrafos } from '../../utils/textoIA';
+import { ContextoResumen } from '../common/ContextoNino';
 
 const NIVELES = [
   { clave: 'low', label: 'Baja' },
@@ -28,7 +29,7 @@ const Texto = ({ texto }) => (
   </div>
 );
 
-const AnalyzerResult = ({ analysisResult, resetAll, previewUrl }) => {
+const AnalyzerResult = ({ analysisResult, resetAll, previewUrl, contexto = null }) => {
   const emocion = analysisResult.chips[0] || '';
   const visual = emotionVisual(emocion);
   const nivel = NIVELES.findIndex((n) => n.clave === analysisResult.intensity);
@@ -105,6 +106,12 @@ const AnalyzerResult = ({ analysisResult, resetAll, previewUrl }) => {
       <Bloque Icono={Compass} titulo="Lectura orientativa" sub="Síntesis y sugerencias para acompañar" destacado>
         <Texto texto={analysisResult.lectura} />
       </Bloque>
+
+      {contexto && (
+        <div className="res-contexto">
+          <ContextoResumen ctx={contexto} titulo="Contexto usado en este análisis" />
+        </div>
+      )}
 
       <button className="btn-new" onClick={resetAll}>
         <RefreshCw size={16} style={{ marginRight: '4px' }} />

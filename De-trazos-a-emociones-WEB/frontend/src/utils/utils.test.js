@@ -69,3 +69,22 @@ test('clima emocional: valencia, puntos y tendencia', async () => {
   assert.equal(resumenClima([{ valor: 2 }, { valor: 2 }]).tipo, 'estable');
   assert.equal(resumenClima([{ valor: 2 }]), null);
 });
+
+test('contexto del niño: valor más reciente no vacío por campo y filas legibles', async () => {
+  const { contextoDelNino, filasContexto } = await import('./contextoNino.js');
+  // Del más reciente al más antiguo: el último se hizo sin contexto (solo nombre).
+  const analisis = [
+    { contexto_nino: { nombre: 'Sofía', situacion_actual: '' } },
+    { contexto_nino: { nombre: 'Sofía', situacion_actual: 'Cambio de colegio', comportamiento: 'triste' } },
+    { contexto_nino: { nombre: 'Sofía', situacion_actual: 'Viejo', genero: 'niña', fecha_nacimiento: '2017-05-10' } },
+  ];
+  const ctx = contextoDelNino(analisis);
+  assert.equal(ctx.situacion_actual, 'Cambio de colegio');
+  assert.equal(ctx.comportamiento, 'triste');
+  assert.equal(ctx.genero, 'niña');
+  assert.equal(ctx.diagnostico_previo, '');
+  const filas = filasContexto(ctx);
+  assert.deepEqual(filas.map((f) => f[0]), ['Edad', 'Género', 'Situación actual', 'Comportamiento reciente']);
+  assert.equal(filas[1][1], 'Niña');
+  assert.deepEqual(filasContexto({}), []);
+});

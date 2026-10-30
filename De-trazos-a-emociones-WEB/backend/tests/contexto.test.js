@@ -22,3 +22,18 @@ test("arma las secciones solo con los datos presentes", () => {
     assert.match(ctx, /- Descripción aportada por el adulto: Su familia/);
     assert.doesNotMatch(ctx, /Género|Comportamiento|espontáneo/);
 });
+
+test("sanitizarContexto: solo campos permitidos, como texto, recortados y sin el nombre", () => {
+    const { sanitizarContexto } = require("../services/ia/contexto");
+    assert.equal(sanitizarContexto(undefined), null);
+    assert.equal(sanitizarContexto("texto"), null);
+    assert.equal(sanitizarContexto([1]), null);
+    const r = sanitizarContexto({
+        nombre: "Otro", situacion_actual: "  Cambio de colegio  ", genero: "niña",
+        edad: 8, comportamiento: null, $where: "x", diagnostico_previo: "a".repeat(1500)
+    });
+    assert.deepEqual(Object.keys(r).sort(), ["diagnostico_previo", "edad", "genero", "situacion_actual"]);
+    assert.equal(r.situacion_actual, "Cambio de colegio");
+    assert.equal(r.edad, "8");
+    assert.equal(r.diagnostico_previo.length, 1000);
+});

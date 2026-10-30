@@ -7,6 +7,7 @@ import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
 import { exportarAnalisis } from '../../utils/exportarPdf';
 import { actividadesPara } from '../../data/actividades';
 import ConsejosModal from './ConsejosModal';
+import { contextoDelNino } from '../../utils/contextoNino';
 import { useAvisos } from '../../context/AvisosContext';
 
 const alturaPorIntensidad = { 1: '22px', 2: '40px', 3: '56px' };
@@ -39,8 +40,9 @@ const WeeklySummary = ({ child }) => {
     }
   };
 
-  // Lleva el contexto del niño al Analyzer para no volver a pedirlo todo.
-  const contextoNino = analisis[0]?.contexto_nino;
+  // Lleva el contexto del niño al Analyzer para no volver a pedirlo todo: el más
+  // completo de sus análisis (no solo el del último, que pudo hacerse sin contexto).
+  const contextoNino = analisis.length ? contextoDelNino(analisis) : null;
   const irNuevoAnalisis = () => {
     if (contextoNino) precargarContexto(contextoNino); else nuevaSesion();
     navigate('/app');
