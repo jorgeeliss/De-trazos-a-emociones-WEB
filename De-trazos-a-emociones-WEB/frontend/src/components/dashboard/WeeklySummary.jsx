@@ -73,7 +73,7 @@ const WeeklySummary = ({ child }) => {
         </div>
         <div className="week-body">
           <div className="state-main">
-            <div className="state-emoji-wrap">
+            <div className="state-emoji-wrap" style={{ '--emo': visual.color }}>
               <div className="state-pulse"></div>
               <visual.Icono size={38} strokeWidth={1.75} style={{ color: visual.color }} />
             </div>
