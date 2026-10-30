@@ -3,6 +3,7 @@ import { X, ZoomIn, RefreshCw, FileDown, Undo2, ImageOff, Timer } from 'lucide-r
 import './AnalysisDetailModal.css';
 import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
 import { formatDuracion } from '../../utils/tiempo';
+import { limpiarResultadoIA } from '../../utils/textoIA';
 import { api } from '../../api';
 import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 import ExportPdfModal from './ExportPdfModal';
@@ -51,7 +52,7 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
 
   if (!analisis) return null;
 
-  const r = resultadoLocal || analisis.resultado_ia || {};
+  const r = limpiarResultadoIA(resultadoLocal || analisis.resultado_ia || {});
   const visual = emotionVisual(r.emocion_predominante || '');
   const inten = intensityInfo(r.intensidad || '');
   const rasgos = Array.isArray(r.rasgos_observados) ? r.rasgos_observados.filter(Boolean) : [];

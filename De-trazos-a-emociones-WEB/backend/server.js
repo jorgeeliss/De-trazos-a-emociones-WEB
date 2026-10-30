@@ -148,6 +148,29 @@ function resolverFormatoOllama() {
 
 // Intenta parsear la respuesta del modelo. Si el JSON llega incompleto o mal
 // formado, recupera el texto crudo y devuelve algo mostrable en vez de fallar.
+// minicpm-v (basado en un modelo chino) a veces mete palabras en chino y
+// puntuación de ancho completo en medio del español ("en一方面，el sol").
+// Se pasa la puntuación a su forma normal y se quitan los caracteres CJK.
+const PUNTUACION_ANCHA = { "，": ", ", "、": ", ", "。": ". ", "：": ": ", "；": "; ", "！": "! ", "？": "? ", "（": " (", "）": ") " };
+function limpiarTextoIA(texto) {
+    if (typeof texto !== "string") return texto;
+    return texto
+        .replace(/[，、。：；！？（）]/g, (c) => PUNTUACION_ANCHA[c])
+        .replace(/[\u3000-\u303F\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uAC00-\uD7AF\uF900-\uFAFF\uFF00-\uFFEF]+/g, "")
+        .replace(/[ \t]+([,.;:!?)])/g, "$1")
+        .replace(/[ \t]{2,}/g, " ")
+        .trim();
+}
+function limpiarResultadoIA(datos) {
+    if (!datos || typeof datos !== "object" || Array.isArray(datos)) return datos;
+    for (const [clave, valor] of Object.entries(datos)) {
+        if (clave === "raw") continue; // el texto crudo se guarda tal cual
+        if (typeof valor === "string") datos[clave] = limpiarTextoIA(valor);
+        else if (Array.isArray(valor)) datos[clave] = valor.map(limpiarTextoIA);
+    }
+    return datos;
+}
+
 function parsearRespuestaIA(rawContent) {
     const limpio = String(rawContent || "")
         .replace(/```json/gi, "")
@@ -267,6 +290,7 @@ Reglas de lenguaje (obligatorias):
 - Usa lenguaje orientativo y tentativo ("podría sugerir", "parece", "podría estar relacionado con"). Nunca uses lenguaje clínico ni diagnóstico ("el niño padece", "tiene un trastorno").
 - No hagas afirmaciones categóricas sobre la salud mental del niño.
 - Recuerda que un mismo trazo puede significar cosas distintas según el niño y su contexto.
+- Escribe TODO en español. No uses palabras ni caracteres de otros idiomas (por ejemplo, chino) ni signos de puntuación de ancho completo como "，" o "。".
 
 Devuelve un objeto JSON con EXACTAMENTE estas claves:
 - "rasgos_observados": lista (array de textos) SOLO de lo visible en el dibujo (colores, trazos y presión aparente, figuras, tamaño, disposición en la hoja, omisiones). Cada elemento debe ser una FRASE NATURAL Y COMPLETA en español, NUNCA una etiqueta, palabras sueltas ni texto con guiones bajos. Ejemplos del formato correcto: "Lluvia representada con líneas azules en el lado derecho de la hoja", "Un sol con expresión triste en la esquina superior izquierda", "Varias figuras humanas pequeñas en la parte inferior". Enumera entre 4 y 10 rasgos DISTINTOS; no repitas ni reformules el mismo rasgo.
@@ -322,7 +346,7 @@ async function obtenerAnalisisIA(imagenBase64, contextoFinal) {
 
     const parseo = parsearRespuestaIA(response.data.message.content);
     return {
-        resultado: conDuracion(parseo.datos, inicio),
+        resultado: conDuracion(limpiarResultadoIA(parseo.datos), inicio),
         aviso: parseo.ok ? undefined : "El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo."
     };
 }

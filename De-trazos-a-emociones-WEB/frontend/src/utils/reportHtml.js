@@ -3,6 +3,7 @@
 // la app (tarjetas, chips de emoción con color, gráfica). Todo el lenguaje es
 // orientativo, nunca clínico.
 
+import { limpiarResultadoIA } from './textoIA';
 import {
   intensityInfo,
   formatFechaHora,
@@ -72,7 +73,7 @@ const listaHistorial = (lista) => {
   const ordenados = [...lista].sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0));
   const filas = ordenados
     .map((a) => {
-      const r = a.resultado_ia || {};
+      const r = limpiarResultadoIA(a.resultado_ia || {});
       const inten = intensityInfo(r.intensidad || '');
       return `<div style="display:flex;align-items:center;justify-content:space-between;
         padding:9px 0;border-bottom:1px solid ${BORDER};">
@@ -87,7 +88,7 @@ const listaHistorial = (lista) => {
 
 // Sección: detalle de un análisis.
 export const seccionDetalle = (analisis, imagenDataUrl) => {
-  const r = analisis.resultado_ia || {};
+  const r = limpiarResultadoIA(analisis.resultado_ia || {});
   const nombre = analisis.contexto_nino?.nombre;
   const esIndep = analisis.independiente || !nombre || nombre === 'Sin nombre';
   const inten = intensityInfo(r.intensidad || '');

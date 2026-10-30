@@ -1,46 +1,82 @@
-import { Sparkles, RefreshCw, Timer } from 'lucide-react';
+import { RefreshCw, Timer, Eye, Puzzle, Compass, Info } from 'lucide-react';
 import './AnalyzerResult.css';
+import { emotionVisual } from '../../utils/emociones';
+import { enParrafos } from '../../utils/textoIA';
 
-const AnalyzerResult = ({ analysisResult, STYLES, resetAll, previewUrl }) => {
+const NIVELES = [
+  { clave: 'low', label: 'Baja' },
+  { clave: 'medio', label: 'Media' },
+  { clave: 'high', label: 'Alta' },
+];
+
+const Bloque = ({ Icono, titulo, sub, destacado, children }) => (
+  <section className={`res-bloque ${destacado ? 'destacado' : ''}`}>
+    <header className="res-bloque-head">
+      <span className="res-bloque-icono"><Icono size={18} /></span>
+      <div>
+        <h3>{titulo}</h3>
+        <p>{sub}</p>
+      </div>
+    </header>
+    {children}
+  </section>
+);
+
+const Texto = ({ texto }) => (
+  <div className="res-texto">
+    {enParrafos(texto).map((p, i) => <p key={i}>{p}</p>)}
+  </div>
+);
+
+const AnalyzerResult = ({ analysisResult, resetAll, previewUrl }) => {
+  const emocion = analysisResult.chips[0] || '';
+  const visual = emotionVisual(emocion);
+  const nivel = NIVELES.findIndex((n) => n.clave === analysisResult.intensity);
+
   return (
-    <div id="screen-3" className="screen">
+    // --emo: color de la emoción predominante; tiñe el resumen y la lectura.
+    <div id="screen-3" className="screen res" style={{ '--emo': visual.color }}>
       <div className="section-label">Resultado del análisis</div>
 
-      {previewUrl && (
-        <div className="result-image-wrap">
-          <img src={previewUrl} alt="Dibujo analizado" className="result-image" />
-          <div className="result-image-caption">Dibujo analizado</div>
-        </div>
-      )}
+      <section className="res-resumen">
+        {previewUrl && (
+          <figure className="res-dibujo">
+            <img src={previewUrl} alt="Dibujo analizado" />
+          </figure>
+        )}
+        <div className="res-datos">
+          <div className="res-etiqueta">Emoción predominante</div>
+          <div className="res-emocion">
+            <span className="res-emocion-icono"><visual.Icono size={26} strokeWidth={1.8} /></span>
+            {emocion.charAt(0).toUpperCase() + emocion.slice(1)}
+          </div>
 
-      <div className="emotions-grid">
-        {analysisResult.chips.map((emotion, i) => {
-          const s = STYLES[i % STYLES.length];
-          return (
-            <div key={i} className="emotion-chip" style={{background: s.bg, color: s.color, animationDelay: `${i * 80}ms`}}>
-              <span className="chip-dot" style={{background: s.dot}}></span>
-              {emotion.charAt(0).toUpperCase() + emotion.slice(1)}
+          <div className="res-intensidad">
+            <div className="res-etiqueta">
+              Intensidad <strong>{analysisResult.intensityLabel}</strong>
             </div>
-          );
-        })}
-      </div>
+            <div className="res-niveles" aria-hidden="true">
+              {NIVELES.map((n, i) => (
+                <div key={n.clave} className={`res-nivel ${i <= nivel ? 'activo' : ''} ${i === nivel ? 'actual' : ''}`}>
+                  <span className="res-nivel-barra" />
+                  <span className="res-nivel-label">{n.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-      <div className="intensity-card">
-        <div className="intensity-label-col">
-          <div className="intensity-title">Intensidad emocional</div>
-          <div className="intensity-value">{analysisResult.intensityLabel}</div>
+          <div className="res-meta">
+            {analysisResult.duracion && (
+              <span className="res-pill">
+                <Timer size={14} /> Tiempo de análisis: <strong>{analysisResult.duracion}</strong>
+              </span>
+            )}
+            <span className="res-pill suave">
+              <Info size={14} /> Lectura orientativa, no diagnóstica
+            </span>
+          </div>
         </div>
-        <div className="intensity-track">
-          <div className={`intensity-fill ${analysisResult.intensity}`} style={{width: analysisResult.intensity === 'high' ? '95%' : analysisResult.intensity === 'low' ? '30%' : '65%'}}></div>
-        </div>
-      </div>
-
-      {analysisResult.duracion && (
-        <div className="analysis-tiempo">
-          <Timer size={15} />
-          Tiempo de análisis: <strong>{analysisResult.duracion}</strong>
-        </div>
-      )}
+      </section>
 
       {analysisResult.simulado && (
         <div className="analysis-notice simulado">Resultado simulado (modo de prueba)</div>
@@ -50,46 +86,28 @@ const AnalyzerResult = ({ analysisResult, STYLES, resetAll, previewUrl }) => {
         <div className="analysis-notice">{analysisResult.aviso}</div>
       )}
 
-      <div className="analysis-card">
-        <div className="analysis-card-top">
-          <div className="analysis-icon">
-            <Sparkles size={20} />
-          </div>
-          <div className="analysis-card-title">Análisis emocional completo</div>
-        </div>
-        <div className="analysis-body">
-          <div className="structured-analysis">
-            {analysisResult.rasgos && analysisResult.rasgos.length > 0 && (
-              <div className="sa-section">
-                <h4 className="sa-title">Rasgos observados</h4>
-                <div className="rasgos-grid">
-                  {analysisResult.rasgos.map((rasgo, i) => (
-                    <div key={i} className="rasgo-item">
-                      <span className="rasgo-dot"></span>
-                      <span className="rasgo-text">{rasgo}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+      {analysisResult.rasgos && analysisResult.rasgos.length > 0 && (
+        <Bloque Icono={Eye} titulo="Rasgos observados" sub="Lo que se ve en el dibujo">
+          <ul className="res-rasgos">
+            {analysisResult.rasgos.map((rasgo, i) => (
+              <li key={i} style={{ animationDelay: `${0.15 + i * 0.05}s` }}>{rasgo}</li>
+            ))}
+          </ul>
+        </Bloque>
+      )}
 
-            {analysisResult.interpretacion && (
-              <div className="sa-section">
-                <h4 className="sa-title">Interpretación</h4>
-                <p className="sa-text">{analysisResult.interpretacion}</p>
-              </div>
-            )}
+      {analysisResult.interpretacion && (
+        <Bloque Icono={Puzzle} titulo="Interpretación" sub="Qué podrían sugerir esos rasgos">
+          <Texto texto={analysisResult.interpretacion} />
+        </Bloque>
+      )}
 
-            <div className="sa-section highlight">
-              <h4 className="sa-title">Lectura orientativa</h4>
-              <p className="sa-text">{analysisResult.lectura}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Bloque Icono={Compass} titulo="Lectura orientativa" sub="Síntesis y sugerencias para acompañar" destacado>
+        <Texto texto={analysisResult.lectura} />
+      </Bloque>
 
       <button className="btn-new" onClick={resetAll}>
-        <RefreshCw size={16} style={{marginRight: '4px'}}/>
+        <RefreshCw size={16} style={{ marginRight: '4px' }} />
         Analizar otro dibujo
       </button>
     </div>

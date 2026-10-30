@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useRef } from 'react';
 import { api } from '../api';
 import { formatDuracion } from '../utils/tiempo';
+import { limpiarTextoIA } from '../utils/textoIA';
 
 const AnalisisSesionContext = createContext(null);
 export const useAnalisisSesion = () => useContext(AnalisisSesionContext);
@@ -35,9 +36,9 @@ function construirResultado(raw, aviso) {
     const clean = raw.replace(/\*\*/g, '').replace(/#{1,4}\s*/g, '').trim();
     return { chips, intensity, intensityLabel: intensityLabel(intensity), rasgos: [], interpretacion: '', lectura: clean, aviso: aviso || '', simulado: false, duracion: null, rawText: raw };
   }
-  const chips = [raw.emocion_predominante || 'emoción detectada'];
+  const chips = [limpiarTextoIA(raw.emocion_predominante) || 'emoción detectada'];
   const intensity = intensityFromText(raw.intensidad);
-  const rasgos = Array.isArray(raw.rasgos_observados) ? raw.rasgos_observados.filter(Boolean) : [];
+  const rasgos = Array.isArray(raw.rasgos_observados) ? raw.rasgos_observados.filter(Boolean).map(limpiarTextoIA) : [];
   return {
     chips,
     intensity,

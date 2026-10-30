@@ -12,15 +12,6 @@ import Logo from '../components/common/Logo';
 import HeroDecoracion from '../components/analyzer/HeroDecoracion';
 import { puedeContexto } from '../utils/permisos';
 
-const STYLES = [
-  { bg: '#e0f2fe', color: '#1e40af', dot: '#93c5fd' },
-  { bg: '#dbeafe', color: '#1e3a8a', dot: '#2563eb' },
-  { bg: '#fffbdf', color: '#334443', dot: '#e6d78a' },
-  { bg: '#e0f2fe', color: '#1e40af', dot: '#7dd3fc' },
-  { bg: '#eff6ff', color: '#2563eb', dot: '#93c5fd' },
-  { bg: '#dbeafe', color: '#1e40af', dot: '#2563eb' },
-];
-
 // Campos de contexto del niño; si todos están vacíos, "Con contexto" no aporta
 // nada y el análisis equivaldría a "Solo dibujo".
 const CAMPOS_CONTEXTO = [
@@ -210,7 +201,6 @@ const Analyzer = () => {
             )}
             <AnalyzerResult
               analysisResult={analysisResult}
-              STYLES={STYLES}
               resetAll={resetAll}
               previewUrl={previewUrl}
             />
