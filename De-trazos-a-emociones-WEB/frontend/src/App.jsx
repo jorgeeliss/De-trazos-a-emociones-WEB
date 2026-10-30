@@ -20,6 +20,7 @@ import { AnalisisSesionProvider } from './context/AnalisisSesionContext';
 import AnalisisToast from './components/common/AnalisisToast';
 import { AvisosProvider } from './context/AvisosContext';
 import AvisosFlotantes from './components/common/AvisosFlotantes';
+import TooltipGlobal from './components/common/TooltipGlobal';
 
 function App() {
   return (
@@ -101,6 +102,7 @@ function App() {
           </Routes>
       <AnalisisToast />
       <AvisosFlotantes />
+      <TooltipGlobal />
     </AnalisisSesionProvider>
     </TourProvider>
     </AvisosProvider>

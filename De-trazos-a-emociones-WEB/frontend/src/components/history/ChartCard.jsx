@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, ArrowRight } from 'lucide-react';
 import './ChartCard.css';
-import { emotionVisual, formatFechaCorta } from '../../utils/emociones';
+import { emotionVisual, formatFechaCorta, formatFechaHora } from '../../utils/emociones';
 import { puntosClima, resumenClima } from '../../utils/clima';
 
 // Clima emocional: cada análisis es un punto con el color y el ícono de su
@@ -10,9 +10,11 @@ import { puntosClima, resumenClima } from '../../utils/clima';
 const X0 = 130, X1 = 588;
 const CENTRO = 112, PASO = 30; // intensidad 3 -> 90 px del centro
 const ICONO_TENDENCIA = { mejora: TrendingUp, baja: TrendingDown, estable: Minus };
+const NIVEL = { baja: 1, media: 2, alta: 3 };
 
 const ChartCard = ({ sessions = [], activeChildName = '', onSelect }) => {
   const [periodo, setPeriodo] = useState('todo');
+  const [activo, setActivo] = useState(null); // índice del punto con el tooltip abierto
   const puntos = puntosClima(sessions, periodo);
   const resumen = resumenClima(puntos);
 
@@ -56,6 +58,7 @@ const ChartCard = ({ sessions = [], activeChildName = '', onSelect }) => {
         </div>
       ) : (
         <div className="chart-wrap">
+          <div className="clima-lienzo" onPointerLeave={() => setActivo(null)}>
           <svg
             viewBox="0 0 620 236"
             className="chart-svg-wrap"
@@ -85,10 +88,13 @@ const ChartCard = ({ sessions = [], activeChildName = '', onSelect }) => {
                 style={{ '--emo': c.visual.color, animationDelay: `${0.25 + i * 0.06}s` }}
                 role={onSelect ? 'button' : undefined}
                 tabIndex={onSelect ? 0 : undefined}
+                aria-label={`${formatFechaCorta(c.fecha)}: ${c.emocion}, intensidad ${c.intensidad}`}
                 onClick={() => abrir(c)}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(c); } }}
+                onPointerEnter={() => setActivo(i)}
+                onFocus={() => setActivo(i)}
+                onBlur={() => setActivo(null)}
               >
-                <title>{`${formatFechaCorta(c.fecha)} · ${c.emocion} · intensidad ${c.intensidad}${onSelect ? ' (clic para ver el análisis)' : ''}`}</title>
                 <circle cx={c.x} cy={c.y} r="13" />
                 <c.visual.Icono x={c.x - 7.5} y={c.y - 7.5} width="15" height="15" strokeWidth="2.2" />
               </g>
@@ -98,6 +104,33 @@ const ChartCard = ({ sessions = [], activeChildName = '', onSelect }) => {
               <text key={`f-${i}`} x={c.x} y="226" textAnchor="middle" className="clima-fecha">{formatFechaCorta(c.fecha)}</text>
             ))}
           </svg>
+
+          {/* Tooltip del punto (HTML sobre el SVG, en % del viewBox). */}
+          {activo !== null && coords[activo] && (() => {
+            const c = coords[activo];
+            const x = (c.x / 620) * 100;
+            const abajo = c.y < 90;
+            const desplazar = x < 22 ? '-12%' : x > 78 ? '-88%' : '-50%';
+            return (
+              <div
+                className={`clima-tooltip ${abajo ? 'abajo' : ''}`}
+                style={{ left: `${x}%`, top: `${(c.y / 236) * 100}%`, '--emo': c.visual.color, '--emo-bg': c.visual.bg, '--desplazar': desplazar }}
+                role="tooltip"
+              >
+                <div className="clima-tooltip-fecha">{formatFechaHora(c.fecha)}</div>
+                <div className="clima-tooltip-emocion">
+                  <span className="clima-tooltip-icono"><c.visual.Icono size={15} /></span>
+                  {c.emocion.charAt(0).toUpperCase() + c.emocion.slice(1)}
+                </div>
+                <div className="clima-tooltip-intensidad">
+                  {[1, 2, 3].map((n) => <span key={n} className={n <= (NIVEL[c.intensidad] || 2) ? 'activo' : ''} />)}
+                  <em>Intensidad {c.intensidad}</em>
+                </div>
+                {onSelect && <div className="clima-tooltip-ver">Clic para ver el análisis <ArrowRight size={12} /></div>}
+              </div>
+            );
+          })()}
+          </div>
         </div>
       )}
 

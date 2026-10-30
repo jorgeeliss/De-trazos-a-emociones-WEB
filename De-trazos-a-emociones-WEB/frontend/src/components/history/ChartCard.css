@@ -179,3 +179,89 @@
   .history-wrapper .clima-linea { animation: none; stroke-dashoffset: 0; }
   .history-wrapper .clima-punto { animation: none; opacity: 1; }
 }
+
+/* Tooltip de los puntos del clima emocional. --emo: color de la emoción. */
+.history-wrapper .clima-lienzo {
+  position: relative;
+}
+.history-wrapper .clima-tooltip {
+  position: absolute;
+  z-index: 5;
+  min-width: 180px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--card2);
+  border: 1px solid color-mix(in srgb, var(--emo) 35%, var(--border2));
+  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.55);
+  pointer-events: none;
+  transform: translate(var(--desplazar, -50%), calc(-100% - 18px));
+  animation: climaTooltip 0.16s ease-out both;
+}
+.history-wrapper .clima-tooltip.abajo {
+  transform: translate(var(--desplazar, -50%), 18px);
+}
+.history-wrapper .clima-tooltip-fecha {
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--muted2);
+  margin-bottom: 6px;
+}
+.history-wrapper .clima-tooltip-emocion {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+.history-wrapper .clima-tooltip-icono {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: var(--emo);
+  background: var(--emo-bg);
+}
+.history-wrapper .clima-tooltip-intensidad {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 7px;
+}
+.history-wrapper .clima-tooltip-intensidad span {
+  width: 14px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--sunken);
+}
+.history-wrapper .clima-tooltip-intensidad span.activo {
+  background: color-mix(in srgb, var(--emo) var(--barra-pct), var(--barra-mezcla));
+}
+.history-wrapper .clima-tooltip-intensidad em {
+  margin-left: 6px;
+  font-style: normal;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.history-wrapper .clima-tooltip-ver {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--accent-soft);
+}
+
+@keyframes climaTooltip {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+:root[data-theme="light"] .history-wrapper .clima-tooltip {
+  background: var(--surface);
+  box-shadow: 0 14px 30px -14px rgba(17, 24, 39, 0.3);
+}
