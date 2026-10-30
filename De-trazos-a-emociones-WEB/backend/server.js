@@ -318,10 +318,11 @@ async function obtenerAnalisisIA(imagenBase64, contextoFinal) {
 }
 
 /* =========================
-   TEST
+   SALUD (prueba rápida de que el backend responde)
+   No va en "/": ahí se sirve el frontend compilado (ver más abajo).
 ========================= */
 
-app.get("/", (req, res) => {
+app.get("/salud", (req, res) => {
     res.send("Servidor con MiniCPM-V funcionando");
 });
 

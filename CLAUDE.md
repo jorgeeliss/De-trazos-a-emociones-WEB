@@ -44,7 +44,7 @@ IMPORTANTE: los documentos académicos dicen que el análisis usa la API de Clau
 Plantilla disponible en `backend/.env.example`.
 
 **API:**
-- `GET /` → sin auth, texto de prueba.
+- `GET /salud` → sin auth, texto de prueba (en `/` se sirve el frontend compilado si existe `frontend/dist`).
 - `POST /auth/register` → sin auth. Campos: nombre, apellido, email, password (mínimo 8), rol (padre | psicologo | profesor).
 - `POST /auth/login` → sin auth. Devuelve `{ token, usuario: { id, nombre, email } }`.
 - `POST /analizar-imagen` → Bearer. `multipart/form-data` con "imagen" + campos de contexto. Llama a Ollama, guarda en MongoDB y devuelve `{ analisis, id, imagen }`.
