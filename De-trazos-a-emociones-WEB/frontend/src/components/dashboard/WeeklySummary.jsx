@@ -5,6 +5,8 @@ import './WeeklySummary.css';
 import { emotionVisual, intensityInfo, emocionPredominante, esEmocionNegativa, formatFechaCorta } from '../../utils/emociones';
 import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
 import { exportarAnalisis } from '../../utils/exportarPdf';
+import { actividadesPara } from '../../data/actividades';
+import ConsejosModal from './ConsejosModal';
 import { useAvisos } from '../../context/AvisosContext';
 
 const alturaPorIntensidad = { 1: '22px', 2: '40px', 3: '56px' };
@@ -17,6 +19,7 @@ const WeeklySummary = ({ child }) => {
   const navigate = useNavigate();
   const { precargarContexto, nuevaSesion } = useAnalisisSesion();
   const [generandoPdf, setGenerandoPdf] = useState(false);
+  const [verConsejos, setVerConsejos] = useState(false);
   const analisis = child?.analisis || [];
   const nombre = child?.nombre && child.nombre !== 'Sin nombre' ? child.nombre : 'el niño';
 
@@ -148,9 +151,30 @@ const WeeklySummary = ({ child }) => {
               <span className="qa-icon azul"><FileDown size={18} /></span>
               {generandoPdf ? 'Generando…' : 'Exportar PDF'}
             </div>
+            <div
+              className="qa-btn"
+              role="button"
+              tabIndex={0}
+              onClick={() => setVerConsejos(true)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setVerConsejos(true); } }}
+              title="Consejos de acompañamiento para esta semana"
+            >
+              <span className="qa-icon ambar"><Lightbulb size={18} /></span>
+              Consejos
+            </div>
           </div>
         </div>
       </div>
+
+      {verConsejos && (
+        <ConsejosModal
+          nombre={nombre}
+          emocion={emocion ? emocion.charAt(0).toUpperCase() + emocion.slice(1) : null}
+          visual={visual}
+          consejos={actividadesPara(emocion || '').consejos}
+          onClose={() => setVerConsejos(false)}
+        />
+      )}
     </div>
   );
 };

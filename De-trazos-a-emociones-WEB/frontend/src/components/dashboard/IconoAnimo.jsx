@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { crearSimulacion } from './trazosCara';
 import { emotionVisual } from '../../utils/emociones';
 import './IconoAnimo.css';
@@ -18,10 +18,9 @@ const ubicarCara = (w, h) => {
 const atenuar = (x, y, w) => 0.3 + 0.7 * Math.min(1, Math.max(0, (x / w - 0.3) / 0.25));
 
 // Emociones por las que pasa la cara al hacer clic, cada una con su cara y color.
-const CICLO = ['Alegría', 'Calma', 'Tristeza', 'Miedo', 'Enojo', 'Ansiedad'].map((nombre) => ({ nombre, ...emotionVisual(nombre) }));
+const CICLO = ['Alegría', 'Calma', 'Tristeza', 'Miedo', 'Enojo', 'Ansiedad'].map((nombre) => emotionVisual(nombre));
 // Tras unos segundos sin clics, vuelve a la emoción predominante del niño.
 const VOLVER_MS = 8000;
-const ETIQUETA_MS = 2200;
 
 // Emoción predominante del niño dibujada con trazos de crayón. Ocupa todo el
 // banner de bienvenida (se monta dentro de .welcome): al entrar los trazos están
@@ -33,8 +32,7 @@ const IconoAnimo = ({ visual, emocion }) => {
   const simRef = useRef(null);
   const inicialRef = useRef(visual);
   const mostradaRef = useRef(null); // clave de la emoción del ciclo en pantalla (null = la del niño)
-  const temporizadores = useRef({ volver: 0, etiqueta: 0 });
-  const [etiqueta, setEtiqueta] = useState(null); // { texto, x, y }
+  const volverRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -48,26 +46,15 @@ const IconoAnimo = ({ visual, emocion }) => {
       densidadSueltas: 1 / 12000,
     });
     simRef.current = sim;
-    const t = temporizadores.current;
     return () => {
-      clearTimeout(t.volver);
-      clearTimeout(t.etiqueta);
+      clearTimeout(volverRef.current);
       sim.destruir();
     };
   }, []);
 
-  // Muestra un momento el nombre de la emoción, debajo de la cara.
-  const mostrarEtiqueta = (texto) => {
-    const u = simRef.current?.ubicacion();
-    if (!u) return;
-    clearTimeout(temporizadores.current.etiqueta);
-    setEtiqueta({ texto, x: u.cx, y: Math.min(u.cy + u.tam / 2 - 2, u.h - 30), id: Date.now() });
-    temporizadores.current.etiqueta = setTimeout(() => setEtiqueta(null), ETIQUETA_MS);
-  };
-
   // Al cambiar de niño (o de emoción), los trazos pasan a la nueva cara y color.
   useEffect(() => {
-    clearTimeout(temporizadores.current.volver);
+    clearTimeout(volverRef.current);
     mostradaRef.current = null;
     simRef.current?.cambiarCara(visual.cara, visual.color);
   }, [visual.cara, visual.color]);
@@ -75,7 +62,6 @@ const IconoAnimo = ({ visual, emocion }) => {
   const volverAlNino = () => {
     mostradaRef.current = null;
     simRef.current?.transicionar(visual.cara, visual.color);
-    if (emocion) mostrarEtiqueta(emocion.charAt(0).toUpperCase() + emocion.slice(1));
   };
 
   const alClic = () => {
@@ -85,9 +71,8 @@ const IconoAnimo = ({ visual, emocion }) => {
     const siguiente = CICLO[i];
     mostradaRef.current = siguiente.clave;
     simRef.current?.transicionar(siguiente.cara, siguiente.color);
-    mostrarEtiqueta(siguiente.nombre);
-    clearTimeout(temporizadores.current.volver);
-    temporizadores.current.volver = setTimeout(volverAlNino, VOLVER_MS);
+    clearTimeout(volverRef.current);
+    volverRef.current = setTimeout(volverAlNino, VOLVER_MS);
   };
 
   const descripcion = emocion ? `Emoción predominante: ${emocion}` : 'Sin emoción registrada todavía';
@@ -100,11 +85,6 @@ const IconoAnimo = ({ visual, emocion }) => {
         style={{ '--animo-color': visual.color }}
         aria-hidden="true"
       />
-      {etiqueta && (
-        <span key={etiqueta.id} className="animo-etiqueta" style={{ left: etiqueta.x, top: etiqueta.y }} aria-hidden="true">
-          {etiqueta.texto}
-        </span>
-      )}
       <button
         type="button"
         className="animo-boton"

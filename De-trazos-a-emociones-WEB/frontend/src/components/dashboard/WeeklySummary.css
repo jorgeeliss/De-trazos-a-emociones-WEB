@@ -332,3 +332,15 @@
   background: var(--blue);
   color: #fff;
 }
+.qa-icon.ambar {
+  background: rgba(251, 191, 36, 0.14);
+  color: var(--amber);
+}
+.qa-btn:hover .qa-icon.ambar {
+  background: var(--amber);
+  color: #fff;
+}
+.qa-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

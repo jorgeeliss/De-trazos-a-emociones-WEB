@@ -75,68 +75,6 @@ img.compare-thumb {
   color: var(--teal);
   font-weight: 600;
 }
-
-/* TARJETA DE TIPS */
-.cmp-columna {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.tips-card {
-  animation: fadeUp 0.6s 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.tips-body {
-  padding: 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.tip-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 16px;
-  background: var(--card2);
-  border-radius: 14px;
-  border: 1px solid transparent;
-  transition: all 0.3s;
-}
-
-.tip-item:hover {
-  background: var(--card2);
-  border-color: var(--border2);
-  transform: translateX(4px);
-}
-
-.tip-num {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: var(--purple-dim);
-  color: var(--purple-light);
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.tip-text {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.6;
-  font-weight: 400;
-}
-
-.tip-text strong {
-  color: var(--text);
-  font-weight: 600;
-}
-
 .compare-selectors {
   display: flex;
   gap: 12px;

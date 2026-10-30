@@ -174,19 +174,6 @@
   align-items: start;
 }
 
-/* Actividades y "Antes y ahora" lado a lado (miden parecido); los consejos
-   debajo, a lo ancho, en columnas. */
-.grid-bottom > .cmp-columna {
-  display: contents;
-}
-.grid-bottom .tips-card {
-  grid-column: 1 / -1;
-}
-.grid-bottom .tips-card .tips-body {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
 @media (max-width: 900px) {
   .grid-bottom {
     grid-template-columns: minmax(0, 1fr);

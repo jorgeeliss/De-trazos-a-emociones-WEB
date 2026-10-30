@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import './ComparisonSection.css';
-import { emotionVisual, emocionPredominante, formatFechaHora, formatFechaHoraCorta } from '../../utils/emociones';
-import { actividadesPara } from '../../data/actividades';
+import { emotionVisual, formatFechaHora, formatFechaHoraCorta } from '../../utils/emociones';
 import AuthImage from '../common/AuthImage';
 
 const Miniatura = ({ analisis, onClick }) => {
@@ -46,69 +45,51 @@ const ComparisonSection = ({ child, onSelect }) => {
     cambio = `Entre esas dos fechas, ${nombre} pasó de ${emocionAntes || 'una emoción no detectada'} a ${emocionAhora || 'una emoción no detectada'}. Observa si el cambio se sostiene en los próximos análisis.`;
   }
 
-  const { consejos } = actividadesPara(emocionPredominante(analisis));
-
   return (
-    <div className="cmp-columna">
-      <div className="dashboard-card compare-card" data-tour="comparar">
-        <div className="ts-header">
-          <div>
-            <div className="ts-title">Antes y ahora</div>
-            <div style={{ fontSize: '13px', color: 'var(--muted2)', marginTop: '4px' }}>Compara dos dibujos para ver su evolución</div>
-          </div>
-        </div>
-        <div className="compare-body">
-          {!hayDos ? (
-            <div className="compare-result"><strong>Sin comparación aún:</strong> {cambio}</div>
-          ) : (
-            <>
-              <div className="compare-selectors">
-                <div className="compare-sel-col">
-                  <label>Antes</label>
-                  <select className="compare-select" value={antesId} onChange={(e) => setAntesId(e.target.value)}>
-                    {analisis.map((a) => <option key={idDe(a)} value={idDe(a)}>{opcionLabel(a)}</option>)}
-                  </select>
-                </div>
-                <div className="compare-sel-col">
-                  <label>Ahora</label>
-                  <select className="compare-select" value={ahoraId} onChange={(e) => setAhoraId(e.target.value)}>
-                    {analisis.map((a) => <option key={idDe(a)} value={idDe(a)}>{opcionLabel(a)}</option>)}
-                  </select>
-                </div>
-              </div>
-
-              <div className="compare-pair">
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                  <Miniatura analisis={antes} onClick={onSelect ? () => onSelect(antes) : undefined} />
-                  <div className="compare-date">{formatFechaHoraCorta(antes?.fecha)}</div>
-                </div>
-                <div className="compare-arrow"><ArrowRight size={24} /></div>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                  <Miniatura analisis={ahora} onClick={onSelect ? () => onSelect(ahora) : undefined} />
-                  <div className="compare-date">{formatFechaHoraCorta(ahora?.fecha)}</div>
-                </div>
-              </div>
-
-              <div className="compare-result">
-                <strong>Cambio detectado:</strong> {cambio}
-              </div>
-            </>
-          )}
+    <div className="dashboard-card compare-card" data-tour="comparar">
+      <div className="ts-header">
+        <div>
+          <div className="ts-title">Antes y ahora</div>
+          <div style={{ fontSize: '13px', color: 'var(--muted2)', marginTop: '4px' }}>Compara dos dibujos para ver su evolución</div>
         </div>
       </div>
-
-      <div className="dashboard-card tips-card">
-        <div className="ts-header">
-          <div className="ts-title">Consejos para esta semana</div>
-        </div>
-        <div className="tips-body">
-          {consejos.map((c, i) => (
-            <div className="tip-item" key={i}>
-              <div className="tip-num">{i + 1}</div>
-              <div className="tip-text"><strong>{c.titulo}.</strong> {c.texto}</div>
+      <div className="compare-body">
+        {!hayDos ? (
+          <div className="compare-result"><strong>Sin comparación aún:</strong> {cambio}</div>
+        ) : (
+          <>
+            <div className="compare-selectors">
+              <div className="compare-sel-col">
+                <label>Antes</label>
+                <select className="compare-select" value={antesId} onChange={(e) => setAntesId(e.target.value)}>
+                  {analisis.map((a) => <option key={idDe(a)} value={idDe(a)}>{opcionLabel(a)}</option>)}
+                </select>
+              </div>
+              <div className="compare-sel-col">
+                <label>Ahora</label>
+                <select className="compare-select" value={ahoraId} onChange={(e) => setAhoraId(e.target.value)}>
+                  {analisis.map((a) => <option key={idDe(a)} value={idDe(a)}>{opcionLabel(a)}</option>)}
+                </select>
+              </div>
             </div>
-          ))}
-        </div>
+
+            <div className="compare-pair">
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <Miniatura analisis={antes} onClick={onSelect ? () => onSelect(antes) : undefined} />
+                <div className="compare-date">{formatFechaHoraCorta(antes?.fecha)}</div>
+              </div>
+              <div className="compare-arrow"><ArrowRight size={24} /></div>
+              <div style={{ flex: 1, textAlign: 'center' }}>
+                <Miniatura analisis={ahora} onClick={onSelect ? () => onSelect(ahora) : undefined} />
+                <div className="compare-date">{formatFechaHoraCorta(ahora?.fecha)}</div>
+              </div>
+            </div>
+
+            <div className="compare-result">
+              <strong>Cambio detectado:</strong> {cambio}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

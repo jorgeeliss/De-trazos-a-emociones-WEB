@@ -381,8 +381,6 @@ export function crearSimulacion(canvas, {
       empujar(2.5, 3);
       dibujar(nuevaCara, { desdeActual: true, retraso: 500, duracion: DURACION_DIBUJO_MS * 0.8, color: nuevoColor });
     },
-    // Posición y tamaño de la cara en el lienzo (para ubicar la etiqueta).
-    ubicacion: () => ({ ...ubicacion, w, h }),
     // Clic: la cara se deshace en trazos sueltos y se vuelve a dibujar.
     dispersar() {
       if (reducido) return;
