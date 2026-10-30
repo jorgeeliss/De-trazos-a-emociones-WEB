@@ -1,8 +1,9 @@
 // Textos que devuelve la IA.
+import { nombreEmocion } from './emociones.js';
 
 // minicpm-v a veces mete palabras en chino y puntuación de ancho completo en
 // medio del español ("en一方面，el sol"). El backend ya limpia los análisis
-// nuevos (limpiarTextoIA en server.js); esto cubre los que se guardaron antes.
+// nuevos (backend/services/ia/parseo.js); esto cubre los que se guardaron antes.
 const PUNTUACION_ANCHA = { '，': ', ', '、': ', ', '。': '. ', '：': ': ', '；': '; ', '！': '! ', '？': '? ', '（': ' (', '）': ') ' };
 
 export const limpiarTextoIA = (texto) => {
@@ -22,6 +23,9 @@ export const limpiarResultadoIA = (r = {}) => {
     if (clave === 'raw') continue;
     if (typeof valor === 'string') copia[clave] = limpiarTextoIA(valor);
     else if (Array.isArray(valor)) copia[clave] = valor.map(limpiarTextoIA);
+  }
+  if (typeof copia.emocion_predominante === 'string') {
+    copia.emocion_predominante = nombreEmocion(copia.emocion_predominante);
   }
   return copia;
 };

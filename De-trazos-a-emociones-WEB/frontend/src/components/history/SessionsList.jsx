@@ -10,7 +10,7 @@ import { emotionVisual } from '../../utils/emociones';
 import { useAvisos } from '../../context/AvisosContext';
 
 const slug = (s) =>
-  String(s || 'nino').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
+  String(s || 'nino').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-');
 
 const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect }) => {
   const { avisarError } = useAvisos();

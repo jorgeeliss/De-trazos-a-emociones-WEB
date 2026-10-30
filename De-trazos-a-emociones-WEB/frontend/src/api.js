@@ -1,4 +1,5 @@
 import { API_URL } from "./config";
+import { limpiarResultadoIA } from "./utils/textoIA";
 
 /* =========================
    MANEJO DE SESIÓN
@@ -117,7 +118,15 @@ export const api = {
       throw new Error(data.error || "Error al obtener análisis");
     }
 
-    return data;
+    // Textos de la IA limpios para todas las pantallas (análisis guardados
+    // antes de que el backend los limpiara: caracteres en chino, "Melancolia alta"…).
+    return Array.isArray(data)
+      ? data.map((a) =>
+          a && a.resultado_ia && typeof a.resultado_ia === "object"
+            ? { ...a, resultado_ia: limpiarResultadoIA(a.resultado_ia) }
+            : a
+        )
+      : data;
   },
 
   analizarImagen: async (formData, signal) => {

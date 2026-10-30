@@ -41,3 +41,13 @@ test('avisos del login: correo y mensajes del backend', () => {
   assert.equal(avisoDeError(new Error('Tu cuenta está pendiente de aprobación por el administrador.')).tipo, 'espera');
   assert.deepEqual(avisoDeError(new Error('El correo ya está registrado')).campos, ['email']);
 });
+
+test('emociones: nombre limpio y reconocimiento sin depender de tildes', async () => {
+  const { nombreEmocion, emotionVisual, esEmocionNegativa } = await import('./emociones.js');
+  assert.equal(nombreEmocion('Melancolia alta'), 'Melancolía');
+  assert.equal(emotionVisual('Melancolia alta').clave, 'tristeza');
+  assert.equal(emotionVisual('alegria').clave, 'alegria');
+  assert.equal(emotionVisual('Estres').clave, 'ansiedad');
+  assert.equal(esEmocionNegativa('melancolia'), true);
+  assert.equal(limpiarResultadoIA({ emocion_predominante: 'Melancolia alta' }).emocion_predominante, 'Melancolía');
+});

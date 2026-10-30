@@ -10,7 +10,7 @@ import { useAvisos } from '../../context/AvisosContext';
 const alturaPorIntensidad = { 1: '22px', 2: '40px', 3: '56px' };
 
 const slug = (s) =>
-  String(s || 'nino').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
+  String(s || 'nino').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '-');
 
 const WeeklySummary = ({ child }) => {
   const { avisarError } = useAvisos();

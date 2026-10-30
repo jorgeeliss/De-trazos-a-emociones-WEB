@@ -72,3 +72,14 @@ test("parsearTextoLibre sin títulos usa el respaldo", () => {
     assert.equal(r.datos.parseo_incompleto, true);
     assert.equal(r.datos.lectura_orientativa, "Un texto cualquiera sin secciones.");
 });
+
+test("normalizarEmocion quita la intensidad del nombre y pone tildes", () => {
+    const { normalizarEmocion } = require("../services/ia/parseo");
+    assert.equal(normalizarEmocion("Melancolia alta"), "Melancolía");
+    assert.equal(normalizarEmocion("Ansiedad leve"), "Ansiedad");
+    assert.equal(normalizarEmocion("Alegria (alta)"), "Alegría");
+    assert.equal(normalizarEmocion("Estres de intensidad media"), "Estrés");
+    assert.equal(normalizarEmocion("Tristeza profunda"), "Tristeza profunda");
+    assert.equal(normalizarEmocion("Medianamente tranquilo"), "Medianamente tranquilo");
+    assert.equal(limpiarResultadoIA({ emocion_predominante: "melancolia alta" }).emocion_predominante, "melancolía");
+});

@@ -15,15 +15,45 @@ const visual = (clave, Icono, cara) => ({
   bg: `var(--emo-${clave}-bg)`,
 });
 
+// Minúsculas y sin tildes: el modelo a veces escribe "melancolia" o "alegria".
+const sinTildes = (s) => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+// Nombre de la emoción para mostrar. El modelo a veces mete la intensidad en el
+// nombre o lo escribe sin tilde ("Melancolia alta" -> "Melancolía"). Los
+// análisis nuevos ya llegan limpios del backend; esto cubre los guardados antes.
+const CON_TILDE = {
+  alegria: 'alegría', melancolia: 'melancolía', frustracion: 'frustración', preocupacion: 'preocupación',
+  tension: 'tensión', energia: 'energía', satisfaccion: 'satisfacción', confusion: 'confusión',
+  desesperacion: 'desesperación', decepcion: 'decepción', agitacion: 'agitación', estres: 'estrés',
+  panico: 'pánico', apatia: 'apatía', emocion: 'emoción', ilusion: 'ilusión',
+};
+const PALABRAS_INTENSIDAD = /\b(?:de\s+)?(?:intensidad\s+)?(?:muy\s+)?(?:alta|alto|media|medio|baja|bajo|leve|moderada|moderado|intensa|intenso)\b/gi;
+
+export function nombreEmocion(texto) {
+  if (typeof texto !== 'string') return texto;
+  const sinIntensidad = texto
+    .replace(PALABRAS_INTENSIDAD, ' ')
+    .replace(/\(\s*\)/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/^[\s,;:.-]+|[\s,;:.-]+$/g, '')
+    .trim();
+  const base = sinIntensidad || texto.trim();
+  return base.replace(/[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]+/g, (palabra) => {
+    const correcta = CON_TILDE[sinTildes(palabra)];
+    if (!correcta) return palabra;
+    return palabra[0] === palabra[0].toUpperCase() ? correcta[0].toUpperCase() + correcta.slice(1) : correcta;
+  });
+}
+
 export function emotionVisual(emocion = '') {
-  const e = String(emocion).toLowerCase();
-  if (e.includes('ansiedad') || e.includes('estrés') || e.includes('angustia') || e.includes('nervios'))
+  const e = sinTildes(emocion);
+  if (e.includes('ansiedad') || e.includes('estres') || e.includes('angustia') || e.includes('nervios'))
     return visual('ansiedad', Annoyed, 'molesta');
-  if (e.includes('enojo') || e.includes('ira') || e.includes('frustración') || e.includes('rabia'))
+  if (e.includes('enojo') || e.includes('ira') || e.includes('frustracion') || e.includes('rabia'))
     return visual('enojo', Angry, 'enojo');
   if (e.includes('miedo') || e.includes('temor') || e.includes('susto'))
     return visual('miedo', Frown, 'triste');
-  if (e.includes('tristeza') || e.includes('melancolía') || e.includes('soledad'))
+  if (e.includes('tristeza') || e.includes('melancolia') || e.includes('soledad'))
     return visual('tristeza', Frown, 'triste');
   if (e.includes('alegr') || e.includes('felic') || e.includes('feliz') || e.includes('content') || e.includes('euforia') || e.includes('entusiasmo') || e.includes('amor'))
     return visual('alegria', Laugh, 'risa');
@@ -42,8 +72,8 @@ export function intensityInfo(intensidad = '') {
 
 // Emociones consideradas negativas, para reglas de alerta orientativas.
 export function esEmocionNegativa(emocion = '') {
-  const e = String(emocion).toLowerCase();
-  return ['ansiedad', 'enojo', 'ira', 'frustración', 'estrés', 'tristeza', 'miedo', 'melancolía', 'soledad', 'angustia']
+  const e = sinTildes(emocion);
+  return ['ansiedad', 'enojo', 'ira', 'frustracion', 'estres', 'tristeza', 'miedo', 'melancolia', 'soledad', 'angustia']
     .some((neg) => e.includes(neg));
 }
 

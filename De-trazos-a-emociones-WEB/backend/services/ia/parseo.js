@@ -16,6 +16,8 @@ function limpiarTextoIA(texto) {
         .replace(/[ \t]{2,}/g, " ")
         .trim();
 }
+const sinTildes = (s) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
 function limpiarResultadoIA(datos) {
     if (!datos || typeof datos !== "object" || Array.isArray(datos)) return datos;
     for (const [clave, valor] of Object.entries(datos)) {
@@ -23,7 +25,37 @@ function limpiarResultadoIA(datos) {
         if (typeof valor === "string") datos[clave] = limpiarTextoIA(valor);
         else if (Array.isArray(valor)) datos[clave] = valor.map(limpiarTextoIA);
     }
+    if (typeof datos.emocion_predominante === "string") {
+        datos.emocion_predominante = normalizarEmocion(datos.emocion_predominante);
+    }
     return datos;
+}
+
+// El modelo a veces mete la intensidad en el nombre de la emoción o la escribe
+// sin tilde ("Melancolia alta"). La intensidad ya tiene su propio campo, así
+// que se quita del nombre, y se ponen las tildes de las emociones comunes.
+const CON_TILDE = {
+    alegria: "alegría", melancolia: "melancolía", frustracion: "frustración", preocupacion: "preocupación",
+    tension: "tensión", energia: "energía", satisfaccion: "satisfacción", confusion: "confusión",
+    desesperacion: "desesperación", decepcion: "decepción", agitacion: "agitación", estres: "estrés",
+    panico: "pánico", apatia: "apatía", emocion: "emoción", ilusion: "ilusión"
+};
+const PALABRAS_INTENSIDAD = /\b(?:de\s+)?(?:intensidad\s+)?(?:muy\s+)?(?:alta|alto|media|medio|baja|bajo|leve|moderada|moderado|intensa|intenso)\b/gi;
+
+function normalizarEmocion(texto) {
+    if (typeof texto !== "string") return texto;
+    const sinIntensidad = texto
+        .replace(PALABRAS_INTENSIDAD, " ")
+        .replace(/\(\s*\)/g, " ")
+        .replace(/\s{2,}/g, " ")
+        .replace(/^[\s,;:.-]+|[\s,;:.-]+$/g, "")
+        .trim();
+    const base = sinIntensidad || texto.trim();
+    return base.replace(/[A-Za-zÁÉÍÓÚÜáéíóúüÑñ]+/g, (palabra) => {
+        const correcta = CON_TILDE[sinTildes(palabra).toLowerCase()];
+        if (!correcta) return palabra;
+        return palabra[0] === palabra[0].toUpperCase() ? correcta[0].toUpperCase() + correcta.slice(1) : correcta;
+    });
 }
 
 // Respaldo cuando no se pudo separar la respuesta en campos.
@@ -83,7 +115,6 @@ const TITULOS = [
     ["intensidad", /^intensidad( emocional)?$/],
     ["lectura", /^lectura( orientativa)?$/]
 ];
-const sinTildes = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
 
 function detectarTitulo(linea) {
     const limpia = linea.replace(/[*_#`>]/g, "").trim();
@@ -143,4 +174,4 @@ function parsearTextoLibre(rawContent) {
     };
 }
 
-module.exports = { limpiarTextoIA, limpiarResultadoIA, parsearRespuestaIA, parsearTextoLibre };
+module.exports = { limpiarTextoIA, limpiarResultadoIA, normalizarEmocion, parsearRespuestaIA, parsearTextoLibre };

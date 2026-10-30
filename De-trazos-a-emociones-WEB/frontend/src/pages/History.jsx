@@ -25,7 +25,6 @@ const History = () => {
   const [activeChild, setActiveChild] = useState('');
   const [loading, setLoading] = useState(true);
   const [detalle, setDetalle] = useState(null);
-  const [dotsHeight, setDotsHeight] = useState(['0px', '0px', '0px', '0px', '0px', '0px', '0px']);
 
   // Refresco simple (tras asignar un independiente). No cambia el niño activo.
   const recargar = async () => {
@@ -38,10 +37,6 @@ const History = () => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDotsHeight(['8px', '14px', '10px', '18px', '12px', '24px', '6px']);
-    }, 300);
-
     const cargarInicial = async () => {
       try {
         const data = await api.getAnalisis();
@@ -63,7 +58,6 @@ const History = () => {
     };
 
     cargarInicial();
-    return () => clearTimeout(timer);
   }, []);
 
   // Niños y existencia de independientes derivados de los datos (se actualizan solos).
@@ -167,7 +161,7 @@ const History = () => {
               <>
                 <div className="grid-top">
                   <ChartCard sessions={activeSessions} activeChildName={activeChildName} />
-                  <SummaryCard sessions={activeSessions} dotsHeight={dotsHeight} />
+                  <SummaryCard sessions={activeSessions} />
                 </div>
 
                 <StatCards sessions={activeSessions} />

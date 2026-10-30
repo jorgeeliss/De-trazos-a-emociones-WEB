@@ -53,7 +53,7 @@ const ExportPdfModal = ({ analisis, imgUrl, onClose }) => {
       const base = (tieneNino ? nombre : 'dibujo')
         .toLowerCase()
         .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
+        .replace(/[\u0300-\u036f]/g, '')
         .replace(/\s+/g, '-');
 
       await exportarAnalisis({
