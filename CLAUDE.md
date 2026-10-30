@@ -17,7 +17,13 @@ IMPORTANTE: los documentos académicos dicen que el análisis usa la API de Clau
 - `De-trazos-a-emociones-WEB/` (raíz, tiene `.git`)
   - `De-trazos-a-emociones-WEB/` (carpeta del proyecto)
     - `package.json`: dependencias del BACKEND (name: `proyecto-ollama`). El backend no tiene `package.json` propio.
-    - `backend/server.js`: app Express, rutas de análisis e historial.
+    - `backend/server.js`: punto de entrada (carga `.env`, conecta MongoDB y escucha el puerto).
+    - `backend/app.js`: app Express (middlewares, rutas, frontend compilado y manejo de errores). Se puede probar sin base de datos.
+    - `backend/routes/analisis.js`: `/analizar-imagen` y todos los `/analisis/*`.
+    - `backend/services/ia/`: análisis con IA. `index.js` (`obtenerAnalisisIA`), `variantes.js` (`IA_VARIANTE`: estructurado | equilibrado | libre), `prompt.js`, `parseo.js`, `contexto.js`, `esquema.js` y `proveedores/` (ollama, mock).
+    - `backend/utils/imagen.js`: redimensionado con sharp o, si no carga, Jimp.
+    - `backend/tests/`: pruebas con `node --test` (`npm test` en la carpeta del proyecto).
+    - `backend/scripts/comparar-variantes.js`: compara las variantes del análisis con dibujos reales (`npm run comparar -- dibujo.jpg`); el informe queda en `comparaciones/` (ignorado por git).
     - `backend/database.js`: conexión Mongoose.
     - `backend/models/User.js` y `backend/models/Analysis.js`.
     - `backend/routes/auth.js`: `/auth/register` y `/auth/login`.
@@ -118,7 +124,7 @@ Plantilla disponible en `backend/.env.example`.
 
 **Entorno de desarrollo (esta máquina):**
 - No hay Ollama instalado aquí y no se puede instalar. No intentes ejecutar el análisis de imágenes en este entorno.
-- Verificación disponible aquí: `npm run lint` y `npm run build` en `frontend/`, y `node --check <archivo>` para los archivos del backend.
+- Verificación disponible aquí: `npm test` (backend) en la carpeta del proyecto; `npm run lint`, `npm test` y `npm run build` en `frontend/`; y `node --check <archivo>` para los archivos del backend.
 - Las pruebas reales con Ollama (modelo `minicpm-v`) se hacen en otro equipo, después del push. Al terminar cada paso, indicar exactamente qué probar allá, con qué usuarios de prueba y qué resultado esperar.
 - Si algo no se puede verificar en esta máquina, decirlo explícitamente en vez de asumir que funciona.
 

@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test \"backend/tests/*.test.js\"",
+    "comparar": "node backend/scripts/comparar-variantes.js"
   },
   "keywords": [],
   "author": "",

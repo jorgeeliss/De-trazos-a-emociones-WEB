@@ -1,0 +1,57 @@
+// Contexto del niño que acompaña al dibujo en el prompt.
+
+// Calcula la edad en años a partir de una fecha de nacimiento (YYYY-MM-DD).
+// Devuelve null si no hay fecha válida.
+function edadDesdeFecha(fechaNacimiento) {
+    if (!fechaNacimiento) return null;
+    const nac = new Date(fechaNacimiento);
+    if (isNaN(nac.getTime())) return null;
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nac.getFullYear();
+    const m = hoy.getMonth() - nac.getMonth();
+    if (m < 0 || (m === 0 && hoy.getDate() < nac.getDate())) edad--;
+    return edad >= 0 ? edad : null;
+}
+
+// Construye el bloque de contexto del niño para el prompt, a partir de un objeto.
+// Sin datos devuelve "" (modo "solo dibujo").
+function construirContextoFinal(ctx = {}) {
+    const {
+        nombre, edad, fecha_nacimiento, genero,
+        situacion_actual, comportamiento, diagnostico_previo,
+        dibujo_espontaneo, comento_mientras, tiempo_dibujo,
+        descripcion_dibujo
+    } = ctx;
+
+    const edadCalculada = edadDesdeFecha(fecha_nacimiento) ?? (edad ? parseInt(edad, 10) : null);
+
+    let contextoNino = "";
+    if (nombre || edadCalculada != null || genero) {
+        contextoNino += "## Información del niño\n";
+        if (nombre) contextoNino += `- Nombre: ${nombre}\n`;
+        if (edadCalculada != null) contextoNino += `- Edad: ${edadCalculada} años\n`;
+        if (genero) contextoNino += `- Género: ${genero}\n`;
+        contextoNino += "\n";
+    }
+    if (situacion_actual || comportamiento || diagnostico_previo) {
+        contextoNino += "## Situación actual\n";
+        if (situacion_actual) contextoNino += `- Situación en casa/entorno: ${situacion_actual}\n`;
+        if (comportamiento) contextoNino += `- Comportamiento reciente: ${comportamiento}\n`;
+        if (diagnostico_previo) contextoNino += `- Diagnóstico previo: ${diagnostico_previo}\n`;
+        contextoNino += "\n";
+    }
+    if (dibujo_espontaneo || comento_mientras || tiempo_dibujo || descripcion_dibujo) {
+        contextoNino += "## Contexto del dibujo\n";
+        if (descripcion_dibujo) contextoNino += `- Descripción aportada por el adulto: ${descripcion_dibujo}\n`;
+        if (dibujo_espontaneo) contextoNino += `- ¿Fue espontáneo?: ${dibujo_espontaneo}\n`;
+        if (comento_mientras) contextoNino += `- Comentó mientras dibujaba: ${comento_mientras}\n`;
+        if (tiempo_dibujo) contextoNino += `- Tiempo que tardó: ${tiempo_dibujo}\n`;
+        contextoNino += "\n";
+    }
+
+    return contextoNino.trim()
+        ? `Ten en cuenta el siguiente contexto del niño para enriquecer tu análisis:\n\n${contextoNino}\n`
+        : "";
+}
+
+module.exports = { edadDesdeFecha, construirContextoFinal };
