@@ -1,4 +1,4 @@
-import { Sparkles, RefreshCw } from 'lucide-react';
+import { Sparkles, RefreshCw, Timer } from 'lucide-react';
 import './AnalyzerResult.css';
 
 const AnalyzerResult = ({ analysisResult, STYLES, resetAll, previewUrl }) => {
@@ -34,6 +34,13 @@ const AnalyzerResult = ({ analysisResult, STYLES, resetAll, previewUrl }) => {
           <div className={`intensity-fill ${analysisResult.intensity}`} style={{width: analysisResult.intensity === 'high' ? '95%' : analysisResult.intensity === 'low' ? '30%' : '65%'}}></div>
         </div>
       </div>
+
+      {analysisResult.duracion && (
+        <div className="analysis-tiempo">
+          <Timer size={15} />
+          Tiempo de análisis: <strong>{analysisResult.duracion}</strong>
+        </div>
+      )}
 
       {analysisResult.simulado && (
         <div className="analysis-notice simulado">Resultado simulado (modo de prueba)</div>

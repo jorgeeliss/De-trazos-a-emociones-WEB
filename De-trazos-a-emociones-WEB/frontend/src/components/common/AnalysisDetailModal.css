@@ -55,6 +55,17 @@
   margin-bottom: 10px;
 }
 
+/* Cuánto tardó la IA (resultado_ia.duracion_ms); los análisis antiguos no lo tienen. */
+.adm-duracion {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 12px;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
 .adm-emotion-row {
   display: flex;
   align-items: center;

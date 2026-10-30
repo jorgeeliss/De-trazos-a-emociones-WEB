@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useRef } from 'react';
 import { api } from '../api';
+import { formatDuracion } from '../utils/tiempo';
 
 const AnalisisSesionContext = createContext(null);
 export const useAnalisisSesion = () => useContext(AnalisisSesionContext);
@@ -32,7 +33,7 @@ function construirResultado(raw, aviso) {
     if (/intensidad[:\s]*(emocional[:\s]*)?(alta|alto)/i.test(lower) || / alto/.test(lower)) intensity = 'high';
     else if (/intensidad[:\s]*(emocional[:\s]*)?(baja|bajo)/i.test(lower) || / bajo/.test(lower) || / leve/.test(lower)) intensity = 'low';
     const clean = raw.replace(/\*\*/g, '').replace(/#{1,4}\s*/g, '').trim();
-    return { chips, intensity, intensityLabel: intensityLabel(intensity), rasgos: [], interpretacion: '', lectura: clean, aviso: aviso || '', simulado: false, rawText: raw };
+    return { chips, intensity, intensityLabel: intensityLabel(intensity), rasgos: [], interpretacion: '', lectura: clean, aviso: aviso || '', simulado: false, duracion: null, rawText: raw };
   }
   const chips = [raw.emocion_predominante || 'emoción detectada'];
   const intensity = intensityFromText(raw.intensidad);
@@ -46,6 +47,7 @@ function construirResultado(raw, aviso) {
     lectura: raw.lectura_orientativa || raw.analisis_completo || 'El modelo no proporcionó un análisis detallado.',
     aviso: aviso || (raw.parseo_incompleto ? 'El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo.' : ''),
     simulado: raw.simulado === true,
+    duracion: formatDuracion(raw.duracion_ms),
     rawText: JSON.stringify(raw, null, 2),
     jsonObj: raw
   };

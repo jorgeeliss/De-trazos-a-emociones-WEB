@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { X, ZoomIn, RefreshCw, FileDown, Undo2, ImageOff } from 'lucide-react';
+import { X, ZoomIn, RefreshCw, FileDown, Undo2, ImageOff, Timer } from 'lucide-react';
 import './AnalysisDetailModal.css';
 import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
+import { formatDuracion } from '../../utils/tiempo';
 import { api } from '../../api';
 import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 import ExportPdfModal from './ExportPdfModal';
@@ -54,6 +55,7 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
   const visual = emotionVisual(r.emocion_predominante || '');
   const inten = intensityInfo(r.intensidad || '');
   const rasgos = Array.isArray(r.rasgos_observados) ? r.rasgos_observados.filter(Boolean) : [];
+  const duracion = formatDuracion(r.duracion_ms);
   const lectura = r.lectura_orientativa || r.analisis_completo || 'Sin lectura disponible para este análisis.';
 
   const sinContexto = !yaReanalizado && analisis.analizado_sin_contexto;
@@ -91,7 +93,10 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
         <button className="adm-close" onClick={onClose} title="Cerrar"><X size={20} /></button>
 
         <div className="adm-head">
-          <div className="adm-date">{formatFechaHora(analisis.fecha)}</div>
+          <div className="adm-date">
+            {formatFechaHora(analisis.fecha)}
+            {duracion && <span className="adm-duracion"><Timer size={13} /> Análisis en {duracion}</span>}
+          </div>
           <div className="adm-emotion-row">
             <span className="adm-chip" style={{ background: visual.bg, color: visual.color }}><visual.Icono size={15} /> {r.emocion_predominante || 'Sin emoción'}</span>
             <span className="adm-intensity" style={{ color: inten.color }}>Intensidad {inten.label}</span>

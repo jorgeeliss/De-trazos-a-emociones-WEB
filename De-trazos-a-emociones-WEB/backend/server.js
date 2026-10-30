@@ -281,11 +281,21 @@ Responde ÚNICAMENTE con ese objeto JSON, sin texto fuera del JSON.
 `;
 }
 
+// Guarda cuánto tardó la IA dentro del resultado (resultado_ia es Mixed, así
+// que no cambia el esquema). El frontend lo muestra como "Tiempo de análisis".
+function conDuracion(resultado, inicio) {
+    if (resultado && typeof resultado === "object" && !Array.isArray(resultado)) {
+        resultado.duracion_ms = Date.now() - inicio;
+    }
+    return resultado;
+}
+
 // Ejecuta el análisis con la IA (o un resultado simulado en modo mock).
 async function obtenerAnalisisIA(imagenBase64, contextoFinal) {
+    const inicio = Date.now();
     if (AI_MODE === "mock") {
         await new Promise((resolve) => setTimeout(resolve, 2500));
-        return { resultado: generarAnalisisSimulado(), aviso: undefined };
+        return { resultado: conDuracion(generarAnalisisSimulado(), inicio), aviso: undefined };
     }
 
     const response = await axios.post(OLLAMA_URL, {
@@ -312,7 +322,7 @@ async function obtenerAnalisisIA(imagenBase64, contextoFinal) {
 
     const parseo = parsearRespuestaIA(response.data.message.content);
     return {
-        resultado: parseo.datos,
+        resultado: conDuracion(parseo.datos, inicio),
         aviso: parseo.ok ? undefined : "El modelo no devolvió un JSON completo. Se muestra el texto recuperado; puedes intentar analizar de nuevo."
     };
 }
