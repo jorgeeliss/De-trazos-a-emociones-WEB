@@ -89,8 +89,9 @@ const IconoAnimo = ({ visual, emocion }) => {
         type="button"
         className="animo-boton"
         onClick={alClic}
+        // Sin title: el tooltip del navegador tapaba la animación. La
+        // descripción queda solo para lectores de pantalla.
         aria-label={`${descripcion}. Haz clic para ver otras emociones.`}
-        title={`${descripcion} · clic para ver otras emociones`}
       />
     </>
   );
