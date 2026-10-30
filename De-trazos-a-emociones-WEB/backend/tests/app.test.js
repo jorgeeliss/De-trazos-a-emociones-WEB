@@ -10,7 +10,8 @@ const app = require("../app");
 
 const ID = "0123456789abcdef01234567";
 const valido = "Bearer " + jwt.sign({ id: "000000000000000000000000" }, process.env.JWT_SECRET, { expiresIn: "1h" });
-const vencido = "Bearer " + jwt.sign({ id: "000000000000000000000000" }, process.env.JWT_SECRET, { expiresIn: -10 });
+// Vencido hace una hora (no segundos): así no depende de pequeños saltos del reloj.
+const vencido = "Bearer " + jwt.sign({ id: "000000000000000000000000", exp: Math.floor(Date.now() / 1000) - 3600 }, process.env.JWT_SECRET);
 
 let servidor;
 let base;
