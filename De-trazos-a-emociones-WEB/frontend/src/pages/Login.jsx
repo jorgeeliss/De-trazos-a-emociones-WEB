@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import { useNavigate, useSearchParams, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link, useOutletContext } from 'react-router-dom';
 import { Mail, Lock, KeyRound, Loader2 } from 'lucide-react';
-import AuthGraphics from '../components/auth/AuthGraphics';
-import { useIntroAuth } from '../components/auth/useIntroAuth';
 import AuthAviso from '../components/auth/AuthAviso';
 import { avisoDeError, correoValido } from '../components/auth/avisos';
 import Logo from '../components/common/Logo';
-import './AuthCommon.css';
 import { api } from '../api';
 import { useAnalisisSesion } from '../context/AnalisisSesionContext';
 
@@ -15,8 +12,8 @@ const Login = () => {
   const [searchParams] = useSearchParams();
   const sesionExpirada = searchParams.get('expirado') === '1';
   const { nuevaSesion } = useAnalisisSesion();
-  // El formulario aparece cuando el logo termina de formarse (o al primer clic/tecla).
-  const [introLista, terminarIntro] = useIntroAuth();
+  // La intro (animación del logo) la maneja AuthLayout.
+  const { introLista } = useOutletContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [cargando, setCargando] = useState(false);
@@ -83,142 +80,134 @@ const Login = () => {
   };
 
   return (
-    <div className={`auth-container ${introLista ? '' : 'intro'}`}>
-      {/* Panel Izquierdo - Gráficos */}
-      <AuthGraphics alTerminar={terminarIntro} />
+    <div className="form-container">
 
-      {/* Panel Derecho - Formulario */}
-      <div className={`right-panel ${introLista ? 'listo' : 'esperando'}`}>
-        <div className="form-container">
-
-          <div className="brand">
-            <div className="brand-icon">
-              <Logo size={36} />
-            </div>
-            <div className="brand-text">
-              <h2>De trazos a emociones</h2>
-              <p>PSICOLOGÍA INFANTIL</p>
-            </div>
-          </div>
-
-          {paso === 1 ? (
-            <>
-              <div className="form-header">
-                <h1>Iniciar sesión</h1>
-                <p>Ingresa con tu correo y contraseña para continuar.</p>
-              </div>
-
-              {/* Se monta al aparecer el formulario para que su animación se vea. */}
-              {introLista && verExpirada && (
-                <AuthAviso
-                  aviso={{ tipo: 'info', icono: 'espera', titulo: 'Tu sesión expiró', texto: 'Por seguridad, vuelve a iniciar sesión.' }}
-                  onCerrar={() => setVerExpirada(false)}
-                />
-              )}
-
-              <form onSubmit={handleSubmit} noValidate>
-                <div className="form-group">
-                  <label htmlFor="email">Correo electrónico</label>
-                  <div className={`input-wrapper ${invalido('email') ? 'invalido' : ''}`}>
-                    <div className="input-icon">
-                      <Mail size={20} />
-                    </div>
-                    <input
-                      type="email"
-                      id="email"
-                      placeholder="nombre@correo.com"
-                      autoComplete="email"
-                      required
-                      aria-invalid={invalido('email') || undefined}
-                      value={email}
-                      onChange={(e) => { setEmail(e.target.value); setAviso(null); }}
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="password">Contraseña</label>
-                  <div className={`input-wrapper ${invalido('password') ? 'invalido' : ''}`}>
-                    <div className="input-icon">
-                      <Lock size={20} />
-                    </div>
-                    <input
-                      type="password"
-                      id="password"
-                      placeholder="••••••"
-                      autoComplete="current-password"
-                      required
-                      aria-invalid={invalido('password') || undefined}
-                      value={password}
-                      onChange={(e) => { setPassword(e.target.value); setAviso(null); }}
-                    />
-                  </div>
-                </div>
-
-                <AuthAviso aviso={aviso} onCerrar={() => setAviso(null)} />
-
-                <button type="submit" className="btn-submit" disabled={cargando}>
-                  {cargando ? <><Loader2 size={18} className="girando" /> Ingresando…</> : 'Continuar'}
-                </button>
-              </form>
-
-              <div className="form-footer">
-                ¿Aún no tienes cuenta? <Link to="/register">Crear cuenta</Link>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="form-header">
-                <h1>Verificación en dos pasos</h1>
-                <p>Ingresa el código de 6 dígitos para continuar</p>
-              </div>
-
-              <form onSubmit={verificarCodigo} noValidate>
-                <div className="form-group">
-                  <label htmlFor="codigo">Código de verificación</label>
-                  <div className={`input-wrapper ${invalido('codigo') ? 'invalido' : ''}`}>
-                    <div className="input-icon">
-                      <KeyRound size={20} />
-                    </div>
-                    <input
-                      type="text"
-                      id="codigo"
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      maxLength={6}
-                      placeholder="— — — — — —"
-                      required
-                      aria-invalid={invalido('codigo') || undefined}
-                      value={codigo}
-                      onChange={(e) => {
-                        setCodigo(e.target.value.replace(/\D/g, '').slice(0, 6));
-                        setAviso(null);
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <AuthAviso aviso={aviso} onCerrar={() => setAviso(null)} />
-
-                <button type="submit" className="btn-submit">
-                  Verificar y entrar
-                </button>
-              </form>
-
-              <div className="form-footer">
-                <button
-                  type="button"
-                  onClick={() => { setPaso(1); setDatosLogin(null); setAviso(null); }}
-                  style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
-                >
-                  ← Volver
-                </button>
-              </div>
-            </>
-          )}
-
+      <div className="brand">
+        <div className="brand-icon">
+          <Logo size={36} />
+        </div>
+        <div className="brand-text">
+          <h2>De trazos a emociones</h2>
+          <p>PSICOLOGÍA INFANTIL</p>
         </div>
       </div>
+
+      {paso === 1 ? (
+        <>
+          <div className="form-header">
+            <h1>Iniciar sesión</h1>
+            <p>Ingresa con tu correo y contraseña para continuar.</p>
+          </div>
+
+          {/* Se monta al aparecer el formulario para que su animación se vea. */}
+          {introLista && verExpirada && (
+            <AuthAviso
+              aviso={{ tipo: 'info', icono: 'espera', titulo: 'Tu sesión expiró', texto: 'Por seguridad, vuelve a iniciar sesión.' }}
+              onCerrar={() => setVerExpirada(false)}
+            />
+          )}
+
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="form-group">
+              <label htmlFor="email">Correo electrónico</label>
+              <div className={`input-wrapper ${invalido('email') ? 'invalido' : ''}`}>
+                <div className="input-icon">
+                  <Mail size={20} />
+                </div>
+                <input
+                  type="email"
+                  id="email"
+                  placeholder="nombre@correo.com"
+                  autoComplete="email"
+                  required
+                  aria-invalid={invalido('email') || undefined}
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setAviso(null); }}
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="password">Contraseña</label>
+              <div className={`input-wrapper ${invalido('password') ? 'invalido' : ''}`}>
+                <div className="input-icon">
+                  <Lock size={20} />
+                </div>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="••••••"
+                  autoComplete="current-password"
+                  required
+                  aria-invalid={invalido('password') || undefined}
+                  value={password}
+                  onChange={(e) => { setPassword(e.target.value); setAviso(null); }}
+                />
+              </div>
+            </div>
+
+            <AuthAviso aviso={aviso} onCerrar={() => setAviso(null)} />
+
+            <button type="submit" className="btn-submit" disabled={cargando}>
+              {cargando ? <><Loader2 size={18} className="girando" /> Ingresando…</> : 'Continuar'}
+            </button>
+          </form>
+
+          <div className="form-footer">
+            ¿Aún no tienes cuenta? <Link to="/register">Crear cuenta</Link>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="form-header">
+            <h1>Verificación en dos pasos</h1>
+            <p>Ingresa el código de 6 dígitos para continuar</p>
+          </div>
+
+          <form onSubmit={verificarCodigo} noValidate>
+            <div className="form-group">
+              <label htmlFor="codigo">Código de verificación</label>
+              <div className={`input-wrapper ${invalido('codigo') ? 'invalido' : ''}`}>
+                <div className="input-icon">
+                  <KeyRound size={20} />
+                </div>
+                <input
+                  type="text"
+                  id="codigo"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  placeholder="— — — — — —"
+                  required
+                  aria-invalid={invalido('codigo') || undefined}
+                  value={codigo}
+                  onChange={(e) => {
+                    setCodigo(e.target.value.replace(/\D/g, '').slice(0, 6));
+                    setAviso(null);
+                  }}
+                />
+              </div>
+            </div>
+
+            <AuthAviso aviso={aviso} onCerrar={() => setAviso(null)} />
+
+            <button type="submit" className="btn-submit">
+              Verificar y entrar
+            </button>
+          </form>
+
+          <div className="form-footer">
+            <button
+              type="button"
+              onClick={() => { setPaso(1); setDatosLogin(null); setAviso(null); }}
+              style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
+            >
+              ← Volver
+            </button>
+          </div>
+        </>
+      )}
+
     </div>
   );
 };

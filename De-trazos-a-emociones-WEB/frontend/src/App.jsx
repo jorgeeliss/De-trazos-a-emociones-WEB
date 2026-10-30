@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AuthLayout from './pages/AuthLayout';
 import Analyzer from './pages/Analyzer';
 import Dashboard from './pages/Dashboard';
 import History from './pages/History';
@@ -28,8 +29,11 @@ function App() {
     <AnalisisSesionProvider>
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<SinSesionRoute><Login /></SinSesionRoute>} />
-      <Route path="/register" element={<SinSesionRoute><Register /></SinSesionRoute>} />
+      {/* Login y registro comparten AuthLayout: la animación no se reinicia al cambiar */}
+      <Route element={<SinSesionRoute><AuthLayout /></SinSesionRoute>}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Route>
       <Route path="/terminos" element={<Terminos />} />
       <Route path="/privacidad" element={<Privacidad />} />
       <Route

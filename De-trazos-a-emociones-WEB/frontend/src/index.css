@@ -1,4 +1,7 @@
 :root {
+  /* Controles nativos (listas desplegables, calendario, scroll) en oscuro:
+     sin esto el navegador abre los <select> con fondo blanco y letra blanca. */
+  color-scheme: dark;
   --sans: 'DM Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
   /* Marca y títulos principales: serif suave y expresiva. */
@@ -91,6 +94,7 @@
 /* ===== TEMA CLARO (paleta estándar: fondos neutros + acento violeta sobrio) ===== */
 /* Mayor especificidad (:root[...] = 0,2,0) para ganarle a cualquier :root. */
 :root[data-theme="light"] {
+  color-scheme: light;
   /* Neutros: blanco y grises estándar, sin tinte lila. */
   --bg-dark: #f4f5f7;
   --bg-panel: #ffffff;
@@ -231,6 +235,12 @@ body {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* Opciones de las listas desplegables con los colores del tema. */
+select option {
+  background-color: var(--card);
+  color: var(--text);
 }
 
 /* Animación de entrada compartida por todas las páginas. */

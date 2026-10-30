@@ -461,6 +461,15 @@
   text-decoration: underline;
 }
 
+/* Al pasar entre login y registro (la intro ya terminó): el formulario nuevo
+   entra enseguida, sin la espera pensada para el final de la animación. */
+.auth-container .right-panel.listo.cambio .form-container,
+.auth-container .right-panel.listo.cambio .form-container > :not(.auth-aviso),
+.auth-container .right-panel.listo.cambio .form-container form > :not(.auth-aviso) {
+  animation-delay: 0s !important;
+  animation-duration: 0.45s;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .auth-container .right-panel.listo .form-container,
   .auth-container .right-panel.listo .form-container > *,
