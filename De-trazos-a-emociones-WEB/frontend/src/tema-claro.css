@@ -343,8 +343,6 @@
   background: var(--t-danger-bg);
   color: var(--t-danger);
 }
-:root[data-theme="light"] .tl-item:hover,
-:root[data-theme="light"] .tl-item-click:hover,
 :root[data-theme="light"] .history-wrapper .session-row:hover {
   background: var(--t-hover);
 }
@@ -540,4 +538,15 @@
   background: var(--t-warn-bg);
   border-color: var(--t-warn-border);
   color: var(--t-warn);
+}
+
+/* Dashboard: tarjetas de "Cómo ha estado" sobre fondo blanco. */
+:root[data-theme="light"] .ts-card {
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--emo) 8%, transparent) 0%, transparent 60%),
+    var(--surface);
+  box-shadow: var(--t-shadow);
+}
+:root[data-theme="light"] .ts-reciente {
+  background: rgba(31, 36, 48, 0.75);
 }

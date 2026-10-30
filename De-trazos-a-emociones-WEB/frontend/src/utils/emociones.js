@@ -52,7 +52,7 @@ export function emotionVisual(emocion = '') {
   if (e.includes('enojo') || e.includes('ira') || e.includes('frustracion') || e.includes('rabia'))
     return visual('enojo', Angry, 'enojo');
   if (e.includes('miedo') || e.includes('temor') || e.includes('susto'))
-    return visual('miedo', Frown, 'triste');
+    return visual('miedo', Frown, 'miedo');
   if (e.includes('tristeza') || e.includes('melancolia') || e.includes('soledad'))
     return visual('tristeza', Frown, 'triste');
   if (e.includes('alegr') || e.includes('felic') || e.includes('feliz') || e.includes('content') || e.includes('euforia') || e.includes('entusiasmo') || e.includes('amor'))

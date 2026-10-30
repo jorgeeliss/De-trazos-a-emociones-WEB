@@ -1,7 +1,9 @@
 // Simulación en canvas para el Dashboard: trazos cortos de crayón que llegan
 // dispersos y se acomodan, en el orden del dibujo, hasta formar la cara de la
-// emoción. Alrededor flotan garabatos sueltos. Todo en el color de la emoción
-// (color CSS del lienzo). La geometría replica los iconos de lucide (caja 24x24).
+// emoción. Alrededor flotan garabatos sueltos. Cada trazo lleva su color: al
+// pasar a otra emoción explota con el color actual y, a medida que vuelve a
+// juntarse, cambia al color de la nueva. La geometría replica los iconos de
+// lucide (caja 24x24).
 import {
   TAU, azar, girarHacia, aRgb, pintarMarca, crearGarabato, pintarGarabato,
   derivar, rebotar, apartarDe, ajustarLienzo,
@@ -29,6 +31,14 @@ const CARAS = {
   triste: [CONTORNO, { f: curva([8, 16], [12, 12], [16, 16]) }, ...ojos()],
   neutra: [CONTORNO, { f: linea([8, 15], [16, 15]) }, ...ojos()],
   molesta: [CONTORNO, { f: linea([8, 15], [16, 15]) }, ...OJOS_LINEA],
+  // Miedo: cejas de preocupación (más altas hacia el centro) y boca temblorosa.
+  miedo: [
+    CONTORNO,
+    { f: (t) => [8 + 8 * t, 15.6 + 0.85 * Math.sin(t * 3 * 2 * Math.PI)] },
+    { f: linea([7.2, 8.4], [10.6, 6.8]) },
+    { f: linea([13.4, 6.8], [16.8, 8.4]) },
+    ...ojos(10.4),
+  ],
   enojo: [
     CONTORNO,
     { f: curva([8, 16], [12, 12], [16, 16]) },
@@ -89,8 +99,16 @@ const trazosDeCara = (cara, { cx, cy, tam }, k) => {
 
 const DURACION_DIBUJO_MS = 1500;
 
+const DURACION_COLOR_MS = 1400; // garabatos sueltos y halo pasan al nuevo color
+
+const mezclar = (a, b, t) => [0, 1, 2].map((i) => Math.round(a[i] + (b[i] - a[i]) * t));
+const cssRgb = ([r, g, b]) => `rgb(${r}, ${g}, ${b})`;
+
 export function crearSimulacion(canvas, {
   cara,
+  // Color de la emoción: un color CSS o "var(--emo-...)". Sin él se usa el
+  // color CSS del lienzo.
+  color: colorInicial = null,
   reducido = false,
   // Elemento que recibe el puntero (los trazos se apartan del cursor).
   zona = canvas,
@@ -106,8 +124,9 @@ export function crearSimulacion(canvas, {
   let h = 0;
   let k = 1;
   let ubicacion = { cx: 0, cy: 0, tam: 0 };
-  let color = '#8b79f2';
-  let rgb = null;
+  let colorActual = colorInicial; // color hacia el que van los trazos
+  // Transición de color de los garabatos sueltos y del halo.
+  let colorSueltos = { desde: colorInicial, hasta: colorInicial, inicio: 0 };
   let trazos = []; // los que forman la cara
   let sueltos = []; // garabatos que flotan alrededor
   let cursor = null;
@@ -121,11 +140,20 @@ export function crearSimulacion(canvas, {
     k = Math.max(0.8, Math.min(2.6, ubicacion.tam / 96));
   };
 
-  // El color sale del CSS del lienzo (color: var(--animo-color)): sigue al tema.
-  const leerColor = () => {
-    color = getComputedStyle(canvas).color || color;
-    rgb = aRgb(color, null);
+  // Colores resueltos a [r, g, b]. Se vuelven a leer cada tanto para seguir
+  // el tema claro/oscuro (las variables --emo-* cambian con el tema).
+  const cacheRgb = new Map();
+  const rgbDe = (css) => {
+    const clave = css || '';
+    if (!cacheRgb.has(clave)) {
+      const estilo = getComputedStyle(canvas);
+      const variable = /^var\((--[\w-]+)\)$/.exec(clave.trim());
+      const valor = variable ? estilo.getPropertyValue(variable[1]) : clave || estilo.color;
+      cacheRgb.set(clave, aRgb(valor).split(',').map(Number));
+    }
+    return cacheRgb.get(clave);
   };
+  const leerColor = () => cacheRgb.clear();
 
   const posicionAlAzar = () => ({ x: 12 + Math.random() * (w - 24), y: 12 + Math.random() * (h - 24) });
   // Para los trazos de la cara: preferir zonas sin texto encima.
@@ -136,8 +164,11 @@ export function crearSimulacion(canvas, {
   };
 
   // Programa el dibujo: cada trazo "sale" hacia su sitio en el orden del dibujo.
-  const dibujar = (nuevaCara, { desdeActual = false, retraso = 0, duracion = DURACION_DIBUJO_MS } = {}) => {
+  const dibujar = (nuevaCara, { desdeActual = false, retraso = 0, duracion = DURACION_DIBUJO_MS, color = colorActual } = {}) => {
     caraActual = nuevaCara;
+    colorActual = color;
+    const ahoraColor = performance.now();
+    colorSueltos = { desde: colorSueltos.hasta, hasta: color, inicio: ahoraColor + retraso };
     const destinos = trazosDeCara(nuevaCara, ubicacion, k);
     const ahora = performance.now();
     const paso = duracion / destinos.length;
@@ -145,7 +176,14 @@ export function crearSimulacion(canvas, {
     trazos = destinos.map((d, i) => {
       const previo = desdeActual && anteriores.length ? anteriores[i % anteriores.length] : null;
       const inicio = previo || posicionLibre();
+      // El trazo conserva el color que tenía (el de la emoción anterior) hasta
+      // que se acerca a su nuevo lugar.
+      const colorPrevio = previo ? (previo.mezcla >= 0.5 ? previo.colHasta : previo.colDesde) : color;
       return {
+        colDesde: colorPrevio,
+        colHasta: color,
+        mezcla: colorPrevio === color ? 1 : 0,
+        d0: null,
         x: inicio.x,
         y: inicio.y,
         ang: previo ? previo.ang : Math.random() * TAU,
@@ -161,7 +199,10 @@ export function crearSimulacion(canvas, {
         fase: Math.random() * TAU,
       };
     });
-    if (reducido) trazos.forEach((p) => Object.assign(p, { x: p.tx, y: p.ty, ang: p.tang, sale: 0 }));
+    if (reducido) {
+      trazos.forEach((p) => Object.assign(p, { x: p.tx, y: p.ty, ang: p.tang, sale: 0, mezcla: 1 }));
+      colorSueltos.inicio = -Infinity;
+    }
   };
 
   const crearSueltos = () => {
@@ -179,6 +220,13 @@ export function crearSimulacion(canvas, {
         p.vx = (p.vx + (tx - p.x) * 0.045) * 0.84;
         p.vy = (p.vy + (ty - p.y) * 0.045) * 0.84;
         p.ang = girarHacia(p.ang, p.tang, 0.12);
+        // Cambia de color a medida que se junta: según cuánto le falta para llegar.
+        if (p.mezcla < 1) {
+          const dist = Math.hypot(p.tx - p.x, p.ty - p.y);
+          if (p.d0 === null) p.d0 = Math.max(dist, 1);
+          const avance = ahora - p.sale > 1800 ? 1 : 1 - dist / p.d0;
+          p.mezcla = Math.max(p.mezcla, Math.min(1, avance * 1.15));
+        }
       } else {
         // Todavía suelto: deriva y gira despacio.
         p.vx = (p.vx + azar(-0.025, 0.025)) * 0.98;
@@ -214,24 +262,33 @@ export function crearSimulacion(canvas, {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
+    // Color de los garabatos sueltos y del halo (en transición tras un cambio).
+    const ahora = performance.now();
+    const tSueltos = Math.min(1, Math.max(0, (ahora - colorSueltos.inicio) / DURACION_COLOR_MS));
+    const rgb = mezclar(rgbDe(colorSueltos.desde), rgbDe(colorSueltos.hasta), tSueltos);
+
     // Halo suave detrás de la cara. Se apaga antes de tocar los bordes del
     // lienzo: si no, el banner lo corta y queda una franja de color abajo.
-    if (rgb) {
+    {
       const radio = Math.max(10, Math.min(tam * 0.85, cy - 4, h - cy - 4, w - cx - 4));
       const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, radio);
-      g.addColorStop(0, `rgba(${rgb}, 0.14)`);
-      g.addColorStop(1, `rgba(${rgb}, 0)`);
+      g.addColorStop(0, `rgba(${rgb.join(', ')}, 0.14)`);
+      g.addColorStop(1, `rgba(${rgb.join(', ')}, 0)`);
       ctx.globalAlpha = 1;
       ctx.fillStyle = g;
       ctx.fillRect(cx - tam, cy - tam, tam * 2, tam * 2);
     }
 
-    ctx.strokeStyle = color;
+    ctx.strokeStyle = cssRgb(rgb);
     ctx.lineWidth = 1.5 * Math.min(k, 1.6);
     for (const g of sueltos) pintarGarabato(ctx, g, g.alfa * alfaBorde(g.x, g.y));
 
-    // Trazos de la cara, con una segunda pasada fina que imita el crayón.
-    for (const p of trazos) pintarMarca(ctx, p, 1.8 * k, alfaBorde(p.x, p.y) * p.alfa, 0.5 * k);
+    // Trazos de la cara, cada uno con su color, y una segunda pasada fina que
+    // imita el crayón.
+    for (const p of trazos) {
+      ctx.strokeStyle = p.mezcla >= 1 ? cssRgb(rgbDe(p.colHasta)) : cssRgb(mezclar(rgbDe(p.colDesde), rgbDe(p.colHasta), p.mezcla));
+      pintarMarca(ctx, p, 1.8 * k, alfaBorde(p.x, p.y) * p.alfa, 0.5 * k);
+    }
     ctx.globalAlpha = 1;
   };
 
@@ -303,16 +360,29 @@ export function crearSimulacion(canvas, {
   }
 
   return {
-    // Pasa de la cara actual a la nueva, trazo por trazo.
-    cambiarCara(nuevaCara) {
+    // Pasa de la cara actual a la nueva, trazo por trazo (p. ej. al cambiar de niño).
+    cambiarCara(nuevaCara, nuevoColor = colorActual) {
       leerColor();
-      if (nuevaCara === caraActual) {
+      if (nuevaCara === caraActual && nuevoColor === colorActual) {
         if (reducido) pintar();
         return;
       }
-      dibujar(nuevaCara, { desdeActual: true });
+      dibujar(nuevaCara, { desdeActual: true, color: nuevoColor });
       if (reducido) pintar();
     },
+    // Clic: la cara explota con su color y se vuelve a juntar formando otra
+    // emoción; cada trazo cambia de color mientras llega a su sitio.
+    transicionar(nuevaCara, nuevoColor) {
+      if (reducido) {
+        this.cambiarCara(nuevaCara, nuevoColor);
+        return;
+      }
+      leerColor();
+      empujar(2.5, 3);
+      dibujar(nuevaCara, { desdeActual: true, retraso: 500, duracion: DURACION_DIBUJO_MS * 0.8, color: nuevoColor });
+    },
+    // Posición y tamaño de la cara en el lienzo (para ubicar la etiqueta).
+    ubicacion: () => ({ ...ubicacion, w, h }),
     // Clic: la cara se deshace en trazos sueltos y se vuelve a dibujar.
     dispersar() {
       if (reducido) return;

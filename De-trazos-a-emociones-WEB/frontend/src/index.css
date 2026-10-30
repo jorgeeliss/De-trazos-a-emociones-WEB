@@ -60,20 +60,22 @@
   --rueda-op: 0.85;
 
   /* Emociones: un color propio por emoción (utils/emociones.js, historial y
-     animaciones de trazos). Las agradables en tonos fríos y tranquilos; las
-     difíciles en tonos cálidos suaves. Todo apagado, sin saturar. */
-  --emo-alegria: #6ccfc0;
-  --emo-alegria-bg: rgba(108, 207, 192, 0.16);
-  --emo-tristeza: #8fa8d6;
-  --emo-tristeza-bg: rgba(143, 168, 214, 0.16);
-  --emo-calma: #9cc5a1;
-  --emo-calma-bg: rgba(156, 197, 161, 0.16);
-  --emo-enojo: #e8908a;
-  --emo-enojo-bg: rgba(232, 144, 138, 0.16);
-  --emo-miedo: #b8a4e3;
-  --emo-miedo-bg: rgba(184, 164, 227, 0.16);
-  --emo-ansiedad: #f0b48a;
-  --emo-ansiedad-bg: rgba(240, 180, 138, 0.16);
+     animaciones de trazos). Las agradables en tonos fríos (alegría turquesa,
+     calma verde hoja); las difíciles cada una con su tono: tristeza azul,
+     miedo violeta, enojo rojo coral, ansiedad naranja. Tonos separados en el
+     círculo cromático para distinguirlas de un vistazo. */
+  --emo-alegria: #2fd2cc;
+  --emo-alegria-bg: rgba(47, 210, 204, 0.16);
+  --emo-tristeza: #6f9cf0;
+  --emo-tristeza-bg: rgba(111, 156, 240, 0.16);
+  --emo-calma: #8fd26f;
+  --emo-calma-bg: rgba(143, 210, 111, 0.16);
+  --emo-enojo: #f2736d;
+  --emo-enojo-bg: rgba(242, 115, 109, 0.16);
+  --emo-miedo: #b48cf5;
+  --emo-miedo-bg: rgba(180, 140, 245, 0.16);
+  --emo-ansiedad: #f5a254;
+  --emo-ansiedad-bg: rgba(245, 162, 84, 0.16);
   --emo-neutra: #94a3b8;
   --emo-neutra-bg: rgba(148, 163, 184, 0.15);
   /* Las barras mezclan su color con este gris (de luminosidad parecida) para
@@ -81,9 +83,9 @@
   --barra-mezcla: #c4c1d8;
   --barra-pct: 80%; /* cuánto color de la emoción lleva la barra (ya son tonos apagados) */
   /* Intensidades */
-  --int-alta: #e8908a;
-  --int-media: #f0b48a;
-  --int-baja: #9cc5a1;
+  --int-alta: #f2736d;
+  --int-media: #f5a254;
+  --int-baja: #8fd26f;
 }
 
 /* ===== TEMA CLARO (paleta estándar: fondos neutros + acento violeta sobrio) ===== */
@@ -141,25 +143,25 @@
   --rueda-4: #e0697f;
   --rueda-op: 0.9;
 
-  --emo-alegria: #2b9e93;
-  --emo-alegria-bg: rgba(43, 158, 147, 0.13);
-  --emo-tristeza: #4f6fa8;
-  --emo-tristeza-bg: rgba(79, 111, 168, 0.13);
-  --emo-calma: #5e9a6c;
-  --emo-calma-bg: rgba(94, 154, 108, 0.13);
-  --emo-enojo: #c5605a;
-  --emo-enojo-bg: rgba(197, 96, 90, 0.13);
-  --emo-miedo: #7d68c4;
-  --emo-miedo-bg: rgba(125, 104, 196, 0.13);
-  --emo-ansiedad: #d1844f;
-  --emo-ansiedad-bg: rgba(209, 132, 79, 0.13);
+  --emo-alegria: #0f9e9a;
+  --emo-alegria-bg: rgba(15, 158, 154, 0.12);
+  --emo-tristeza: #3b6fd4;
+  --emo-tristeza-bg: rgba(59, 111, 212, 0.12);
+  --emo-calma: #4f9a33;
+  --emo-calma-bg: rgba(79, 154, 51, 0.12);
+  --emo-enojo: #d8453f;
+  --emo-enojo-bg: rgba(216, 69, 63, 0.12);
+  --emo-miedo: #8150d6;
+  --emo-miedo-bg: rgba(129, 80, 214, 0.12);
+  --emo-ansiedad: #d9771f;
+  --emo-ansiedad-bg: rgba(217, 119, 31, 0.12);
   --emo-neutra: #64748b;
   --emo-neutra-bg: rgba(100, 116, 139, 0.12);
   --barra-mezcla: #d8dbe3;
   --barra-pct: 78%;
-  --int-alta: #c5605a;
-  --int-media: #d1844f;
-  --int-baja: #5e9a6c;
+  --int-alta: #d8453f;
+  --int-media: #d9771f;
+  --int-baja: #4f9a33;
 }
 
 /* ===== PALETAS DE ACENTO (en claro y oscuro) ===== */

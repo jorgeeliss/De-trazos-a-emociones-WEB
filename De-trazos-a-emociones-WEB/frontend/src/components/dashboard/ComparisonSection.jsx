@@ -49,7 +49,7 @@ const ComparisonSection = ({ child, onSelect }) => {
   const { consejos } = actividadesPara(emocionPredominante(analisis));
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div className="cmp-columna">
       <div className="dashboard-card compare-card" data-tour="comparar">
         <div className="ts-header">
           <div>

@@ -37,3 +37,31 @@
     width: 130px;
   }
 }
+
+/* Nombre de la emoción que se está mostrando (aparece un momento tras el clic). */
+.animo-etiqueta {
+  position: absolute;
+  z-index: 1;
+  transform: translateX(-50%);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  border: 1px solid var(--border2);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: animoEtiqueta 2.2s ease both;
+}
+
+@keyframes animoEtiqueta {
+  0% { opacity: 0; transform: translate(-50%, 6px); }
+  15%, 75% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, -4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animo-etiqueta { animation: none; }
+}
