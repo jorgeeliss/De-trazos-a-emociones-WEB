@@ -172,7 +172,7 @@ const Analyzer = () => {
         {step === 2 && modo === 'contexto' && !isAnalyzing && (
           <div className="ctx-paso">
             <ContextoResumen
-              ctx={formData}
+              ctx={{ ...formData, descripcion_dibujo: '' }} /* la descripción se escribe justo abajo */
               titulo={formData.nombre ? `Contexto de ${formData.nombre}` : 'Contexto del niño'}
               subtitulo="Se usará en este análisis."
               onEditar={() => setStep(1)}
@@ -216,7 +216,9 @@ const Analyzer = () => {
               analysisResult={analysisResult}
               resetAll={resetAll}
               previewUrl={previewUrl}
-              contexto={modo === 'contexto' ? formData : null}
+              contexto={modo === 'contexto'
+                ? formData
+                : (formData.descripcion_dibujo?.trim() ? { descripcion_dibujo: formData.descripcion_dibujo } : null)}
             />
           </>
         )}

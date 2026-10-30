@@ -2,7 +2,7 @@ import { Pencil, UserRound } from 'lucide-react';
 import { filasContexto, OPCIONES } from '../../utils/contextoNino';
 import './ContextoNino.css';
 
-const LARGOS = ['Situación actual', 'Diagnóstico previo', 'Comentó mientras dibujaba'];
+const LARGOS = ['Situación actual', 'Diagnóstico previo', 'Descripción del dibujo', 'Comentó mientras dibujaba'];
 const capital = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 
 // Resumen del contexto del niño (lo que se usa o se usará en el análisis).
@@ -91,6 +91,10 @@ export const ContextoEditor = ({ valor = {}, onChange, conDibujo = true }) => {
       </label>
       {conDibujo && (
         <>
+          <label className="ctx-campo">
+            <span>Descripción del dibujo</span>
+            <textarea name="descripcion_dibujo" rows={2} value={valor.descripcion_dibujo || ''} onChange={alEscribir} placeholder="Opcional: qué representa, quiénes aparecen…" />
+          </label>
           <div className="ctx-campo">
             <span>¿El dibujo fue espontáneo o se le pidió?</span>
             <Pildoras nombre="dibujo_espontaneo" opciones={OPCIONES.dibujo_espontaneo} valor={valor.dibujo_espontaneo || ''} onElegir={poner} />

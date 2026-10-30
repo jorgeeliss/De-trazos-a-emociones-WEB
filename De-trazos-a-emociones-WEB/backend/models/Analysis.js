@@ -17,7 +17,9 @@ const AnalysisSchema = new mongoose.Schema({
         diagnostico_previo: String,
         dibujo_espontaneo: String,
         comento_mientras: String,
-        tiempo_dibujo: String
+        tiempo_dibujo: String,
+        // Descripción breve del dibujo que escribe el adulto (con o sin contexto).
+        descripcion_dibujo: String
     },
 
     ruta_imagen: {

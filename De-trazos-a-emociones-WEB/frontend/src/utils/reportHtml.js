@@ -129,7 +129,7 @@ export const bloquesDetalle = (analisis, imagenDataUrl) => {
         ${tituloSeccion('Contexto con el que se analizó')}
         <div style="display:flex;flex-wrap:wrap;gap:10px 22px;">
           ${filas.map(([etq, val]) => `
-            <div style="${['Situación actual', 'Diagnóstico previo', 'Comentó mientras dibujaba'].includes(etq) ? 'width:100%;' : 'min-width:140px;'}">
+            <div style="${['Situación actual', 'Diagnóstico previo', 'Descripción del dibujo', 'Comentó mientras dibujaba'].includes(etq) ? 'width:100%;' : 'min-width:140px;'}">
               <div style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${MUTED};">${esc(etq)}</div>
               <div style="font-size:12.5px;color:${TEXT};margin-top:2px;line-height:1.5;">${esc(val)}</div>
             </div>`).join('')}
@@ -138,7 +138,8 @@ export const bloquesDetalle = (analisis, imagenDataUrl) => {
     : (esIndep || sinContexto)
       ? `<div style="margin-top:18px;padding:12px 16px;background:${SUAVE};border-radius:12px;font-size:12.5px;line-height:1.55;color:${TEXT};">
           ${tituloSeccion('Contexto del análisis')}
-          Este dibujo se analizó <b>sin el contexto del niño</b> (modo «Solo dibujo»): la lectura se basa solo en lo que se ve en el dibujo.
+          Este dibujo se analizó <b>sin el contexto del niño</b> (modo «Solo dibujo»): la lectura se basa ${ctx.descripcion_dibujo ? 'en el dibujo y en la descripción aportada' : 'solo en lo que se ve en el dibujo'}.
+          ${ctx.descripcion_dibujo ? `<div style="margin-top:8px;"><div style="font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${MUTED};">Descripción del dibujo</div><div style="margin-top:2px;">${esc(ctx.descripcion_dibujo)}</div></div>` : ''}
           ${!esIndep && datosNino ? `<div style="margin-top:6px;color:${MUTED};">Datos del niño: ${esc(datosNino)}</div>` : ''}
         </div>`
       : '';

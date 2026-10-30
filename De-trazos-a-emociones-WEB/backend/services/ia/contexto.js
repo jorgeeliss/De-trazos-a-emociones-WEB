@@ -59,7 +59,7 @@ function construirContextoFinal(ctx = {}) {
 const CAMPOS_EDITABLES = [
     "edad", "fecha_nacimiento", "genero",
     "situacion_actual", "comportamiento", "diagnostico_previo",
-    "dibujo_espontaneo", "comento_mientras", "tiempo_dibujo"
+    "dibujo_espontaneo", "comento_mientras", "tiempo_dibujo", "descripcion_dibujo"
 ];
 const LARGO_MAXIMO = 1000;
 

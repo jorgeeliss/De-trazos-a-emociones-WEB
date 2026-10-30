@@ -37,3 +37,17 @@ test("sanitizarContexto: solo campos permitidos, como texto, recortados y sin el
     assert.equal(r.edad, "8");
     assert.equal(r.diagnostico_previo.length, 1000);
 });
+
+test("el esquema de Analysis conserva la descripción del dibujo en contexto_nino", () => {
+    const Analysis = require("../models/Analysis");
+    const a = new Analysis({
+        usuarioId: "000000000000000000000000",
+        ruta_imagen: "/uploads/x.jpg",
+        resultado_ia: { emocion_predominante: "calma" },
+        contexto_nino: { descripcion_dibujo: "Su familia en la playa", campo_inventado: "x" }
+    });
+    assert.equal(a.validateSync(), undefined);
+    const ctx = a.toObject().contexto_nino;
+    assert.equal(ctx.descripcion_dibujo, "Su familia en la playa");
+    assert.equal(ctx.campo_inventado, undefined); // los campos desconocidos se descartan
+});

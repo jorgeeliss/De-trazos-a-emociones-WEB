@@ -87,4 +87,5 @@ test('contexto del niño: valor más reciente no vacío por campo y filas legibl
   assert.deepEqual(filas.map((f) => f[0]), ['Edad', 'Género', 'Situación actual', 'Comportamiento reciente']);
   assert.equal(filas[1][1], 'Niña');
   assert.deepEqual(filasContexto({}), []);
+  assert.deepEqual(filasContexto({ descripcion_dibujo: 'Su familia en la playa' }), [['Descripción del dibujo', 'Su familia en la playa']]);
 });

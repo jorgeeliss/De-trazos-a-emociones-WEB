@@ -71,7 +71,8 @@ router.post(
         diagnostico_previo,
         dibujo_espontaneo,
         comento_mientras,
-        tiempo_dibujo
+        tiempo_dibujo,
+        descripcion_dibujo
     } = req.body;
 
     // En modo "solo dibujo" el body no trae contexto, así que esto queda vacío.
@@ -105,7 +106,8 @@ router.post(
             contexto_nino: {
                 nombre, edad, fecha_nacimiento, genero,
                 situacion_actual, comportamiento, diagnostico_previo,
-                dibujo_espontaneo, comento_mientras, tiempo_dibujo
+                dibujo_espontaneo, comento_mientras, tiempo_dibujo,
+                descripcion_dibujo
             },
             ruta_imagen: rutaImagenGuardada,
             resultado_ia: resultadoJSON,
@@ -174,7 +176,10 @@ router.post("/analisis/guardar", verificarToken, async (req, res) => {
     try {
         const nuevo = new Analysis({
             usuarioId: req.usuario.id,
-            contexto_nino: independiente ? {} : (contexto_nino || {}),
+            // Un dibujo suelto solo conserva su descripción (si la tuvo).
+            contexto_nino: independiente
+                ? (contexto_nino?.descripcion_dibujo ? { descripcion_dibujo: contexto_nino.descripcion_dibujo } : {})
+                : (contexto_nino || {}),
             ruta_imagen: "/uploads/" + nombreArchivo,
             resultado_ia: analisis,
             independiente: !!independiente,
@@ -230,7 +235,9 @@ router.patch("/analisis/:id/asignar", verificarToken, async (req, res) => {
             nombre: contexto_nino.nombre,
             edad: contexto_nino.edad,
             fecha_nacimiento: contexto_nino.fecha_nacimiento,
-            genero: contexto_nino.genero
+            genero: contexto_nino.genero,
+            // La descripción del dibujo (si la tenía) se conserva al asignarlo.
+            descripcion_dibujo: analisis.contexto_nino?.descripcion_dibujo
         };
         // Sigue siendo un análisis hecho sin contexto hasta que se reanalice.
         analisis.analizado_sin_contexto = true;
@@ -262,7 +269,9 @@ router.patch("/analisis/:id/desasignar", verificarToken, async (req, res) => {
         }
 
         analisis.independiente = true;
-        analisis.contexto_nino = {};
+        // Se quita el niño, pero la descripción del dibujo se conserva.
+        const descripcion = analisis.contexto_nino?.descripcion_dibujo;
+        analisis.contexto_nino = descripcion ? { descripcion_dibujo: descripcion } : {};
         analisis.analizado_sin_contexto = true;
 
         await analisis.save();

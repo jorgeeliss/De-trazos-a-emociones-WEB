@@ -181,7 +181,8 @@ export function AnalisisSesionProvider({ children }) {
       if (!data.analisis) throw new Error('La API no devolvió un campo "analisis"');
       setAnalysisResult(construirResultado(data.analisis, data.aviso));
       if (modo === 'solo') {
-        setPendienteGuardar({ imagen: data.imagen, analisis: data.analisis });
+        // La descripción del dibujo viaja con el análisis para guardarse con él.
+        setPendienteGuardar({ imagen: data.imagen, analisis: data.analisis, descripcion: formData.descripcion_dibujo?.trim() || '' });
         setGuardadoEstado(null);
       }
       setStep(3);
@@ -209,7 +210,13 @@ export function AnalisisSesionProvider({ children }) {
   const guardarIndependiente = async () => {
     setGuardando(true);
     try {
-      await api.guardarAnalisis({ analisis: pendienteGuardar.analisis, imagen: pendienteGuardar.imagen, independiente: true });
+      const descripcion = pendienteGuardar.descripcion;
+      await api.guardarAnalisis({
+        analisis: pendienteGuardar.analisis,
+        imagen: pendienteGuardar.imagen,
+        independiente: true,
+        ...(descripcion ? { contexto_nino: { descripcion_dibujo: descripcion } } : {}),
+      });
       setGuardadoEstado('independiente');
       setPendienteGuardar(null);
     } catch (err) { avisarError('No se pudo guardar el análisis', err); } finally { setGuardando(false); }
@@ -224,7 +231,10 @@ export function AnalisisSesionProvider({ children }) {
         analisis: pendienteGuardar.analisis,
         imagen: pendienteGuardar.imagen,
         independiente: false,
-        contexto_nino: { nombre, edad: ctx.edad, fecha_nacimiento: ctx.fecha_nacimiento, genero: ctx.genero }
+        contexto_nino: {
+          nombre, edad: ctx.edad, fecha_nacimiento: ctx.fecha_nacimiento, genero: ctx.genero,
+          ...(pendienteGuardar.descripcion ? { descripcion_dibujo: pendienteGuardar.descripcion } : {}),
+        }
       });
       setGuardadoEstado('asignado');
       setPendienteGuardar(null);

@@ -62,7 +62,7 @@ Plantilla disponible en `backend/.env.example`.
 
 **Modelos de datos:**
 - `User`: nombre, apellido, email (único), password (hash), rol, timestamps.
-- `Analysis`: usuarioId; `contexto_nino` { nombre, edad, genero, situacion_actual, comportamiento, diagnostico_previo, dibujo_espontaneo, comento_mientras, tiempo_dibujo }; ruta_imagen; resultado_ia (Mixed); fecha.
+- `Analysis`: usuarioId; `contexto_nino` { nombre, edad, fecha_nacimiento, genero, situacion_actual, comportamiento, diagnostico_previo, dibujo_espontaneo, comento_mientras, tiempo_dibujo, descripcion_dibujo (desde 2026-10-30; los análisis anteriores no la tienen) }; ruta_imagen; resultado_ia (Mixed); independiente; analizado_sin_contexto; fecha.
 
 **Flujo de la app:**
 - Registro e inicio de sesión. El token se guarda en `localStorage` y el login redirige a `/app`.

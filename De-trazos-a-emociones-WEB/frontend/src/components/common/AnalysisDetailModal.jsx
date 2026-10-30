@@ -144,6 +144,17 @@ const AnalysisDetailModal = ({ analisis, analisisDelNino = [], onClose, onActual
           </div>
         )}
 
+        {/* Dibujo suelto: solo su descripción, si se escribió. */}
+        {analisis.independiente && analisis.contexto_nino?.descripcion_dibujo && (
+          <div className="adm-contexto">
+            <ContextoResumen
+              ctx={{ descripcion_dibujo: analisis.contexto_nino.descripcion_dibujo }}
+              titulo="Descripción del dibujo"
+              subtitulo="Aportada al analizarlo."
+            />
+          </div>
+        )}
+
         {/* Contexto del niño: el usado en el análisis o, si se analizó sin
             contexto, el que se usará al reanalizar (revisable y editable). */}
         {!analisis.independiente && !reanalizando && (

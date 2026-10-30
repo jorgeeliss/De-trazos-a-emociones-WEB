@@ -4,7 +4,7 @@ import { textoEdad } from './emociones.js';
 // Datos propios del niño (se conservan entre análisis).
 export const CAMPOS_NINO = ['nombre', 'edad', 'fecha_nacimiento', 'genero', 'situacion_actual', 'comportamiento', 'diagnostico_previo'];
 // Datos de cada dibujo en particular (cambian en cada análisis).
-export const CAMPOS_DIBUJO = ['dibujo_espontaneo', 'comento_mientras', 'tiempo_dibujo'];
+export const CAMPOS_DIBUJO = ['descripcion_dibujo', 'dibujo_espontaneo', 'comento_mientras', 'tiempo_dibujo'];
 
 export const OPCIONES = {
   genero: [['niña', 'Niña'], ['niño', 'Niño'], ['no especificado', 'Prefiero no decirlo']],
@@ -38,6 +38,7 @@ export function filasContexto(ctx = {}) {
   if (lleno(ctx.situacion_actual)) filas.push(['Situación actual', ctx.situacion_actual]);
   if (lleno(ctx.comportamiento)) filas.push(['Comportamiento reciente', capital(ctx.comportamiento)]);
   if (lleno(ctx.diagnostico_previo)) filas.push(['Diagnóstico previo', ctx.diagnostico_previo]);
+  if (lleno(ctx.descripcion_dibujo)) filas.push(['Descripción del dibujo', ctx.descripcion_dibujo]);
   if (lleno(ctx.dibujo_espontaneo)) filas.push(['El dibujo', capital(ctx.dibujo_espontaneo)]);
   if (lleno(ctx.comento_mientras)) filas.push(['Comentó mientras dibujaba', ctx.comento_mientras]);
   if (lleno(ctx.tiempo_dibujo)) filas.push(['Tiempo que tardó', capital(ctx.tiempo_dibujo)]);
