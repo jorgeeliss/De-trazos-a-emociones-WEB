@@ -13,6 +13,7 @@ import { api } from '../api';
 import PasswordChecklist from '../components/common/PasswordChecklist';
 import { passwordValida } from '../utils/password';
 import './Configuracion.css';
+import { useAvisos } from '../context/AvisosContext';
 
 const leerUsuarioLocal = () => {
   try {
@@ -37,6 +38,7 @@ const TABS = [
 ];
 
 const Configuracion = () => {
+  const { avisarError } = useAvisos();
   const { tema, setTema } = useTheme();
   const navigate = useNavigate();
   const { start: iniciarRecorrido } = useTour();
@@ -100,7 +102,7 @@ const Configuracion = () => {
       await api.subirFotoPerfil(file);
       setRecargaFoto((n) => n + 1);
     } catch (err) {
-      alert(err.message);
+      avisarError('No se pudo subir la foto', err);
     } finally {
       setSubiendo(false);
       if (fileRef.current) fileRef.current.value = '';
@@ -119,7 +121,7 @@ const Configuracion = () => {
       api.logout();
       navigate('/login');
     } catch (err) {
-      alert(err.message);
+      avisarError('No se pudo eliminar la cuenta', err);
       setEliminando(false);
       setConfirmarPaso(0);
     }

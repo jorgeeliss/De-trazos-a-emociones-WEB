@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useRef } from 'react';
 import { api } from '../api';
+import { useAvisos } from './AvisosContext';
 import { formatDuracion } from '../utils/tiempo';
 import { limpiarTextoIA } from '../utils/textoIA';
 
@@ -55,6 +56,7 @@ function construirResultado(raw, aviso) {
 }
 
 export function AnalisisSesionProvider({ children }) {
+  const { avisarError } = useAvisos();
   const [modo, setModo] = useState('contexto');
   const [ninoConocido, setNinoConocido] = useState(false);
   const [step, setStep] = useState(1);
@@ -209,7 +211,7 @@ export function AnalisisSesionProvider({ children }) {
       await api.guardarAnalisis({ analisis: pendienteGuardar.analisis, imagen: pendienteGuardar.imagen, independiente: true });
       setGuardadoEstado('independiente');
       setPendienteGuardar(null);
-    } catch (err) { alert(err.message); } finally { setGuardando(false); }
+    } catch (err) { avisarError('No se pudo guardar el análisis', err); } finally { setGuardando(false); }
   };
 
   const asignarANino = async (nombre) => {
@@ -225,7 +227,7 @@ export function AnalisisSesionProvider({ children }) {
       });
       setGuardadoEstado('asignado');
       setPendienteGuardar(null);
-    } catch (err) { alert(err.message); } finally { setGuardando(false); }
+    } catch (err) { avisarError('No se pudo guardar el análisis en el niño', err); } finally { setGuardando(false); }
   };
 
   const noGuardar = async () => {
@@ -234,7 +236,7 @@ export function AnalisisSesionProvider({ children }) {
       await api.descartarAnalisis(pendienteGuardar.imagen);
       setGuardadoEstado('descartado');
       setPendienteGuardar(null);
-    } catch (err) { alert(err.message); } finally { setGuardando(false); }
+    } catch (err) { avisarError('No se pudo descartar el análisis', err); } finally { setGuardando(false); }
   };
 
   // Al analizar otro dibujo se conserva el contexto del niño (nombre, situación

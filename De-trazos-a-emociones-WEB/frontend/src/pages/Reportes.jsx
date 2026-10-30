@@ -7,8 +7,10 @@ import BrandHeader from '../components/common/BrandHeader';
 import Sidebar from '../components/layout/Sidebar';
 import { puedePdf } from '../utils/permisos';
 import './Reportes.css';
+import { useAvisos } from '../context/AvisosContext';
 
 const Reportes = () => {
+  const { avisarError } = useAvisos();
   const [ninos, setNinos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [generando, setGenerando] = useState(false);
@@ -47,7 +49,7 @@ const Reportes = () => {
     try {
       await exportarReporte(ninos);
     } catch (e) {
-      alert(e.message);
+      avisarError('No se pudo generar el reporte', e);
     } finally {
       setGenerando(false);
     }

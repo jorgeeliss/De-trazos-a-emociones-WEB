@@ -17,10 +17,13 @@ import { ThemeProvider } from './context/ThemeContext';
 import { TourProvider } from './context/TourContext';
 import { AnalisisSesionProvider } from './context/AnalisisSesionContext';
 import AnalisisToast from './components/common/AnalisisToast';
+import { AvisosProvider } from './context/AvisosContext';
+import AvisosFlotantes from './components/common/AvisosFlotantes';
 
 function App() {
   return (
     <ThemeProvider>
+    <AvisosProvider>
     <TourProvider>
     <AnalisisSesionProvider>
     <Routes>
@@ -93,8 +96,10 @@ function App() {
       />
           </Routes>
       <AnalisisToast />
+      <AvisosFlotantes />
     </AnalisisSesionProvider>
     </TourProvider>
+    </AvisosProvider>
     </ThemeProvider>
         );
       }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { X, ZoomIn, RefreshCw, FileDown, Undo2, ImageOff, Timer } from 'lucide-react';
 import './AnalysisDetailModal.css';
 import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
@@ -9,44 +9,23 @@ import AnalyzingProgress from '../analyzer/AnalyzingProgress';
 import ExportPdfModal from './ExportPdfModal';
 import { useBloquearScroll } from '../../hooks/useBloquearScroll';
 import { puedePdf } from '../../utils/permisos';
-import { API_URL } from '../../config';
+import { useImagenAnalisis } from '../../hooks/useImagenAnalisis';
+import { useAvisos } from '../../context/AvisosContext';
 
 const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }) => {
   const [zoom, setZoom] = useState(false);
   const [exportar, setExportar] = useState(false);
-  const [imgUrl, setImgUrl] = useState(null);
-  const [imgError, setImgError] = useState(false);
   const [resultadoLocal, setResultadoLocal] = useState(null);
   const [yaReanalizado, setYaReanalizado] = useState(false);
   const [reanalizando, setReanalizando] = useState(false);
   const [desasignando, setDesasignando] = useState(false);
+  const { avisarError } = useAvisos();
 
   const tieneImagen = !!analisis?.ruta_imagen;
   const analisisId = analisis?._id;
 
-  // Carga la imagen protegida con el token (un solo fetch, reusado en el detalle y el zoom).
-  useEffect(() => {
-    let cancelado = false;
-    let objectUrl;
-    const cargar = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${API_URL}/analisis/${analisisId}/imagen`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (cancelado) return;
-        if (!res.ok) { setImgError(true); return; }
-        const blob = await res.blob();
-        if (cancelado) return;
-        objectUrl = URL.createObjectURL(blob);
-        setImgUrl(objectUrl);
-      } catch {
-        if (!cancelado) setImgError(true);
-      }
-    };
-    if (analisisId && tieneImagen) cargar();
-    return () => { cancelado = true; if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [analisisId, tieneImagen]);
+  // Imagen protegida con el token (un solo fetch, reusado en el detalle, el zoom y el PDF).
+  const { url: imgUrl, error: imgError } = useImagenAnalisis(analisisId, tieneImagen);
 
   useBloquearScroll(!!analisis);
 
@@ -70,7 +49,7 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
       setYaReanalizado(true);
       if (onActualizado) onActualizado(analisis._id, data.analisis);
     } catch (err) {
-      alert(err.message);
+      avisarError('No se pudo reanalizar el dibujo', err);
     } finally {
       setReanalizando(false);
     }
@@ -83,7 +62,7 @@ const AnalysisDetailModal = ({ analisis, onClose, onActualizado, onDesasignado }
       if (onDesasignado) onDesasignado(analisis._id);
       onClose();
     } catch (err) {
-      alert(err.message);
+      avisarError('No se pudo quitar el dibujo del niño', err);
       setDesasignando(false);
     }
   };

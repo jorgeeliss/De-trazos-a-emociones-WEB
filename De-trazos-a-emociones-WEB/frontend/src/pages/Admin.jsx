@@ -5,6 +5,7 @@ import Sidebar from '../components/layout/Sidebar';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import { leerUsuario } from '../utils/permisos';
 import './Admin.css';
+import { useAvisos } from '../context/AvisosContext';
 
 const FILTROS = [
   { key: 'pendiente', label: 'Pendientes' },
@@ -19,6 +20,7 @@ const ROL_LABEL = {
 };
 
 const Admin = () => {
+  const { avisarError } = useAvisos();
   const [filtro, setFiltro] = useState('pendiente');
   const [recargas, setRecargas] = useState(0);
   const [usuarios, setUsuarios] = useState([]);
@@ -42,7 +44,7 @@ const Admin = () => {
         )
       );
     } catch (e) {
-      alert(e.message);
+      avisarError('No se pudo actualizar el usuario', e);
     } finally {
       setGuardandoGestion(null);
     }
@@ -78,7 +80,7 @@ const Admin = () => {
       // Cambió de estado: se quita de la lista actual.
       setUsuarios((prev) => prev.filter((u) => u._id !== id));
     } catch (e) {
-      alert(e.message);
+      avisarError('No se pudo resolver la solicitud', e);
     } finally {
       setProcesando(null);
     }
@@ -93,7 +95,7 @@ const Admin = () => {
       setUsuarios((prev) => prev.filter((x) => x._id !== u._id));
       setPorBorrar(null);
     } catch (e) {
-      alert(e.message);
+      avisarError('No se pudo eliminar el usuario', e);
     } finally {
       setProcesando(null);
     }

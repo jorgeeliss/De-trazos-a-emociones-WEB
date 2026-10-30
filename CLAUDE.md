@@ -35,6 +35,8 @@ IMPORTANTE: los documentos académicos dicen que el análisis usa la API de Clau
       - `src/`: `App.jsx`, `main.jsx`, `api.js`, `ProtectedRoute.jsx`.
       - `src/pages/`: Login, Register, Analyzer, Dashboard, History.
       - `src/components/`: `analyzer/`, `auth/`, `dashboard/`, `history/`, `layout/`.
+      - Avisos: usar `useAvisos()` (`src/context/AvisosContext.jsx`, se muestran con `components/common/AvisosFlotantes.jsx`), nunca `alert()`. En login y registro, `components/auth/AuthAviso.jsx`.
+      - Imágenes protegidas de un análisis: `src/hooks/useImagenAnalisis.js`.
 
 **Cómo se ejecuta hoy:**
 1. Ollama: instalarlo, ejecutar `ollama pull minicpm-v` y dejar el servicio corriendo en el puerto 11434.

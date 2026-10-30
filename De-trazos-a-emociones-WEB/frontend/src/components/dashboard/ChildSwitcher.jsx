@@ -6,8 +6,10 @@ import { emotionVisual, emocionPredominante, textoEdad } from '../../utils/emoci
 import { api } from '../../api';
 import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
 import ConfirmDialog from '../common/ConfirmDialog';
+import { useAvisos } from '../../context/AvisosContext';
 
 const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) => {
+  const { avisarError } = useAvisos();
   const navigate = useNavigate();
   const { nuevaSesion } = useAnalisisSesion();
   const [porBorrar, setPorBorrar] = useState(null);
@@ -34,7 +36,7 @@ const ChildSwitcher = ({ ninos = [], activeChild, setActiveChild, onDeleted }) =
       if (onDeleted) onDeleted(ids);
       cancelarBorrado();
     } catch (err) {
-      alert(err.message);
+      avisarError('No se pudo eliminar al niño', err);
     } finally {
       setBorrando(false);
     }

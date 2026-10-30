@@ -7,11 +7,13 @@ import ConfirmDialog from '../common/ConfirmDialog';
 import { exportarAnalisis } from '../../utils/exportarPdf';
 import { puedePdf } from '../../utils/permisos';
 import { emotionVisual } from '../../utils/emociones';
+import { useAvisos } from '../../context/AvisosContext';
 
 const slug = (s) =>
   String(s || 'nino').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
 
 const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect }) => {
+  const { avisarError } = useAvisos();
   const [generando, setGenerando] = useState(false);
   const [porBorrar, setPorBorrar] = useState(null);
   const [borrando, setBorrando] = useState(false);
@@ -26,7 +28,7 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
         nombreArchivo: `de-trazos-${slug(activeChildName)}.pdf`,
       });
     } catch (e) {
-      alert(e.message);
+      avisarError('No se pudo generar el PDF', e);
     } finally {
       setGenerando(false);
     }
@@ -67,7 +69,7 @@ const SessionsList = ({ sessions = [], activeChildName = '', onDeleted, onSelect
       if (onDeleted) onDeleted(porBorrar);
       setPorBorrar(null);
     } catch (err) {
-      alert(err.message);
+      avisarError('No se pudo eliminar el análisis', err);
     } finally {
       setBorrando(false);
     }

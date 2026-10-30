@@ -5,8 +5,10 @@ import { api } from '../../api';
 import AuthImage from '../common/AuthImage';
 import ConfirmDialog from '../common/ConfirmDialog';
 import { emotionVisual, intensityInfo, formatFechaHora } from '../../utils/emociones';
+import { useAvisos } from '../../context/AvisosContext';
 
 const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
+  const { avisarError } = useAvisos();
   const [ninoSel, setNinoSel] = useState('');
   const [ocupado, setOcupado] = useState(false);
   const [porBorrar, setPorBorrar] = useState(false);
@@ -29,7 +31,7 @@ const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
       });
       if (onAsignado) onAsignado(analisis._id);
     } catch (err) {
-      alert(err.message);
+      avisarError('No se pudo asignar el dibujo', err);
     } finally {
       setOcupado(false);
     }
@@ -47,7 +49,7 @@ const Tarjeta = ({ analisis, ninos, onSelect, onDeleted, onAsignado }) => {
       if (onDeleted) onDeleted(analisis._id);
       setPorBorrar(false);
     } catch (err) {
-      alert(err.message);
+      avisarError('No se pudo eliminar el dibujo', err);
     } finally {
       setBorrando(false);
     }

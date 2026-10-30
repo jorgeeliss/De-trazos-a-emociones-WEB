@@ -5,6 +5,7 @@ import './WeeklySummary.css';
 import { emotionVisual, intensityInfo, emocionPredominante, esEmocionNegativa, formatFechaCorta } from '../../utils/emociones';
 import { useAnalisisSesion } from '../../context/AnalisisSesionContext';
 import { exportarAnalisis } from '../../utils/exportarPdf';
+import { useAvisos } from '../../context/AvisosContext';
 
 const alturaPorIntensidad = { 1: '22px', 2: '40px', 3: '56px' };
 
@@ -12,6 +13,7 @@ const slug = (s) =>
   String(s || 'nino').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-');
 
 const WeeklySummary = ({ child }) => {
+  const { avisarError } = useAvisos();
   const navigate = useNavigate();
   const { precargarContexto, nuevaSesion } = useAnalisisSesion();
   const [generandoPdf, setGenerandoPdf] = useState(false);
@@ -28,7 +30,7 @@ const WeeklySummary = ({ child }) => {
         nombreArchivo: `de-trazos-${slug(child?.nombre)}.pdf`,
       });
     } catch (e) {
-      alert(e.message);
+      avisarError('No se pudo generar el PDF', e);
     } finally {
       setGenerandoPdf(false);
     }
